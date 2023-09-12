@@ -1,12 +1,24 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor() {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('/auth')
+  @UseGuards(AuthGuard('42'))
+  async fortyTwoAuth(@Req() req){}
+
+  @Get('/auth/callback')
+  @UseGuards(AuthGuard('42'))
+  async fortyTwoAuthcallback(@Req() req){
+      //Handle the successful 42 oauth2 authentication callback here
+      return req.user;
   }
+
+  // @Get('profile')
+  // @UseGuards(JwtAuthGuard)
+  // getProfile(@Req() req){
+  //   return req.user;
+  // }
 }
