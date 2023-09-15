@@ -1,3 +1,6 @@
+import { config } from 'dotenv';
+config();
+
 export const jwtConstants = {
- secret: 'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SERCET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE',
+    secret: process.env.JWT_CONST,
 };

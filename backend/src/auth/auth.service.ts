@@ -1,13 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service'; 
 import { JwtService } from '@nestjs/jwt';
 import { Token } from './token.decorator';
 @Injectable()
 export class AuthService {
-    constructor(
-        private usersService: UsersService,
-        private jwtService: JwtService
-        ) {}
+    constructor(private jwtService: JwtService) {}
 
     async generateJwt(user: any) {
         const payload = { username: user.displayName, sub: user.id };
