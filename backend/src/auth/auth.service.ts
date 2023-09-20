@@ -13,20 +13,11 @@ export class AuthService {
     //for handling log out
     private readonly blacklist = new Set<string>(); 
     //Add a token to blacklist
-    addToBlacklist(@Token() token: string) {
+    addToBlacklist(token: string) {
         this.blacklist.add(token);
-        console.log(this.blacklist);
     }
     //check if a token is blacklisted
-    isTokenBlacklisted(@Token() token: string): boolean{
-        //debug
-        console.log("--------------isTokenBlacklisted----------");
-        console.log("arg == ", token);
-        console.log("is token exist on the blacklist == ", this.blacklist.has(token));
-        //end debug
-        console.log(this.blacklist);
-        console.log("--------------------------------------------");
-
+    isTokenBlacklisted(token: string): boolean{
         return this.blacklist.has(token);
     }
 }

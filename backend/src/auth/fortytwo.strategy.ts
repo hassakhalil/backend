@@ -25,6 +25,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
             const user = profile;
             return done(null, user);
           } catch (error) {
+            console.log("Error in 42 strategy == ",error);
             return done(error, false);
           }
     }

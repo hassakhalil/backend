@@ -2,7 +2,7 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { AuthService } from './auth/auth.service';
-import { Token } from './auth/token.decorator';
+import { Request, Response } from 'express';
 
 @Controller()
 export class AppController {
@@ -10,41 +10,40 @@ export class AppController {
 
   @Get('/auth')
   @UseGuards(AuthGuard('42'))
-  async fortyTwoAuth(@Req() req){}
+  async fortyTwoAuth(@Req() req: Request){}
 
   @Get('/auth/callback')
   @UseGuards(AuthGuard('42'))
-  async fortyTwoAuthcallback(@Req() req, @Res() res){
+  async fortyTwoAuthcallback(@Req() req: Request, @Res({ passthrough: true }) res: Response){
       //Handle the successful 42 oauth2 authentication callback here
       //if the user already exist redirect to home
       //if not redirect to make a profile and save it to the database(choose a unique name and upload an avatar)
-      //  return this.authService.generateJwt(req.user);
-      const token = await this.authService.generateJwt(req.user);
-
-      res.setHeader('Authorization', 'Bearer ' + token);
+      const token  = await this.authService.generateJwt(req.user);
+      res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
       
-      return res.json({
+      return {
         home: ' you are logged in, this should be your home page if youre already a user in and profile setup if youre new',
-      });
+      };
   }
 
   @Get('/profile')
   @UseGuards(JwtAuthGuard)
   getProfile(@Req() req){
     return {
-      profile: "this is your profile ",
+      profile: "Profile",
     };
   }
 
   @Get('/logout')
   @UseGuards(JwtAuthGuard)
-  logout(@Req() request, @Token() token: string){
-    //debug
-    console.log("token extracted from request=========",token);
-    //end debug
+  logout(@Req() request: Request, @Res({ passthrough: true}) response: Response){
+    //blacklist the jwt
+    const token  = request.cookies.jwt;
     this.authService.addToBlacklist(token);
+    //cleare the cookie
+    response.clearCookie('jwt');
     return {
-      logout: "token has been blacklisted",
+      logout: "Logged out seccussfully",
     };
   }
 
