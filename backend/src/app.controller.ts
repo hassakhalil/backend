@@ -10,7 +10,7 @@ export class AppController {
 
   @Get('/auth')
   @UseGuards(AuthGuard('42'))
-  async fortyTwoAuth(@Req() req: Request){}
+  async fortyTwoAuth(){}
 
   @Get('/auth/callback')
   @UseGuards(AuthGuard('42'))
@@ -28,7 +28,7 @@ export class AppController {
 
   @Get('/profile')
   @UseGuards(JwtAuthGuard)
-  getProfile(@Req() req){
+  getProfile(){
     return {
       profile: "Profile",
     };
@@ -40,7 +40,7 @@ export class AppController {
     //blacklist the jwt
     const token  = request.cookies.jwt;
     this.authService.addToBlacklist(token);
-    //cleare the cookie
+    //clear the cookie
     response.clearCookie('jwt');
     return {
       logout: "Logged out seccussfully",
