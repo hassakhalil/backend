@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -17,13 +17,16 @@ export class AppController {
   @UseGuards(AuthGuard('42'))
   async fortyTwoAuthcallback(@Req() req: Request, @Res({ passthrough: true }) res: Response){
       //Handle the successful 42 oauth2 authentication callback here
+      //generate token
       const token  = await this.authService.generateJwt(req.user);
+      //set the token in a cookie
       res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
-      const user = this.usersService.findOne(req.user);
+      //check if the user exist in the datase
+      const user = await this.usersService.findOne(this.authService.extractId(req.user));
+      
       if (!user)
       {
         //user does not exist 
-        this.usersService.create(req.user);
         return {
           message: 'user doesnt exist',
           todo:     'ask the user to enter a unique username and to upload an avatar',
@@ -31,27 +34,38 @@ export class AppController {
         };
       }
 
-      //check if the user already exist in the database (check by intra id)
-        //if the user doesnt exist ask him to enter  unique username and avatar + save the new user ther the data base
-        //(?????should i force the user to enter unique username and avatar????????)
-        ///return the user profile from the data base
-      return {
-        profile: 'profile data',
-      };
+    //this should change to include all the data the frontend needs
+      return user;
   }
-
+      
   @Post('/setprofile')
   @UseGuards(JwtAuthGuard)
-  setprofile() {
-      //add the username and avatar if any to the database user record
+  async setprofile(@Body() body: string, @Req() req:Request) {
+
+    const user  = await this.usersService.create(body, this.authService.extractIdFromPayload(req.user));
+    if (!user)
+      return {Error: "Failed to create user"};
+    
+      //this should change to include all the data the frontend needs
+    return user;
   }
 
-@Get('/profile')
+  @Post('/avatar')
+  @UseGuards(JwtAuthGuard)
+  uploadavatar(){
+
+  }
+
+  @Get('twofactorauth')
+  @UseGuards(JwtAuthGuard)
+  twofactorauth() {
+
+  }
+
+  @Get('/profile')
   @UseGuards(JwtAuthGuard)
   getProfile(){
-    return {
-      profile: "Profile",
-    };
+    return {profile: "Profile"};
   }
 
   @Get('/logout')

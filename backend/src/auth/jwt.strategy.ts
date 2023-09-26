@@ -21,14 +21,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: any){
-        //check if the token is blacklisted
-        // if (this.authService.isTokenBlacklisted(token)) {
-        //     //debug
-            
-        //     console.log("from validate function/jwtstrategy [ found a blacklisted token and about throw an exception ]");
-        //     //end debug
-        //     throw new UnauthorizedException('token has been blacklisted');
-        // }
         //your validation logic here, e.g.,getching user from database
         //return the user if the token is valid
         return { userId: payload.sub, username: payload.username};

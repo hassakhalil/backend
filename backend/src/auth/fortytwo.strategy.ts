@@ -22,7 +22,10 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
     ): Promise<any> {
         try {
             // You can use this profile data to create or retrieve a user in your application
-            const user = profile;
+            const user = {
+                id: profile.id,
+                displayName: profile.displayName
+            };
             return done(null, user);
           } catch (error) {
             console.log("Error in 42 strategy == ",error);

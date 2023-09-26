@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Token } from './token.decorator';
+
 @Injectable()
 export class AuthService {
     constructor(private jwtService: JwtService) {}
@@ -8,6 +8,13 @@ export class AuthService {
     async generateJwt(user: any) {
         const payload = { username: user.displayName, sub: user.id };
         return this.jwtService.sign(payload);
+    }
+
+    extractId(user: any) {
+        return user.id;
+    }
+    extractIdFromPayload(user: any) {
+        return user.userId;
     }
 
     //for handling log out

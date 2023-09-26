@@ -12,12 +12,11 @@ datasource db {
 
 model users {
   id            Int     @id @default(autoincrement()) 
-  username      String?  @unique
-  intra_login   String
-  intra_id      String
-  avatar        String?
+  username      String  @unique
+  intra_id      String  @unique
+  avatar        Bytes?
   twofactorauth Boolean
-  status        String
+  status        String?
 
   //relations
 
