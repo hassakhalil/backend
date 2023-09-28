@@ -2,10 +2,10 @@
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
-    "login" TEXT NOT NULL,
-    "avatar" TEXT NOT NULL,
+    "intra_id" TEXT NOT NULL,
+    "avatar" BYTEA,
     "twofactorauth" BOOLEAN NOT NULL,
-    "status" TEXT NOT NULL,
+    "status" TEXT,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -81,6 +81,9 @@ CREATE TABLE "leaderboard" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "users_intra_id_key" ON "users"("intra_id");
 
 -- AddForeignKey
 ALTER TABLE "friendships" ADD CONSTRAINT "friendships_sender_id_fkey" FOREIGN KEY ("sender_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

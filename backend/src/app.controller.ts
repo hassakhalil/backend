@@ -1,13 +1,17 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { Request, Response } from 'express';
 import { UsersService } from './users/users.service';
+import { UsernameDto} from './users/dto/username.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller()
 export class AppController {
-  constructor(private readonly authService: AuthService, private readonly usersService: UsersService) {}
+  constructor(private readonly authService: AuthService,
+              private readonly usersService: UsersService,
+              ) {}
 
   @Get('/auth')
   @UseGuards(AuthGuard('42'))
@@ -40,9 +44,9 @@ export class AppController {
       
   @Post('/setprofile')
   @UseGuards(JwtAuthGuard)
-  async setprofile(@Body() body: string, @Req() req:Request) {
+  async setprofile(@Body() usernameDto: UsernameDto, @Req() req: Request) {
 
-    const user  = await this.usersService.create(body, this.authService.extractIdFromPayload(req.user));
+    const user  = await this.usersService.create(usernameDto.username, this.authService.extractIdFromPayload(req.user));
     if (!user)
       return {Error: "Failed to create user"};
     
@@ -52,8 +56,18 @@ export class AppController {
 
   @Post('/avatar')
   @UseGuards(JwtAuthGuard)
-  uploadavatar(){
-
+  //front end should not forget field name when making requests to this endpoint
+  @UseInterceptors(FileInterceptor('avatar'))
+  async uploadavatar(@UploadedFile() photo: Express.Multer.File, @Req() req: Request){
+    if (!this.usersService.updateavatar(photo.buffer, this.authService.extractIdFromPayload(req.user)))
+    {
+      return {
+        Error: "Failed to upload avatar",
+      };
+    }
+    return {
+      message: "Avatar uploaded successfully",
+    }
   }
 
   @Get('twofactorauth')
