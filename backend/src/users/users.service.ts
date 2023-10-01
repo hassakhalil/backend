@@ -14,16 +14,22 @@ export class UsersService {
     if (test)
       return null;
     //give the user random avatar until he upload one of his own
-    const defaultavatar = await this.getAvatar();
-    const user = await this.prisma.users.create({
-          data: {
-            username: un,
-            intra_id: id,
-            twofactorauth: false,
-            avatar: defaultavatar,
-          },
-      });
-    return user;
+    // const defaultavatar = await this.getAvatar();
+    try{
+      const user = await this.prisma.users.create({
+            data: {
+              username: un,
+              intra_id: id,
+              // avatar: defaultavatar,
+            },
+        });
+      return user;
+      
+    }
+    catch(error){
+      console.log('Error :',error);
+      return null;
+    }
   }
 
   findAll() {
@@ -31,12 +37,17 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const user = await this.prisma.users.findUnique({
-      where: {
-        intra_id: id,
-      },
-    });
-    return user;
+    try{
+      const user = await this.prisma.users.findUnique({
+        where: {
+          intra_id: id,
+        },
+      });
+      return user;
+    }
+    catch(erro){
+      return null;
+    }
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
@@ -86,6 +97,48 @@ export class UsersService {
     }
     catch(error){
       console.log('Error: failed to upload avatar');
+      return false;
+    }
+  }
+
+  //2fa 
+  async setTwoFactorAuthSecret(secret: string, userId :string): Promise<boolean>{
+    //debug
+    console.log('setTwoFactorAuthSecret() secret = ', secret);
+    //end debug 
+    try{
+      const updateTwoFactorAuthSecret = await this.prisma.users.update({
+        where: {
+          intra_id: userId,
+        },
+        data: {
+          two_factor_auth_secret: secret,
+        },
+      });
+      console.log("2fa secret set in the database successfully\n");
+      return true;
+    }
+    catch(error){
+      console.log("Error; failed to set the 2fa secret in the database\n");
+      return false;
+    }
+  }
+
+  async turnOnTwoFactorAuth(userId : string) :Promise<boolean> {
+    try{
+      const updateTwoFactorAuthState = await this.prisma.users.update({
+        where: {
+          intra_id: userId,
+        },
+        data: {
+          is_two_factor_auth_enabled: true,
+        },
+      });
+      console.log("2fa state changed in the database successfully\n");
+      return true;
+    }
+    catch(error){
+      console.log("Error; failed to change the 2fa state in the database\n");
       return false;
     }
   }

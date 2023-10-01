@@ -4,7 +4,8 @@ CREATE TABLE "users" (
     "username" TEXT NOT NULL,
     "intra_id" TEXT NOT NULL,
     "avatar" BYTEA,
-    "twofactorauth" BOOLEAN NOT NULL,
+    "is_two_factor_auth_enabled" BOOLEAN NOT NULL DEFAULT false,
+    "two_factor_auth_secret" TEXT,
     "status" TEXT,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")

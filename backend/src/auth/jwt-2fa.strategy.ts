@@ -6,7 +6,7 @@ import { Request } from "express";
 import { UsersService } from "src/users/users.service";
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
     constructor(private readonly usersService: UsersService) {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([(req: Request) => {
@@ -23,7 +23,8 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     async validate(payload: any){
         //your validation logic here, e.g.,getching user from database
         // const user = await this.usersService.findOne(payload.sub);
-        // if (!user.is_two_factor_auth_enabled) {
+        // console.log('user from jwt2fastrategy == ', user);
+        // if (user && !user.is_two_factor_auth_enabled) {
         //     return user;
         // }
         // if (payload.isTwoFactorAuthentcated) {
