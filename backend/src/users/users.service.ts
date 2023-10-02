@@ -139,4 +139,23 @@ export class UsersService {
       return false;
     }
   }
+
+  async turnOffTwoFactorAuth(userId : string) :Promise<boolean> {
+    try{
+      const updateTwoFactorAuthState = await this.prisma.users.update({
+        where: {
+          intra_id: userId,
+        },
+        data: {
+          is_two_factor_auth_enabled: false,
+        },
+      });
+      console.log("2fa state changed in the database successfully\n");
+      return true;
+    }
+    catch(error){
+      console.log("Error; failed to change the 2fa state in the database\n");
+      return false;
+    }
+  }
 }

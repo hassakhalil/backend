@@ -137,6 +137,28 @@ async activateTwoFactorAuth(@Req() req: Request, @Body() body) {
   }
 }
 
+@Post('2fa/turn-off')
+@UseGuards(Jwt2faAuthGuard)
+async desactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
+  const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+  const isCodeValid = this.authService.isTwoFactorAuthCodeValid(
+    body.twoFactorAuthCode,
+    user,
+  );
+  if (!isCodeValid){
+    throw new UnauthorizedException('2fa: Wrong authentication code');
+  }
+  const isDesactivated = await this.usersService.turnOffTwoFactorAuth(this.authService.extractIdFromPayload(req.user));
+  if (!isDesactivated){
+    return {
+      message: 'Failed to desactivate 2fa',
+    };
+  }
+  return {
+    message: 'you successfully desactivated 2fa',
+  }
+}
+
   @Post('/avatar')
   @UseGuards(Jwt2faAuthGuard)
   //front end should not forget field name when making requests to this endpoint
