@@ -9,18 +9,19 @@ import { UsersService } from 'src/users/users.service';
 import { UsersModule } from 'src/users/users.module';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '1h'},
+      signOptions: { expiresIn: '24h'},
     }),
     UsersModule,
     PrismaModule,
   ],
-  providers: [AuthService, Jwt2faStrategy, FortyTwoStrategy, UsersService, PrismaService],
+  providers: [AuthService, Jwt2faStrategy, FortyTwoStrategy, UsersService, PrismaService, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

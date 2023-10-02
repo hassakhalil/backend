@@ -103,9 +103,6 @@ export class UsersService {
 
   //2fa 
   async setTwoFactorAuthSecret(secret: string, userId :string): Promise<boolean>{
-    //debug
-    console.log('setTwoFactorAuthSecret() secret = ', secret);
-    //end debug 
     try{
       const updateTwoFactorAuthSecret = await this.prisma.users.update({
         where: {

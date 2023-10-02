@@ -7,30 +7,28 @@ import { toDataURL } from 'qrcode';
 export class AuthService {
     constructor(private jwtService: JwtService) {}
     
-    async login(user: any) {
+    async login(user: any, isTwoFactorAuthEbnabled:boolean) {
         const payload = {
-            username: user.displayName,
-            sub: user.id,
-            isTwoFactorAuthenticationEbnabled: false,
+            username: user.intraDisplayName,
+            sub: user.intraId,
+            isTwoFactorAuthenticationEbnabled: isTwoFactorAuthEbnabled,
             isTwoFactorAuthentcated: false,
         };
-
         return this.jwtService.sign(payload);
     }
 
-    async loginWith2fa(user: any) {
+    async loginWith2fa(user: any, isTwoFactorAuthEbnabled: boolean) {
         const payload = {
-            username: user.displayName,
-            sub: user.id,
-            isTwoFactorAuthenticationEbnabled: user.isTwoFactorAuthenticationEnabled,
+            username: user.username,
+            sub: user.sub,
+            isTwoFactorAuthenticationEbnabled: isTwoFactorAuthEbnabled,
             isTwoFactorAuthentcated: true,
         };
-
         return this.jwtService.sign(payload);
     }
     
     extractId(user: any) {
-        return user.id;
+        return user.intraId;
     }
     extractIdFromPayload(user: any) {
         return user.sub;
@@ -51,7 +49,7 @@ export class AuthService {
     async generateTwoFactorAuthSecret(user: any){
         const secret = authenticator.generateSecret();
 
-        const otpauthUrl = authenticator.keyuri(user.id, 'ft_transcendence', secret);
+        const otpauthUrl = authenticator.keyuri(user.username, 'Ft_transcendence', secret);
 
         return {
             secret,
@@ -64,10 +62,6 @@ export class AuthService {
     }
 
     isTwoFactorAuthCodeValid(twoFactorAuthCode: string, user:any){
-        //debug
-        console.log('is2facodevalid() code = ', twoFactorAuthCode);
-        console.log('is2facodevalid() user = ', user);
-        //end debug
         return authenticator.verify({
             token: twoFactorAuthCode,
             secret: user.two_factor_auth_secret,

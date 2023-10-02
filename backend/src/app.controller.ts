@@ -1,12 +1,13 @@
 import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Jwt2faAuthGuard } from './auth/jwt-auth.guard';
+import { Jwt2faAuthGuard } from './auth/jwt-2fa-auth.guard';
 import { AuthService } from './auth/auth.service';
 import { Request, Response } from 'express';
 import { UsersService } from './users/users.service';
 import { UsernameDto} from './users/dto/username.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { toFileStream } from 'qrcode';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Controller()
 export class AppController {
@@ -21,34 +22,56 @@ export class AppController {
   @Get('/auth/callback')
   @UseGuards(AuthGuard('42'))
   async fortyTwoAuthcallback(@Req() req: Request, @Res({ passthrough: true }) res: Response){
-      //Handle the successful 42 oauth2 authentication callback here
-      //generate token
-      const token  = await this.authService.login(req.user);
-      //set the token in a cookie
-      res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
-      //check if the user exist in the datase
-      const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
-      
-      if (!user)
-      {
-        //user does not exist 
-        return {
-          message: 'user doesnt exist',
-          todo:     'ask the user to enter a unique username and to upload an avatar',
-          next:   'hit /setprofile with a post request and include the user data'
-        };
+
+      const user = await this.usersService.findOne(this.authService.extractId(req.user));
+      //debug
+      console.log(user);
+      //end debug
+      //user not found in the database
+      if (!user){
+          //generate token
+          const token  = await this.authService.login(req.user, false);
+          //set the token in a cookie
+          res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
+          //user does not exist 
+          return {
+            message: 'you have to setup a username',
+            endpoint:     '/setprofile',
+            method: 'POST',
+            body:  '{"username": "string"}'
+          };
       }
-      
-      //this should change to include all the data the frontend needs
+      else {
+        if (user.is_two_factor_auth_enabled){
+          //generate token
+          const token  = await this.authService.login(req.user, true);
+          //set the token in a cookie
+          res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
+          return {
+            message: 'you have to 2fa autenticate',
+            endpoint: '2fa/authenticate',
+            method: 'POST',
+            body:   '{"twoFactorAuthCode": "string"}',
+          }
+        }
+        else{
+          //generate token
+          const token  = await this.authService.login(req.user, false);
+          //set the token in a cookie
+          res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
+        }
+      }
       return user;
     }
     
-    @Post('2fa/authenticate')
+  @Post('2fa/authenticate')
   @HttpCode(200)
-  @UseGuards(Jwt2faAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async authenticate(@Req() req:Request, @Body() body, @Res({ passthrough: true}) res: Response) {
     const us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
-
+    //debug
+    console.log('authenticate() us = ',us);
+    //end debug
     const isCodevalid = this.authService.isTwoFactorAuthCodeValid(
       body.twoFactorAuthCode,
       us,
@@ -57,23 +80,18 @@ export class AppController {
       if(!isCodevalid) {
         throw new UnauthorizedException('2fa: Wrong authentication code');
       }
-      const token = await this.authService.loginWith2fa(req.user);
+      const token = await this.authService.loginWith2fa(req.user, us.is_two_factor_auth_enabled);
       res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
       //check if the user exist in the datase
-      const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
       
       //this should change to include all the data the frontend needs
-      return user;
+      return us;
 }
       
   @Post('/setprofile')
   @UseGuards(Jwt2faAuthGuard)
   async setprofile(@Body() usernameDto: UsernameDto, @Req() req: Request) {
-    
-    //debug
-    console.log('usernameDto = ', usernameDto);
-    //end debug 
-    
+        
     const user  = await this.usersService.create(usernameDto.username, this.authService.extractIdFromPayload(req.user));
     console.log({user});
     if (!user)
@@ -82,18 +100,17 @@ export class AppController {
   //this should change to include all the data the frontend needs
   return user;
 }
-//2fa
+
 @Get('2fa/generate')
 @UseGuards(Jwt2faAuthGuard)
 async generateQrCode(@Res() res: Response, @Req() req:Request){
   const secret_url = await this.authService.generateTwoFactorAuthSecret(req.user);
-  //debug
-  console.log('generateQRcode() secret = ', secret_url);
-  //end debug
 
-  const isSet = await this.usersService.setTwoFactorAuthSecret(secret_url.secret,this.authService.extractIdFromPayload(req.user));
-  // const qrcode = await this.authService.generateQrCodedataURL(secret_url.otpauthUrl);
-  const qrcode = toFileStream(res, secret_url.otpauthUrl);
+  await this.usersService.setTwoFactorAuthSecret(
+    secret_url.secret,
+    this.authService.extractIdFromPayload(req.user)
+    );
+  const qrcode = await toFileStream(res, secret_url.otpauthUrl);
   
   return qrcode;
 }
@@ -101,10 +118,7 @@ async generateQrCode(@Res() res: Response, @Req() req:Request){
 @Post('2fa/turn-on')
 @UseGuards(Jwt2faAuthGuard)
 async activateTwoFactorAuth(@Req() req: Request, @Body() body) {
-  //debug
-  console.log('avtivateTwoFactorAuth body = ', body);
   const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
-  //end ebug
   const isCodeValid = this.authService.isTwoFactorAuthCodeValid(
     body.twoFactorAuthCode,
     user,
@@ -142,8 +156,9 @@ async activateTwoFactorAuth(@Req() req: Request, @Body() body) {
 
   @Get('/profile')
   @UseGuards(Jwt2faAuthGuard)
-  getProfile(@Req() req: Request){
-    return req.user;
+  async  getProfile(@Req() req: Request){
+    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    return user;
   }
 
   @Get('/logout')

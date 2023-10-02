@@ -3,7 +3,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
 
 @Injectable()
-export class JwtAuthGuard extends AuthGuard('jwt') {
+export class Jwt2faAuthGuard extends AuthGuard('jwt-2fa') {
    // You can add custom logic here
    constructor(@Inject(AuthService) private readonly authService : AuthService){
         super();

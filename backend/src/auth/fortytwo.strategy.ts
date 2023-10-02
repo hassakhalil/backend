@@ -23,8 +23,8 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
         try {
             // You can use this profile data to create or retrieve a user in your application
             const user = {
-                id: profile.id,
-                displayName: profile.displayName
+                intraId: profile.id,
+                intraDisplayName: profile.displayName
             };
             return done(null, user);
           } catch (error) {
