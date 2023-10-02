@@ -31,8 +31,9 @@ model users {
   message     messages[]    @relation("messages_users")
   //management
   management  managements[] @relation("managements_users")
-  //leaderboard
-  leaderboard leaderboard[] @relation("leaderboard_users")
+  //achievements
+  achievement achievements[] @relation("achievements_users")
+
 }
 
 model friendships {
@@ -47,10 +48,11 @@ model friendships {
 }
 
 model games {
-  id            Int @id @default(autoincrement())
-  player_one_id Int
-  player_two_id Int
-  game_score    String
+  id                  Int @id @default(autoincrement())
+  player_one_id       Int
+  player_two_id       Int
+  player_one_score    Int
+  player_two_score    Int
   date          DateTime @default(now())
 
   //relations 
@@ -102,17 +104,13 @@ model managements {
   user  users @relation("managements_users", fields: [user_id], references: [id])
 }
 
-model leaderboard {
+model achievements {
   id            Int @id @default(autoincrement())
+  name          String
   user_id       Int
-  rank          Int
-  level         Int
-  wins          Int
-  defeats       Int
-  games_played  Int
 
   //relations
-  user users @relation("leaderboard_users", fields: [user_id], references: [id])
+  user  users @relation("achievements_users", fields: [user_id], references: [id])
 }
 
 
