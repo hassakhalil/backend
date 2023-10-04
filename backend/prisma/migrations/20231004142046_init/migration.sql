@@ -3,7 +3,7 @@ CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
     "username" TEXT NOT NULL,
     "intra_id" TEXT NOT NULL,
-    "avatar" BYTEA,
+    "avatar" TEXT NOT NULL,
     "is_two_factor_auth_enabled" BOOLEAN NOT NULL DEFAULT false,
     "two_factor_auth_secret" TEXT,
     "status" TEXT,

@@ -11,6 +11,7 @@ export class AuthService {
         const payload = {
             username: user.intraDisplayName,
             sub: user.intraId,
+            photo: user.intraPhoto,
             isTwoFactorAuthenticationEbnabled: isTwoFactorAuthEbnabled,
             isTwoFactorAuthentcated: false,
         };
@@ -21,6 +22,7 @@ export class AuthService {
         const payload = {
             username: user.username,
             sub: user.sub,
+            photo: user.intraPhoto,
             isTwoFactorAuthenticationEbnabled: isTwoFactorAuthEbnabled,
             isTwoFactorAuthentcated: true,
         };

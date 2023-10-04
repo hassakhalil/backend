@@ -9,8 +9,8 @@ import * as path from 'path';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(un: string, id: string) {
-    const test = await this.findOne(id);
+  async create(un: string, payload: any) {
+    const test = await this.findOne(payload.sub);
     if (test)
       return null;
     //give the user random avatar until he upload one of his own
@@ -19,8 +19,8 @@ export class UsersService {
       const user = await this.prisma.users.create({
             data: {
               username: un,
-              intra_id: id,
-              // avatar: defaultavatar,
+              intra_id: payload.sub,
+              avatar: payload.photo,
             },
         });
       return user;
@@ -59,37 +59,28 @@ export class UsersService {
   }
 
   //avatar
-  async convertImageToBuffer(filepath: string): Promise<Buffer | null> {
+  async getAvatar(userId: string): Promise<string | null> {
     try{
-        const imageBuffer = await fs.readFile(filepath);
-        return imageBuffer;
+      const user = await this.prisma.users.findUnique({
+        where: {
+          intra_id: userId,
+        },
+      });
+      return user.avatar;
     }
-    catch(error){
-      console.log("Error converting image to buffer");
+    catch(erro){
       return null;
     }
   }
 
-  async getAvatar(): Promise<Buffer | null> {
-    const filepath = '/Users/hassan/Desktop/backend/backend/src/users/avatars/default_avatar.png';
-    console.log('filepath == ', filepath);
-    const imagebuffer = await this.convertImageToBuffer(filepath);
-    if (!imagebuffer)
-    {
-      console.log('failed to generate random avatar');
-      return null;
-    }
-    return imagebuffer;
-  }
-
-  async updateavatar(photo: Buffer, id: string): Promise<boolean> {
+  async updateavatar(path: string, id: string): Promise<boolean> {
     try{
       const updateUser = await this.prisma.users.update({
         where:{
           intra_id: id ,
         },
         data: {
-          avatar: photo,
+          avatar: path,
         },
       });
       console.log('avatar uploaded seccussfully');
