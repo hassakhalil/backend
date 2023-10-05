@@ -24,12 +24,12 @@ export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
         //your validation logic here, e.g.,getching user from database
         const user = await this.usersService.findOne(payload.sub);
         if (!user)
-            return payload;
+            throw new UnauthorizedException('Setup a username');
         else if (!user.is_two_factor_auth_enabled)
             return payload;
         else if (payload.isTwoFactorAuthentcated)
             return payload;
         else
-            throw new UnauthorizedException('go to /2fa/authenticate');
+            throw new UnauthorizedException('you have to 2fa authenticate');
     }
 }

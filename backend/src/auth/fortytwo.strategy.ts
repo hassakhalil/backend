@@ -27,9 +27,6 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
                 intraDisplayName: profile.displayName,
                 intraPhoto: profile._json.image.link,
             };
-            //debug
-            console.log('intra profile = ',user);
-            //end debug
             return done(null, user);
           } catch (error) {
             console.log("Error in 42 strategy == ",error);

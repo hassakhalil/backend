@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode, ParseFilePipeBuilder, HttpStatus} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode, ParseFilePipeBuilder, HttpStatus, HttpException} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Jwt2faAuthGuard } from './auth/jwt-2fa-auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -23,16 +23,11 @@ export const multerConfig = {
     },
   }),
   fileFilter: (req, file, cb) => {
-    //debug
-    console.log(file);
-    //end debug
     // Check if the file's MIME type is an image
     if (file.mimetype.startsWith('image/')) {
       cb(null, true); // Accept the file
     } 
     else {
-      //handle the error here
-      // cb(new Error('Only image files are allowed.'));
        // Reject the file
        cb(null,false);
     }
@@ -59,9 +54,6 @@ export class AppController {
   async fortyTwoAuthcallback(@Req() req: Request, @Res({ passthrough: true }) res: Response){
 
       const user = await this.usersService.findOne(this.authService.extractId(req.user));
-      //debug
-      console.log(user);
-      //end debug
       //user not found in the database
       if (!user){
           //generate token
@@ -71,7 +63,7 @@ export class AppController {
           //user does not exist 
           return {
             message: 'you have to setup a username',
-            endpoint:     '/set-username',
+            nextEndpoint:     '/set-username',
             method: 'POST',
             body:  '{"username": "string"}'
           };
@@ -84,7 +76,7 @@ export class AppController {
           res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
           return {
             message: 'you have to 2fa autenticate',
-            endpoint: '2fa/authenticate',
+            nextEndpoint: '2fa/authenticate',
             method: 'POST',
             body:   '{"twoFactorAuthCode": "string"}',
           }
@@ -96,7 +88,7 @@ export class AppController {
           res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
         }
       }
-      return user;
+      return 'Youre logged in';
     }
     
   @Post('2fa/authenticate')
@@ -104,36 +96,27 @@ export class AppController {
   @UseGuards(JwtAuthGuard)
   async authenticate(@Req() req: Request, @Body() body, @Res({ passthrough: true}) res: Response) {
     const us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
-    //debug
-    console.log('authenticate() us = ',us);
-    //end debug
     const isCodevalid = this.authService.isTwoFactorAuthCodeValid(
       body.twoFactorAuthCode,
       us,
       );
       
       if(!isCodevalid) {
-        throw new UnauthorizedException('2fa: Wrong authentication code');
+        throw new UnauthorizedException('Wrong authentication code');
       }
       const token = await this.authService.loginWith2fa(req.user, us.is_two_factor_auth_enabled);
       res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
-      //check if the user exist in the datase
-      
-      //this should change to include all the data the frontend needs
-      return us;
+      return 'Youre logged in with 2fa';
 }
       
   @Post('/set-username')
-  @UseGuards(Jwt2faAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async setUsername(@Body() usernameDto: UsernameDto, @Req() req: Request) {
         
-    const user  = await this.usersService.create(usernameDto.username, req.user);
-    console.log({user});
-    if (!user)
-    return {Error: "Failed to create user"};
-  
-  //this should change to include all the data the frontend needs
-  return user;
+    const isCreated  = await this.usersService.create(usernameDto.username, req.user);
+    if (!isCreated)
+      throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
+    return 'User Created';
 }
 
 @Get('2fa/generate-qrcode')
@@ -159,17 +142,13 @@ async activateTwoFactorAuth(@Req() req: Request, @Body() body) {
     user,
   );
   if (!isCodeValid){
-    throw new UnauthorizedException('2fa: Wrong authentication code');
+    throw new UnauthorizedException('Wrong authentication code');
   }
-  const isActivated = await this.usersService.turnOnTwoFactorAuth(this.authService.extractIdFromPayload(req.user));
+  const isActivated = await this.usersService.updateTwoFactorAuthState(this.authService.extractIdFromPayload(req.user), true);
   if (!isActivated){
-    return {
-      message: 'Failed to activate 2fa',
-    };
+    throw new HttpException('Failed to activate 2fa', HttpStatus.INTERNAL_SERVER_ERROR);
   }
-  return {
-    message: 'you successfully activated 2fa',
-  }
+  return 'You successfully activated 2fa';
 }
 
 @Post('2fa/turn-off')
@@ -181,17 +160,13 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     user,
   );
   if (!isCodeValid){
-    throw new UnauthorizedException('2fa: Wrong authentication code');
+    throw new UnauthorizedException('Wrong authentication code');
   }
-  const isDesactivated = await this.usersService.turnOffTwoFactorAuth(this.authService.extractIdFromPayload(req.user));
+  const isDesactivated = await this.usersService.updateTwoFactorAuthState(this.authService.extractIdFromPayload(req.user), false);
   if (!isDesactivated){
-    return {
-      message: 'Failed to deactivate 2fa',
-    };
+    throw new HttpException('Failed to deactivate 2fa', HttpStatus.INTERNAL_SERVER_ERROR);
   }
-  return {
-    message: 'you successfully deactivated 2fa',
-  }
+  return 'You successfully deactivated 2fa';
 }
 
   @Post('/upload-avatar')
@@ -202,9 +177,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       //save the path to the database
       if (file === undefined)
       {
-        return {
-          message: 'Error: Only image files are allowed.',
-        }
+        throw new HttpException('Only image files are allowed.', HttpStatus.BAD_REQUEST);
       }
       //check if the client already uploaded an avatar if yes replace it
       const path  = await this.usersService.getAvatar(this.authService.extractIdFromPayload(req.user));
@@ -213,16 +186,12 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
           //remove old avatar
           fs.unlinkSync(path);
       }
-      const isSaved = this.usersService.updateavatar(file.path, this.authService.extractIdFromPayload(req.user));
+      const isSaved = this.usersService.updateAvatar(file.path, this.authService.extractIdFromPayload(req.user));
       if (!isSaved)
       {
-        return {
-          message : 'Error: failed to upload avatar',
-        };
+        throw new HttpException('Failed to upload avatar', HttpStatus.INTERNAL_SERVER_ERROR);
       }
-      return {
-        message: 'avatar uploaded seccussfully',
-      };
+      return 'Avatar uploaded seccussfully';
     }
 
   @Get('/get-avatar')
@@ -230,21 +199,13 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   async getAvatar(@Req() req: Request, @Res() res: Response) {
       //get the avatar path from the database
       const path = await this.usersService.getAvatar(this.authService.extractIdFromPayload(req.user));
-      //debug
-      // console.log('getAvatar() path = ', path);
-      //end debug
       if (!path)
       {
-        return res.send({
-          message: 'Error: no avatar found',
-        });
+        throw new HttpException('avatar not found', HttpStatus.INTERNAL_SERVER_ERROR);
       }
       if (path.indexOf('cdn.intra.42.fr') !== -1)
       {
-        return res.send({
-          message: 'Error: you have to get this avatar from intra',
-          endpoint: path,
-        });
+        throw new HttpException('Get this avatar from intra', HttpStatus.NOT_FOUND);
       }
       res.setHeader('Content-Type', 'application/octet-stream');
       //get the proper filename from the path 
@@ -258,8 +219,12 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   @Get('/profile')
   @UseGuards(Jwt2faAuthGuard)
   async  getProfile(@Req() req: Request){
-    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
-    return user;
+    const profileData = await this.usersService.getProfileData(this.authService.extractIdFromPayload(req.user));
+    if (!profileData)
+    {
+      throw new HttpException('No Profile Data', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return profileData;
   }
 
   @Get('/logout')
@@ -270,9 +235,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     this.authService.addToBlacklist(token);
     //clear the cookie
     response.clearCookie('jwt');
-    return {
-      logout: "Logged out seccussfully",
-    };
+    return 'Logged out seccussfully';
   }
 
 

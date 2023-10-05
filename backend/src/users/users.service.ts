@@ -9,12 +9,10 @@ import * as path from 'path';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(un: string, payload: any) {
+  async create(un: string, payload: any) :Promise<boolean>{
     const test = await this.findOne(payload.sub);
     if (test)
-      return null;
-    //give the user random avatar until he upload one of his own
-    // const defaultavatar = await this.getAvatar();
+      return false;
     try{
       const user = await this.prisma.users.create({
             data: {
@@ -23,17 +21,11 @@ export class UsersService {
               avatar: payload.photo,
             },
         });
-      return user;
-      
+      return true; 
     }
     catch(error){
-      console.log('Error :',error);
-      return null;
+      return false;
     }
-  }
-
-  findAll() {
-    return `This action returns all users`;
   }
 
   async findOne(id: string) {
@@ -43,19 +35,15 @@ export class UsersService {
           intra_id: id,
         },
       });
-      return user;
+      return {
+        username:                   user.username,
+        avatar:                     user.avatar,
+        is_two_factor_auth_enabled: user.is_two_factor_auth_enabled,
+      };
     }
     catch(erro){
       return null;
     }
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 
   //avatar
@@ -73,7 +61,7 @@ export class UsersService {
     }
   }
 
-  async updateavatar(path: string, id: string): Promise<boolean> {
+  async updateAvatar(path: string, id: string): Promise<boolean> {
     try{
       const updateUser = await this.prisma.users.update({
         where:{
@@ -83,11 +71,9 @@ export class UsersService {
           avatar: path,
         },
       });
-      console.log('avatar uploaded seccussfully');
       return true;
     }
     catch(error){
-      console.log('Error: failed to upload avatar');
       return false;
     }
   }
@@ -103,50 +89,47 @@ export class UsersService {
           two_factor_auth_secret: secret,
         },
       });
-      console.log("2fa secret set in the database successfully\n");
       return true;
     }
     catch(error){
-      console.log("Error; failed to set the 2fa secret in the database\n");
       return false;
     }
   }
 
-  async turnOnTwoFactorAuth(userId : string) :Promise<boolean> {
+  async updateTwoFactorAuthState(userId : string, state: boolean) :Promise<boolean> {
     try{
       const updateTwoFactorAuthState = await this.prisma.users.update({
         where: {
           intra_id: userId,
         },
         data: {
-          is_two_factor_auth_enabled: true,
+          is_two_factor_auth_enabled: state,
         },
       });
-      console.log("2fa state changed in the database successfully\n");
       return true;
     }
     catch(error){
-      console.log("Error; failed to change the 2fa state in the database\n");
       return false;
     }
   }
 
-  async turnOffTwoFactorAuth(userId : string) :Promise<boolean> {
-    try{
-      const updateTwoFactorAuthState = await this.prisma.users.update({
-        where: {
-          intra_id: userId,
-        },
-        data: {
-          is_two_factor_auth_enabled: false,
-        },
-      });
-      console.log("2fa state changed in the database successfully\n");
-      return true;
-    }
-    catch(error){
-      console.log("Error; failed to change the 2fa state in the database\n");
-      return false;
-    }
+  async getProfileData(userId: string) {
+    //return
+      //profile data
+      //list of friends---> where sender or acceptor = userId and state ==1
+      //stats of the user---->calculated from games table
+      //match history of the user----> all games where player_one or player_two == userId sorted by date
+      //ladder of the user --->calculated
+      //leaderboard---> calculated from games table
+      try {
+          const personalData = await this.findOne(userId);
+          // const friend_list = await this.prisma.find();
+          // const match_history = ;
+
+          return personalData;
+      }
+      catch(error){
+        return null;
+      }
   }
 }

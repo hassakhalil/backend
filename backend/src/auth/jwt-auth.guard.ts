@@ -1,4 +1,4 @@
-import { ExecutionContext, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ExecutionContext, HttpException, HttpStatus, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
 
@@ -17,15 +17,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     if (!token){
         //cookie not found .deny access
-        console.log('didnt find any jwt token');
-        return false;
+        throw new HttpException('Jwt token not found', HttpStatus.UNAUTHORIZED);
     }
     //check if the token is blacklisted
     if (this.authService.isTokenBlacklisted(token))
     {
-      console.log('jwt token is  blacklisted');
-
-      return false;
+        throw new HttpException('Jwt token is  blacklisted', HttpStatus.UNAUTHORIZED);
     }
     return super.canActivate(context); // Call the parent canActivate method
   }
