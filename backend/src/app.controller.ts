@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode, ParseFilePipeBuilder, HttpStatus} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Jwt2faAuthGuard } from './auth/jwt-2fa-auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -9,19 +9,38 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { toFileStream } from 'qrcode';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { diskStorage } from 'multer';
+import * as fs from 'fs';
 
 export const multerConfig = {
-  dest: process.env.UPLOAD_PATH,
   storage: diskStorage({
     destination: (req, file, cb) => {
       cb(null,  process.env.UPLOAD_PATH);
     },
     filename:(req, file, cb) => {
         const uniquePrefix = Date.now() + '-' + Math.round(Math.random()*1e9);
-
-    cb(null, uniquePrefix+'-'+file.originalname);
+        //add file type check (file filter)
+        cb(null, uniquePrefix+'-'+file.originalname);
     },
   }),
+  fileFilter: (req, file, cb) => {
+    //debug
+    console.log(file);
+    //end debug
+    // Check if the file's MIME type is an image
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true); // Accept the file
+    } 
+    else {
+      //handle the error here
+      // cb(new Error('Only image files are allowed.'));
+       // Reject the file
+       cb(null,false);
+    }
+  },
+  limits: {
+    fileSize: 1024*1024*2, // 2 MB (adjust as needed)
+  },
+  //add file filter here
 };
 
 
@@ -179,11 +198,21 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   @UseGuards(Jwt2faAuthGuard)
   //front end should not forget field name when making requests to this endpoint
   @UseInterceptors(FileInterceptor('avatar', multerConfig))
-  async uploadAvatar(@UploadedFile() file, @Req() req: Request){
-      //debug
-      // console.log(file);
-      //end debug
+  async uploadAvatar(@UploadedFile()file: Express.Multer.File, @Req() req: Request){
       //save the path to the database
+      if (file === undefined)
+      {
+        return {
+          message: 'Error: Only image files are allowed.',
+        }
+      }
+      //check if the client already uploaded an avatar if yes replace it
+      const path  = await this.usersService.getAvatar(this.authService.extractIdFromPayload(req.user));
+      if (path.indexOf('cdn.intra.42.fr') === -1 && path !== null)
+      {
+          //remove old avatar
+          fs.unlinkSync(path);
+      }
       const isSaved = this.usersService.updateavatar(file.path, this.authService.extractIdFromPayload(req.user));
       if (!isSaved)
       {
@@ -212,9 +241,6 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       }
       if (path.indexOf('cdn.intra.42.fr') !== -1)
       {
-        //debug
-        // console.log('found csn.intra.........');
-        //end debug
         return res.send({
           message: 'Error: you have to get this avatar from intra',
           endpoint: path,
@@ -222,7 +248,9 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       }
       res.setHeader('Content-Type', 'application/octet-stream');
       //get the proper filename from the path 
-      res.setHeader('Content-Disposition', 'attachement; filename=avatar.pdf');
+      const filename = path.substring(path.lastIndexOf("/")+1); 
+      const hvalue = 'attachement; filename='+filename;
+      res.setHeader('Content-Disposition', hvalue);
       return res.sendFile(path);
   }
 
