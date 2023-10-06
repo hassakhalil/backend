@@ -201,7 +201,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   @UseGuards(Jwt2faAuthGuard)
   async getAvatar(@Param('username') username: string, @Req() req: Request, @Res() res: Response) {
       //get the avatar path from the database
-      const path = await this.usersService.getAvatar(username);
+      const path = await this.usersService.getAvatar(username); 
       if (!path)
       {
         throw new HttpException('avatar not found', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -227,7 +227,23 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     {
       throw new HttpException('No Profile Data', HttpStatus.NOT_FOUND);
     }
-    return profileData;
+    const getIntraIdFromDb = await this.usersService.getIntraIdFromDb(username);
+    const extractIdFromPayload  = this.authService.extractIdFromPayload(req.user);
+    if (getIntraIdFromDb === extractIdFromPayload)
+    {
+        return profileData;
+    }
+    else{
+        return {
+          user_data: {
+              id:       profileData.user_data.id,
+              username: profileData.user_data.username,
+              avatar:   profileData.user_data.avatar,
+          },
+          friends: profileData.friends,
+          match_history: profileData.match_history,
+        }
+    }
   }
 
   @Get('/logout')

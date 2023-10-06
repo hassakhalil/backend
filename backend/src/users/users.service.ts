@@ -66,6 +66,20 @@ export class UsersService {
     }
   }
 
+  async getIntraIdFromDb(un: string){
+    try{
+      const user = await this.prisma.users.findUnique({
+        where: {
+          username: un,
+        },
+      });
+      return user.intra_id;
+    }
+    catch(erro){
+      return null;
+    }
+  }
+
   //avatar
   async getAvatar(un: string): Promise<string | null> {
     try{
@@ -168,9 +182,13 @@ export class UsersService {
       //return 
       //{
           //friendId//
-          //username//
-          //avatar//
+          //friend_username//
+          //avatar_path//
       //}
+      
+      // const ret = friend_list.map(item => {
+      //     if 
+      // });
       return friend_list;
     }
     catch(error){
