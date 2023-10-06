@@ -25,7 +25,8 @@ export const multerConfig = {
   fileFilter: (req, file, cb) => {
     // Check if the file's MIME type is an image
     if (file.mimetype.startsWith('image/')) {
-      cb(null, true); // Accept the file
+      // Accept the file
+      cb(null, true); 
     } 
     else {
        // Reject the file

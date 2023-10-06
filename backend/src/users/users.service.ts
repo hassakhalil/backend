@@ -80,6 +80,20 @@ export class UsersService {
     }
   }
 
+  async getUsername(userId: number){
+    try{
+      const user = await this.prisma.users.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+      return user.username;
+    }
+    catch(erro){
+      return null;
+    }
+  }
+
   //avatar
   async getAvatar(un: string): Promise<string | null> {
     try{
@@ -179,17 +193,27 @@ export class UsersService {
       //loop over the table 
       //select the friend id
       //get the friend data 
+      
+      const friends = friend_list.map(item => {
+        if (item.acceptor_id === userId){
+          return {
+            id: item.sender_id,
+          };
+        }
+        else{
+          return {
+            id: item.acceptor_id,
+          };
+        }
+      });
+
+      //step 2
       //return 
       //{
-          //friendId//
+          // friendId//
           //friend_username//
-          //avatar_path//
       //}
-      
-      // const ret = friend_list.map(item => {
-      //     if 
-      // });
-      return friend_list;
+      return friends;
     }
     catch(error){
       return null;
