@@ -238,5 +238,40 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     return 'Logged out seccussfully';
   }
 
+  //chat
+
+  // @Post('/add-friend')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async addFriend(){
+
+  // }
+
+  // @Post('/block-friend')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async blockFriend(){
+
+  // }
+
+
+  // @Post('/join-room')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async joinRoom(){
+
+  // }
+
+  // @Post('/leave-room')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async leaveRoom(){
+
+  // }
+
+  // @Post('/mute-member')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async addFriend(){
+
+  // }
+
+
+
 
 }

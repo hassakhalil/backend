@@ -39,7 +39,7 @@ model friendships {
   id            Int     @id @default(autoincrement())
   acceptor_id   Int
   sender_id     Int
-  status        Boolean
+  fr_status     Boolean
 
   //relations
   sender   users @relation("SentFriendships", fields: [sender_id], references: [id])
@@ -52,7 +52,7 @@ model games {
   player_two_id       Int
   player_one_score    Int
   player_two_score    Int
-  date          DateTime @default(now())
+  date                DateTime @default(now())
 
   //relations 
   player_one users @relation("player_one", fields: [player_one_id], references: [id])

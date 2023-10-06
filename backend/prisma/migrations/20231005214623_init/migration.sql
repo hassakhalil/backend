@@ -6,7 +6,6 @@ CREATE TABLE "users" (
     "avatar" TEXT NOT NULL,
     "is_two_factor_auth_enabled" BOOLEAN NOT NULL DEFAULT false,
     "two_factor_auth_secret" TEXT,
-    "status" TEXT,
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -16,7 +15,7 @@ CREATE TABLE "friendships" (
     "id" SERIAL NOT NULL,
     "acceptor_id" INTEGER NOT NULL,
     "sender_id" INTEGER NOT NULL,
-    "status" BOOLEAN NOT NULL,
+    "f_status" BOOLEAN NOT NULL,
 
     CONSTRAINT "friendships_pkey" PRIMARY KEY ("id")
 );
@@ -60,10 +59,10 @@ CREATE TABLE "managements" (
     "room_id" INTEGER NOT NULL,
     "user_id" INTEGER NOT NULL,
     "role" TEXT NOT NULL,
-    "is_muted" BOOLEAN NOT NULL,
+    "is_muted" BOOLEAN NOT NULL DEFAULT false,
     "mute_start" TIMESTAMP(3),
     "mute_end" TIMESTAMP(3),
-    "status" TEXT NOT NULL,
+    "is_banned" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "managements_pkey" PRIMARY KEY ("id")
 );

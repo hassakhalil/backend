@@ -36,6 +36,7 @@ export class UsersService {
         },
       });
       return {
+        id:                         user.id,
         username:                   user.username,
         avatar:                     user.avatar,
         is_two_factor_auth_enabled: user.is_two_factor_auth_enabled,
@@ -113,6 +114,45 @@ export class UsersService {
     }
   }
 
+  async getfriends(userId: number) {
+    try{
+      const friend_list = await this.prisma.friendships.findMany({
+        where: {
+          OR:[
+            {
+                acceptor_id: {
+                  equals: userId,
+                },
+            },
+            {
+                sender_id:  {
+                  equals: userId,
+                },
+            },
+          ],
+          AND:{
+            fr_status: {
+              equals: true,
+            }
+          },
+        },
+      });
+      return friend_list;
+    }
+    catch(error){
+      return null;
+    }
+  }
+
+  async getMatchHistory(userId: number) {
+      // try {
+      //     const match_history = await this.prisma.()
+      // }
+      // catch(error){
+      //   return null;
+      // }
+  }
+
   async getProfileData(userId: string) {
     //return
       //profile data
@@ -123,10 +163,13 @@ export class UsersService {
       //leaderboard---> calculated from games table
       try {
           const personalData = await this.findOne(userId);
-          // const friend_list = await this.prisma.find();
+          const friend_list = await this.getfriends(personalData.id);
           // const match_history = ;
 
-          return personalData;
+          return {
+            user_data: personalData,
+            friends:   friend_list,
+          };
       }
       catch(error){
         return null;
