@@ -47,12 +47,31 @@ export class UsersService {
     }
   }
 
-  //avatar
-  async getAvatar(userId: string): Promise<string | null> {
+  async findByUsername(un: string) {
     try{
       const user = await this.prisma.users.findUnique({
         where: {
-          intra_id: userId,
+          username: un,
+        },
+      });
+      return {
+        id:                         user.id,
+        username:                   user.username,
+        avatar:                     user.avatar,
+        is_two_factor_auth_enabled: user.is_two_factor_auth_enabled,
+      };
+    }
+    catch(erro){
+      return null;
+    }
+  }
+
+  //avatar
+  async getAvatar(un: string): Promise<string | null> {
+    try{
+      const user = await this.prisma.users.findUnique({
+        where: {
+          username: un,
         },
       });
       return user.avatar;
@@ -114,6 +133,7 @@ export class UsersService {
     }
   }
 
+
   async getfriends(userId: number) {
     try{
       const friend_list = await this.prisma.friendships.findMany({
@@ -136,7 +156,21 @@ export class UsersService {
             }
           },
         },
+        select: {
+          acceptor_id: true,
+          sender_id:    true,
+        }
       });
+      //step 1
+      //loop over the table 
+      //select the friend id
+      //get the friend data 
+      //return 
+      //{
+          //friendId//
+          //username//
+          //avatar//
+      //}
       return friend_list;
     }
     catch(error){
@@ -145,15 +179,56 @@ export class UsersService {
   }
 
   async getMatchHistory(userId: number) {
-      // try {
-      //     const match_history = await this.prisma.()
-      // }
-      // catch(error){
-      //   return null;
-      // }
+      try {
+          const match_history = await this.prisma.games.findMany(
+            {
+              where: {
+                OR:[
+                  {
+                      player_one_id: {
+                        equals: userId,
+                      },
+                  },
+                  {
+                      player_two_id: {
+                        equals: userId,
+                      },
+                  },
+                ],
+              },
+              orderBy: {
+                  date: 'asc',
+              },
+            }
+          );
+          return match_history;
+      }
+      catch(error){
+        return null;
+      }
   }
 
-  async getProfileData(userId: string) {
+  // async getStats(userId: number) {
+  //     //wins
+  //     //loses
+  //     //ladder level
+  //     //achievements
+  //     //
+  //     try{
+  //         return {
+  //           achievements:
+  //           wins:
+  //           loses:
+            
+  //           level:
+  //         }
+  //     }
+  //     catch(error){
+
+  //     }
+  // }
+
+  async getProfileData(un: string) {
     //return
       //profile data
       //list of friends---> where sender or acceptor = userId and state ==1
@@ -162,13 +237,16 @@ export class UsersService {
       //ladder of the user --->calculated
       //leaderboard---> calculated from games table
       try {
-          const personalData = await this.findOne(userId);
-          const friend_list = await this.getfriends(personalData.id);
-          // const match_history = ;
+          const PersonalData = await this.findByUsername(un);
+          const FriendList = await this.getfriends(PersonalData.id);
+          const MatchHistory = await this.getMatchHistory(PersonalData.id);
+          // const UserStats = await this.getStats(PersonalData.id);
 
           return {
-            user_data: personalData,
-            friends:   friend_list,
+            user_data:     PersonalData,
+            friends:       FriendList,
+            match_history: MatchHistory,
+            // stats:         UserStats,
           };
       }
       catch(error){

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode, ParseFilePipeBuilder, HttpStatus, HttpException} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode, ParseFilePipeBuilder, HttpStatus, HttpException, Param} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Jwt2faAuthGuard } from './auth/jwt-2fa-auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -116,7 +116,9 @@ export class AppController {
     const isCreated  = await this.usersService.create(usernameDto.username, req.user);
     if (!isCreated)
       throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
-    return 'User Created';
+    return {
+      username :usernameDto.username,
+    };
 }
 
 @Get('2fa/generate-qrcode')
@@ -194,11 +196,12 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       return 'Avatar uploaded seccussfully';
     }
 
-  @Get('/get-avatar')
+      //return the avatar of "username" instead of the current user
+  @Get('/get-avatar/:username')
   @UseGuards(Jwt2faAuthGuard)
-  async getAvatar(@Req() req: Request, @Res() res: Response) {
+  async getAvatar(@Param('username') username: string, @Req() req: Request, @Res() res: Response) {
       //get the avatar path from the database
-      const path = await this.usersService.getAvatar(this.authService.extractIdFromPayload(req.user));
+      const path = await this.usersService.getAvatar(username);
       if (!path)
       {
         throw new HttpException('avatar not found', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -215,14 +218,14 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       return res.sendFile(path);
   }
 
-
-  @Get('/profile')
+  //return profile of "username" instead of the current user
+  @Get('/profile/:username')
   @UseGuards(Jwt2faAuthGuard)
-  async  getProfile(@Req() req: Request){
-    const profileData = await this.usersService.getProfileData(this.authService.extractIdFromPayload(req.user));
+  async  getProfile(@Param('username') username: string, @Req() req: Request){
+    const profileData = await this.usersService.getProfileData(username);
     if (!profileData)
     {
-      throw new HttpException('No Profile Data', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('No Profile Data', HttpStatus.NOT_FOUND);
     }
     return profileData;
   }
@@ -246,6 +249,12 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
 
   // }
 
+  // @Post('/accept-friend')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async acceptFriend(){
+
+  // }
+
   // @Post('/block-friend')
   // @UseGuards(Jwt2faAuthGuard)
   // async blockFriend(){
@@ -256,6 +265,12 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   // @Post('/join-room')
   // @UseGuards(Jwt2faAuthGuard)
   // async joinRoom(){
+
+  // }
+
+  // @Post('/accept-member')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async acceptMember(){
 
   // }
 
@@ -271,6 +286,11 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
 
   // }
 
+  // @Post('/allow-member')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async allowMember(){
+
+  // }
 
 
 
