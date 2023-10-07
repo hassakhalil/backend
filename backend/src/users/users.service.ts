@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { first } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -39,6 +40,8 @@ export class UsersService {
         id:                         user.id,
         username:                   user.username,
         avatar:                     user.avatar,
+        intra_id:                   user.intra_id,
+        rating:                     user.rating,
         is_two_factor_auth_enabled: user.is_two_factor_auth_enabled,
       };
     }
@@ -58,7 +61,25 @@ export class UsersService {
         id:                         user.id,
         username:                   user.username,
         avatar:                     user.avatar,
+        rating:                     user.rating,
         is_two_factor_auth_enabled: user.is_two_factor_auth_enabled,
+      };
+    }
+    catch(erro){
+      return null;
+    }
+  }
+
+  async findById(Id: number) {
+    try{
+      const user = await this.prisma.users.findUnique({
+        where: {
+          id: Id,
+        },
+      });
+      return {
+        username:                   user.username,
+        avatar:                     user.avatar,
       };
     }
     catch(erro){
@@ -189,12 +210,9 @@ export class UsersService {
           sender_id:    true,
         }
       });
-      //step 1
       //loop over the table 
-      //select the friend id
-      //get the friend data 
-      
-      const friends = friend_list.map(item => {
+      //select just the friend id
+      const filter = friend_list.map(item => {
         if (item.acceptor_id === userId){
           return {
             id: item.sender_id,
@@ -206,14 +224,7 @@ export class UsersService {
           };
         }
       });
-
-      //step 2
-      //return 
-      //{
-          // friendId//
-          //friend_username//
-      //}
-      return friends;
+      return filter;
     }
     catch(error){
       return null;
@@ -250,45 +261,55 @@ export class UsersService {
       }
   }
 
-  // async getStats(userId: number) {
-  //     //wins
-  //     //loses
-  //     //ladder level
-  //     //achievements
-  //     //
-  //     try{
-  //         return {
-  //           achievements:
-  //           wins:
-  //           loses:
-            
-  //           level:
-  //         }
-  //     }
-  //     catch(error){
+  async getAchievements(userId: number) {
+      try{
+          const achievements = await this.prisma.achievements.findMany({
+              where:{
+                user_id: userId,
+              },
+              select: {
+                name:true,
+              },
+            });
 
-  //     }
-  // }
+          return achievements;
+      }
+      catch(error){
+        return null;
+      }
+  }
 
   async getProfileData(un: string) {
-    //return
-      //profile data
-      //list of friends---> where sender or acceptor = userId and state ==1
-      //stats of the user---->calculated from games table
-      //match history of the user----> all games where player_one or player_two == userId sorted by date
-      //ladder of the user --->calculated
-      //leaderboard---> calculated from games table
       try {
           const PersonalData = await this.findByUsername(un);
           const FriendList = await this.getfriends(PersonalData.id);
           const MatchHistory = await this.getMatchHistory(PersonalData.id);
-          // const UserStats = await this.getStats(PersonalData.id);
+          const UserAchievements = await this.getAchievements(PersonalData.id);
+          let wins = 0;
+          let loses = 0;
+          let draws = 0;
+          MatchHistory.map(item => {
+            if (item.player_one_score === item.player_two_score){
+              draws++;
+            }
+            else if  ((item.player_one_id === PersonalData.id && item.player_one_score > item.player_two_score)
+            || (item.player_two_id === PersonalData.id && item.player_one_score < item.player_two_score)){
+              
+              wins++;
+            }
+            else{
+                loses++;
+            }
+          });
 
           return {
             user_data:     PersonalData,
             friends:       FriendList,
             match_history: MatchHistory,
-            // stats:         UserStats,
+            achievements:  UserAchievements,
+            wins:          wins,
+            loses:         loses,
+            draws:         draws,
           };
       }
       catch(error){

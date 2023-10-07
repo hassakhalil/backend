@@ -30,6 +30,6 @@ export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
         else if (payload.isTwoFactorAuthentcated)
             return payload;
         else
-            throw new UnauthorizedException('you have to 2fa authenticate');
+            throw new UnauthorizedException('You have to 2fa authenticate');
     }
 }

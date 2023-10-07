@@ -4,6 +4,7 @@ CREATE TABLE "users" (
     "username" TEXT NOT NULL,
     "intra_id" TEXT NOT NULL,
     "avatar" TEXT NOT NULL,
+    "rating" INTEGER NOT NULL,
     "is_two_factor_auth_enabled" BOOLEAN NOT NULL DEFAULT false,
     "two_factor_auth_secret" TEXT,
 
@@ -15,7 +16,7 @@ CREATE TABLE "friendships" (
     "id" SERIAL NOT NULL,
     "acceptor_id" INTEGER NOT NULL,
     "sender_id" INTEGER NOT NULL,
-    "f_status" BOOLEAN NOT NULL,
+    "fr_status" BOOLEAN NOT NULL,
 
     CONSTRAINT "friendships_pkey" PRIMARY KEY ("id")
 );

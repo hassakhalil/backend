@@ -176,20 +176,17 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   @UseInterceptors(FileInterceptor('avatar', multerConfig))
   async uploadAvatar(@UploadedFile()file: Express.Multer.File, @Req() req: Request){
       //save the path to the database
-      if (file === undefined)
-      {
+      if (file === undefined){
         throw new HttpException('Only image files are allowed.', HttpStatus.BAD_REQUEST);
       }
       //check if the client already uploaded an avatar if yes replace it
       const path  = await this.usersService.getAvatar(this.authService.extractIdFromPayload(req.user));
-      if (path.indexOf('cdn.intra.42.fr') === -1 && path !== null)
-      {
+      if (path.indexOf('cdn.intra.42.fr') === -1 && path !== null){
           //remove old avatar
           fs.unlinkSync(path);
       }
       const isSaved = this.usersService.updateAvatar(file.path, this.authService.extractIdFromPayload(req.user));
-      if (!isSaved)
-      {
+      if (!isSaved){
         throw new HttpException('Failed to upload avatar', HttpStatus.INTERNAL_SERVER_ERROR);
       }
       return 'Avatar uploaded seccussfully';
@@ -221,21 +218,16 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   @Get('/profile/:username')
   @UseGuards(Jwt2faAuthGuard)
   async  getProfile(@Param('username') username: string, @Req() req: Request){
+    let us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     let un = username;
-    if (username === 'me')
-    {
-        let us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    if (username === 'me'){
         un = us.username;
     }
     const profileData = await this.usersService.getProfileData(un);
-    if (!profileData)
-    {
+    if (!profileData){
       throw new HttpException('No Profile Data', HttpStatus.NOT_FOUND);
     }
-    const getIntraIdFromDb = await this.usersService.getIntraIdFromDb(un);
-    const extractIdFromPayload  = this.authService.extractIdFromPayload(req.user);
-    if (getIntraIdFromDb === extractIdFromPayload)
-    {
+    if (us.intra_id === this.authService.extractIdFromPayload(req.user)){
         return profileData;
     }
     else{
@@ -249,6 +241,16 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
           match_history: profileData.match_history,
         }
     }
+  }
+
+  @Get('/load-user/:id')
+  @UseGuards(Jwt2faAuthGuard)
+  async loadUser(@Param('id') id: string) {
+      const user = await this.usersService.findById(+id);
+      if (!user){
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      }
+      return user;
   }
 
   @Get('/logout')

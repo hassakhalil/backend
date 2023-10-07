@@ -14,7 +14,8 @@ model users {
   id                          Int     @id @default(autoincrement()) 
   username                    String  @unique
   intra_id                    String  @unique
-  avatar                      String   
+  avatar                      String
+  rating                      Int     @default(700)
   is_two_factor_auth_enabled  Boolean @default(false)
   two_factor_auth_secret      String?
 
