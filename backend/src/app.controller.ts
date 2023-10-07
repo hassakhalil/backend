@@ -89,7 +89,7 @@ export class AppController {
           res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
         }
       }
-      return 'Youre logged in';
+      return user.username;
     }
     
   @Post('2fa/authenticate')
@@ -107,7 +107,7 @@ export class AppController {
       }
       const token = await this.authService.loginWith2fa(req.user, us.is_two_factor_auth_enabled);
       res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
-      return 'Youre logged in with 2fa';
+      return us.username;
 }
       
   @Post('/set-username')
@@ -117,9 +117,7 @@ export class AppController {
     const isCreated  = await this.usersService.create(usernameDto.username, req.user);
     if (!isCreated)
       throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
-    return {
-      username :usernameDto.username,
-    };
+    return usernameDto.username;
 }
 
 @Get('2fa/generate-qrcode')
@@ -223,12 +221,18 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   @Get('/profile/:username')
   @UseGuards(Jwt2faAuthGuard)
   async  getProfile(@Param('username') username: string, @Req() req: Request){
-    const profileData = await this.usersService.getProfileData(username);
+    let un = username;
+    if (username === 'me')
+    {
+        let us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+        un = us.username;
+    }
+    const profileData = await this.usersService.getProfileData(un);
     if (!profileData)
     {
       throw new HttpException('No Profile Data', HttpStatus.NOT_FOUND);
     }
-    const getIntraIdFromDb = await this.usersService.getIntraIdFromDb(username);
+    const getIntraIdFromDb = await this.usersService.getIntraIdFromDb(un);
     const extractIdFromPayload  = this.authService.extractIdFromPayload(req.user);
     if (getIntraIdFromDb === extractIdFromPayload)
     {
