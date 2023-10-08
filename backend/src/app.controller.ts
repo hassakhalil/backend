@@ -10,6 +10,7 @@ import { toFileStream } from 'qrcode';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
+import { profile } from 'console';
 
 export const multerConfig = {
   storage: diskStorage({
@@ -62,12 +63,13 @@ export class AppController {
           //set the token in a cookie
           res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
           //user does not exist 
-          return {
-            message: 'you have to setup a username',
-            nextEndpoint:     '/set-username',
-            method: 'POST',
-            body:  '{"username": "string"}'
-          };
+          // return {
+          //   message: 'you have to setup a username',
+          //   nextEndpoint:     '/set-username',
+          //   method: 'POST',
+          //   body:  '{"username": "string"}'
+          // };
+          return res.redirect("http://localhost:5173/set_username");
       }
       else {
         if (user.is_two_factor_auth_enabled){
@@ -233,12 +235,18 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     else{
         return {
           user_data: {
-              id:       profileData.user_data.id,
-              username: profileData.user_data.username,
-              avatar:   profileData.user_data.avatar,
+              id:         profileData.user_data.id,
+              username:   profileData.user_data.username,
+              avatar:     profileData.user_data.avatar,
+              rating:     profileData.user_data.rating,
+
           },
-          friends: profileData.friends,
-          match_history: profileData.match_history,
+          friends:        profileData.friends,
+          match_history:  profileData.match_history,
+          achievements:   profileData.achievements,
+          wins:           profileData.wins,
+          loses:          profileData.loses,
+          draws:          profileData.draws,
         }
     }
   }
