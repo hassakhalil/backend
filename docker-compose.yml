@@ -23,7 +23,7 @@ services:
     depends_on:
       - postgres
     volumes:
-      - /Users/hassan/Desktop/backend/backend/src:/backend/src
+      - /Users/hassan/Desktop/back/backend/src:/backend/src
 volumes:
   postgres:
 
