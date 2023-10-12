@@ -234,24 +234,22 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   async  getProfile(@Param('username') username: string, @Req() req: Request){
     let us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     let un = username;
-    let me = false;
     if (username === 'me'){
-        me = true;
         un = us.username;
     }
     const profileData = await this.usersService.getProfileData(un);
     if (!profileData){
       throw new HttpException('No Profile Data', HttpStatus.NOT_FOUND);
     }
-    if (us.intra_id === this.authService.extractIdFromPayload(req.user)){
+    if (profileData.user_data.intra_id === this.authService.extractIdFromPayload(req.user)){
       return {
         user_data: {
             id:         profileData.user_data.id,
             username:   profileData.user_data.username,
             avatar:     profileData.user_data.avatar,
             rating:     profileData.user_data.rating,
+            me:        true,
             is_two_factor_auth_enabled: profileData.user_data.is_two_factor_auth_enabled,
-            me:        me,
 
         },
         friends:        profileData.friends,
@@ -260,7 +258,8 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
         wins:           profileData.wins,
         loses:          profileData.loses,
         draws:          profileData.draws,
-      }    }
+      }
+    }
     else{
         return {
           user_data: {
@@ -268,7 +267,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
               username:   profileData.user_data.username,
               avatar:     profileData.user_data.avatar,
               rating:     profileData.user_data.rating,
-              me:        me,
+              me:        false,
           },
           friends:        profileData.friends,
           match_history:  profileData.match_history,
@@ -332,11 +331,22 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     return 'Friend accepted seccussfully';
   }
 
-  // @Post('/block-friend')
+  @Post('/block-friend/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async blockFriend(@Req() req: Request, @Param('username') username: string){
+    // add the username as blocked by this user in the managament table (private chat)
+    //check if the user is trying to block himself
+    const us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+
+  }
+
+  // @Post('/unblock-friend/:username')
   // @UseGuards(Jwt2faAuthGuard)
-  // async blockFriend(){
+  // async unblock(){
 
   // }
+
+
 
 
   // @Post('/join-room')

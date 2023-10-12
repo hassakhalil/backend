@@ -80,6 +80,7 @@ export class UsersService {
         username:                   user.username,
         avatar:                     user.avatar,
         rating:                     user.rating,
+        intra_id:                   user.intra_id,
         is_two_factor_auth_enabled: user.is_two_factor_auth_enabled,
       };
     }

@@ -100,6 +100,7 @@ model managements {
   mute_start    DateTime?
   mute_end      DateTime?
   is_banned     Boolean @default(false)
+  is_blocked    Boolean @default(false)
   //relations
   //room
   room  rooms @relation("managements_rooms", fields: [room_id], references: [id])
