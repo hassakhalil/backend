@@ -115,12 +115,24 @@ export class AppController {
   @Post('/set-username')
   @UseGuards(JwtAuthGuard)
   async setUsername(@Body() usernameDto: UsernameDto, @Req() req: Request) {
-        
-    const isCreated  = await this.usersService.create(usernameDto.username, req.user);
-    if (!isCreated)
-      throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
-    return usernameDto.username;
-}
+
+    //check if the user already exist in the database
+    const us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    if (us){
+      //update username 
+      const isUpdated = await this.usersService.updateUsername(usernameDto.username, us.id);
+      if (!isUpdated)
+        throw new HttpException('Failed to update username', HttpStatus.BAD_REQUEST);
+    }
+    else{
+      const isCreated  = await this.usersService.create(usernameDto.username, req.user);
+      if (!isCreated)
+        throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
+    }
+    return 'Username set seccussfully';
+  }
+  
+  @Post('')
 
 @Get('2fa/generate-qrcode')
 @UseGuards(Jwt2faAuthGuard)
@@ -222,7 +234,9 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   async  getProfile(@Param('username') username: string, @Req() req: Request){
     let us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     let un = username;
+    let me = false;
     if (username === 'me'){
+        me = true;
         un = us.username;
     }
     const profileData = await this.usersService.getProfileData(un);
@@ -230,8 +244,23 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       throw new HttpException('No Profile Data', HttpStatus.NOT_FOUND);
     }
     if (us.intra_id === this.authService.extractIdFromPayload(req.user)){
-        return profileData;
-    }
+      return {
+        user_data: {
+            id:         profileData.user_data.id,
+            username:   profileData.user_data.username,
+            avatar:     profileData.user_data.avatar,
+            rating:     profileData.user_data.rating,
+            is_two_factor_auth_enabled: profileData.user_data.is_two_factor_auth_enabled,
+            me:        me,
+
+        },
+        friends:        profileData.friends,
+        match_history:  profileData.match_history,
+        achievements:   profileData.achievements,
+        wins:           profileData.wins,
+        loses:          profileData.loses,
+        draws:          profileData.draws,
+      }    }
     else{
         return {
           user_data: {
@@ -239,7 +268,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
               username:   profileData.user_data.username,
               avatar:     profileData.user_data.avatar,
               rating:     profileData.user_data.rating,
-
+              me:        me,
           },
           friends:        profileData.friends,
           match_history:  profileData.match_history,

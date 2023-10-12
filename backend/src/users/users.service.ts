@@ -28,6 +28,24 @@ export class UsersService {
       return false;
     }
   }
+  async updateUsername(Username: string, userId: number) :Promise<boolean>{
+    try{
+        const isUpdated = await this.prisma.users.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            username: Username,
+          },
+        });
+        if(!isUpdated)
+          return false;
+        return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
 
   async findOne(id: string) {
     try{
