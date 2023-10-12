@@ -316,4 +316,50 @@ export class UsersService {
         return null;
       }
   }
+
+  //relations 
+
+  async addFriend(senderId: number, acceptorUsername: string) :Promise<boolean>{
+    //get the friend id
+    try {
+        const friendId = await this.findByUsername(acceptorUsername);
+        const invitation = await this.prisma.friendships.create({
+          data: {
+            sender_id: senderId,
+            acceptor_id: friendId.id,
+            fr_status: false,
+          },
+        });
+        return true;
+    }
+    catch(error){
+        return false
+    }
+  }
+
+  async acceptFriend(acceptorId: number, senderUsername: string) :Promise<boolean>{
+  
+    try {
+        const sender = await this.findByUsername(senderUsername);
+        const isAccepted = await this.prisma.friendships.updateMany({
+          where: {
+            acceptor_id: acceptorId,
+            sender_id: sender.id,
+          },
+          data: {
+            fr_status: true,
+          },
+        });
+        if (!isAccepted){
+          return false;
+        }
+        return true;
+    }
+    catch(error){
+      //debug
+      // console.log(error);
+      //end debug
+      return false;
+    }
+  }
 }

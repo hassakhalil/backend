@@ -63,13 +63,13 @@ export class AppController {
           //set the token in a cookie
           res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
           //user does not exist 
-          // return {
-          //   message: 'you have to setup a username',
-          //   nextEndpoint:     '/set-username',
-          //   method: 'POST',
-          //   body:  '{"username": "string"}'
-          // };
-          return res.redirect("http://localhost:5173/set_username");
+          return {
+            message: 'you have to setup a username',
+            nextEndpoint:     '/set-username',
+            method: 'POST',
+            body:  '{"username": "string"}'
+          };
+          // return res.redirect("http://localhost:5173/set_username");
       }
       else {
         if (user.is_two_factor_auth_enabled){
@@ -274,17 +274,34 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
 
   //chat
 
-  // @Post('/add-friend')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async addFriend(){
+  @Post('/add-friend/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async addFriend(@Req() req: Request, @Param('username') username: string){
+    //check if the user is already a friend or the user is trying to add himself
+    let us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    if (us.username === username){
+      throw new HttpException('You are trying to add yourself as a friend', HttpStatus.BAD_REQUEST);
+    }
+    const isAdded = await this.usersService.addFriend(us.id, username);
+    if (!isAdded){
+      throw new HttpException('Failed to add friend', HttpStatus.BAD_REQUEST);
+    }
+    return 'Friend added seccussfully';
+  }
 
-  // }
 
-  // @Post('/accept-friend')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async acceptFriend(){
 
-  // }
+  @Post('/accept-friend/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async acceptFriend(@Req() req: Request, @Param('username') username: string){
+    //check if the friendship exists and the user is the acceptor
+    let us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    const isAccepted = await this.usersService.acceptFriend(us.id, username);
+    if (!isAccepted){
+      throw new HttpException('Failed to accept friend', HttpStatus.BAD_REQUEST);
+    }
+    return 'Friend accepted seccussfully';
+  }
 
   // @Post('/block-friend')
   // @UseGuards(Jwt2faAuthGuard)

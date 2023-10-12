@@ -46,6 +46,7 @@ model friendships {
   //relations
   sender   users @relation("SentFriendships", fields: [sender_id], references: [id])
   acceptor users @relation("ReceivedFriendships", fields: [acceptor_id], references: [id])
+  @@unique([acceptor_id, sender_id]) 
 }
 
 model games {
