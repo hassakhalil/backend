@@ -219,7 +219,7 @@ export class UsersService {
             },
           ],
           AND:{
-            fr_status: {
+            fr_state: {
               equals: true,
             }
           },
@@ -346,7 +346,7 @@ export class UsersService {
           data: {
             sender_id: senderId,
             acceptor_id: friendId.id,
-            fr_status: false,
+            fr_state: false,
           },
         });
         return true;
@@ -366,7 +366,7 @@ export class UsersService {
             sender_id: sender.id,
           },
           data: {
-            fr_status: true,
+            fr_state: true,
           },
         });
         if (!isAccepted){
@@ -381,4 +381,60 @@ export class UsersService {
       return false;
     }
   }
+
+  async updateBlockState(userId: number, friendUsername: string, state: boolean) :Promise<boolean>{
+    //get the friend id
+    const friend = await this.findByUsername(friendUsername);
+    try{
+        //get the record id
+        let recordToUpdate = await this.prisma.friendships.findMany({
+          where: {
+            sender_id: userId,
+            acceptor_id: friend.id,
+            fr_state: true,            
+          },
+        });
+        //debug
+        // console.log(recordToUpdate);
+        //end debug
+        if (recordToUpdate[0]){
+                      
+            const isAcceptorBlocked = await this.prisma.friendships.updateMany({
+              where: {
+                id: recordToUpdate[0].id,
+              },
+              data:{  
+                is_acceptor_blocked: state,
+              }
+            });        
+        }
+        else {
+          let recordToUpdate = await this.prisma.friendships.findMany({
+            where: {
+              sender_id: friend.id,
+              acceptor_id: userId,
+              fr_state: true,            
+            },
+          });
+          //debug
+          // console.log(recordToUpdate);
+          //end debug
+          const isSenderBlocked = await this.prisma.friendships.updateMany({
+            where: {
+              id: recordToUpdate[0].id,
+            },
+            data:{  
+              is_sender_blocked: state,
+            }
+          });
+          if (!isSenderBlocked)
+            return false;
+        }
+        return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
 }

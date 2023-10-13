@@ -38,10 +38,12 @@ model users {
 }
 
 model friendships {
-  id            Int     @id @default(autoincrement())
-  acceptor_id   Int
-  sender_id     Int
-  fr_status     Boolean
+  id                  Int     @id @default(autoincrement())
+  acceptor_id         Int
+  sender_id           Int
+  is_acceptor_blocked Boolean @default(false)
+  is_sender_blocked   Boolean @default(false)
+  fr_state            Boolean
 
   //relations
   sender   users @relation("SentFriendships", fields: [sender_id], references: [id])
@@ -100,7 +102,6 @@ model managements {
   mute_start    DateTime?
   mute_end      DateTime?
   is_banned     Boolean @default(false)
-  is_blocked    Boolean @default(false)
   //relations
   //room
   room  rooms @relation("managements_rooms", fields: [room_id], references: [id])

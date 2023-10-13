@@ -16,7 +16,7 @@ CREATE TABLE "friendships" (
     "id" SERIAL NOT NULL,
     "acceptor_id" INTEGER NOT NULL,
     "sender_id" INTEGER NOT NULL,
-    "fr_status" BOOLEAN NOT NULL,
+    "fr_state" BOOLEAN NOT NULL,
 
     CONSTRAINT "friendships_pkey" PRIMARY KEY ("id")
 );

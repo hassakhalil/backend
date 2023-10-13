@@ -337,17 +337,31 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     // add the username as blocked by this user in the managament table (private chat)
     //check if the user is trying to block himself
     const us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
-
+    if (us.username === username){
+      throw new HttpException('You are trying to block yourself', HttpStatus.BAD_REQUEST);
+    }
+    const isBlocked = await this.usersService.updateBlockState(us.id, username, true);
+    if (!isBlocked){
+      throw new HttpException('Failed to block friend', HttpStatus.BAD_REQUEST);
+    }
+    return 'Friend blocked seccussfully';
   }
 
-  // @Post('/unblock-friend/:username')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async unblock(){
-
-  // }
-
-
-
+  @Post('/unblock-friend/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async unblockFriend(@Req() req: Request, @Param('username') username: string){
+    // add the username as blocked by this user in the managament table (private chat)
+    //check if the user is trying to block himself
+    const us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    if (us.username === username){
+      throw new HttpException('You are trying to unblock yourself', HttpStatus.BAD_REQUEST);
+    }
+    const isBlocked = await this.usersService.updateBlockState(us.id, username,false);
+    if (!isBlocked){
+      throw new HttpException('Failed to unblock friend', HttpStatus.BAD_REQUEST);
+    }
+    return 'Friend unblocked seccussfully';
+  }
 
   // @Post('/join-room')
   // @UseGuards(Jwt2faAuthGuard)
