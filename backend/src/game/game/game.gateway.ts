@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit, UseGuards } from '@nestjs/common';
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server , Socket} from 'socket.io';
 import { gameService  } from './game.service';
@@ -9,6 +9,7 @@ import {metaData } from '../interfaces/metaData';
 import { subscribe } from 'diagnostics_channel';
 import { Logger } from '@nestjs/common';
 import { OnGatewayDisconnect } from '@nestjs/websockets';
+import { Jwt2faAuthGuard } from 'src/auth/jwt-2fa-auth.guard';
 
 @WebSocketGateway(
   {
@@ -88,29 +89,32 @@ export class GameGateway implements OnGatewayDisconnect {
     }
     return 'new game cretead';
   }
-
+  @UseGuards(Jwt2faAuthGuard)
   @SubscribeMessage('playerMovePaddle')
   playerMovePaddle(@MessageBody() newPosition :number, @ConnectedSocket() socket: Socket)
   {
     console.log("socket.id before search =" + socket.id)
     this.gameService.playerMovePaddle(newPosition, socket)
   }
+  @UseGuards(Jwt2faAuthGuard)
   @SubscribeMessage("drawPaddles")
   draw(@ConnectedSocket() socket: Socket)
   {
     return (this.gameService.drawPaddles(socket))
   }
+  @UseGuards(Jwt2faAuthGuard)
   @SubscribeMessage("updatePaddlePosition")
   updatePaddlePosition(@ConnectedSocket() socket: Socket)
   {
     this.gameService.updatePaddlePosition(socket)
   }
+  @UseGuards(Jwt2faAuthGuard)
   @SubscribeMessage("stopPaddleMove")
   stopPaddleMove(@ConnectedSocket() socket: Socket)
   {
     this.gameService.stopPaddleMove(socket)
   }
-
+  @UseGuards(Jwt2faAuthGuard)
   @SubscribeMessage("getballposition")
   getballposition(@ConnectedSocket() socket: Socket)
   {
@@ -118,7 +122,7 @@ export class GameGateway implements OnGatewayDisconnect {
     const PlayersId = this.gameService.getPlayersId(socket)
     return (this.gameService.getballposition(socket))
   }
-  
+  @UseGuards(Jwt2faAuthGuard)
   @SubscribeMessage("getScore")
   getScore(@ConnectedSocket() socket: Socket)
   {
