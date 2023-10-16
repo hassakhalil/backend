@@ -10,7 +10,7 @@ import { toFileStream } from 'qrcode';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
-import { profile } from 'console';
+import { RoomSettingsDto } from './users/dto/roomSettings.dto';
 
 export const multerConfig = {
   storage: diskStorage({
@@ -248,7 +248,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
             username:   profileData.user_data.username,
             avatar:     profileData.user_data.avatar,
             rating:     profileData.user_data.rating,
-            me:        true,
+            me:         true,
             is_two_factor_auth_enabled: profileData.user_data.is_two_factor_auth_enabled,
 
         },
@@ -314,6 +314,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     if (!isAdded){
       throw new HttpException('Failed to add friend', HttpStatus.BAD_REQUEST);
     }
+    //emit to notifications event "friend request"
     return 'Friend added seccussfully';
   }
 
@@ -328,6 +329,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     if (!isAccepted){
       throw new HttpException('Failed to accept friend', HttpStatus.BAD_REQUEST);
     }
+    //create rooms for private chat here
     return 'Friend accepted seccussfully';
   }
 
@@ -363,6 +365,13 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
     return 'Friend unblocked seccussfully';
   }
 
+  @Post('/create-room')
+  @UseGuards(Jwt2faAuthGuard)
+  async createRoom(@Req() req: Request, @Body() body: RoomSettingsDto){
+
+  }
+
+
   // @Post('/join-room')
   // @UseGuards(Jwt2faAuthGuard)
   // async joinRoom(){
@@ -387,9 +396,34 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
 
   // }
 
+  // @Post('/unmute-member')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async addFriend(){
+
+  // }
+
+  // @Post('/ban-member')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async allowMember(){
+
+  // }
+
+
   // @Post('/allow-member')
   // @UseGuards(Jwt2faAuthGuard)
   // async allowMember(){
+
+  // }
+
+  // @Get('get-all-rooms')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async getRooms(){
+
+  // }
+
+  // @Get('get-room/:roomId')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async getRooms(){
 
   // }
 

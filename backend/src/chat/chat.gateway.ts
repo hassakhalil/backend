@@ -3,36 +3,48 @@ import { WebSocketGateway,
     WebSocketServer,
     SubscribeMessage,
     OnGatewayConnection,
-    OnGatewayDisconnect
+    OnGatewayDisconnect,
+    MessageBody,
 } from "@nestjs/websockets";
 import { Jwt2faAuthGuard } from "src/auth/jwt-2fa-auth.guard";
-
+import { Logger } from "@nestjs/common";
+import { UsersService } from "src/users/users.service";
+import { Server, Socket }  from 'socket.io';
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+    constructor(private usersService: UsersService) {}
+
     @WebSocketServer() server;
-    users: number  = 0;
 
-    async handleConnection() {
-        // A client has connected
-        this.users++;
+    private logger = new Logger('ChatGateway');
 
-        //Notify connected clients of current users
-        this.server.emit('users', this.users);
-    }
-
-    async handleDisconnect() {
-        // A client has disconnected
-        this.users--;
-
-        //Notify connected clients of current users
-        this.server.emit('users', this.users);
-    }
-
-    @UseGuards(Jwt2faAuthGuard)
     @SubscribeMessage('chat')
-    async onChat(client, message) {
-        client.broadcast.emit('chat', message)
+    async handleChatEvent(@MessageBody() payload: any): Promise<any>{
+        this.logger.log(payload);
+        this.server.to(payload.roomId).emit('chat', payload); //broadcast messages 
+        //save the message to the database
+        return payload;  
+    }
+
+    @SubscribeMessage('join-room')
+    async handleJoinRoomEvent(@MessageBody() payload: { roomId : string, user: any}) {
+        if (payload.user.socketId){
+            //let the client join the room to recieve reel time updates
+            this.logger.log(`${payload.user.socketId} is joining ${payload.roomId}`);
+            this.server.in(payload.user.socketId).socketsJoin(payload.roomId);
+        }
+    }
+
+    async handleConnection(socket: Socket): Promise<void> {
+        // triger the user state change to active ( use event emeter) 
+        this.logger.log(`Socket connected ${socket}`);
+    }
+
+    async handleDisconnect(socket: any) {
+        // triger the user state change to non active
+        this.logger.log(`Socket disconnected ${socket}`);
+        
     }
 }
 

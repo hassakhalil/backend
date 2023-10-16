@@ -202,7 +202,7 @@ export class UsersService {
   }
 
 
-  async getfriends(userId: number) {
+  async getFriends(userId: number) {
     try{
       const friend_list = await this.prisma.friendships.findMany({
         where: {
@@ -301,7 +301,7 @@ export class UsersService {
   async getProfileData(un: string) {
       try {
           const PersonalData = await this.findByUsername(un);
-          const FriendList = await this.getfriends(PersonalData.id);
+          const FriendList = await this.getFriends(PersonalData.id);
           const MatchHistory = await this.getMatchHistory(PersonalData.id);
           const UserAchievements = await this.getAchievements(PersonalData.id);
           let wins = 0;
@@ -341,12 +341,28 @@ export class UsersService {
   async addFriend(senderId: number, acceptorUsername: string) :Promise<boolean>{
     //get the friend id
     try {
-        const friendId = await this.findByUsername(acceptorUsername);
+        const friend = await this.findByUsername(acceptorUsername);
+        //check if the friendship 
+        //search if the friendship already exist
+        const isSender = await this.prisma.friendships.findMany({
+          where: {
+            sender_id: senderId,
+            acceptor_id: friend.id,
+          },
+        });
+        const isAcceptor = await this.prisma.friendships.findMany({
+          where: {
+            sender_id: friend.id,
+            acceptor_id: senderId,
+          },
+        });
+        if (isSender[0] || isAcceptor[0])
+          return false;
         const invitation = await this.prisma.friendships.create({
           data: {
             sender_id: senderId,
-            acceptor_id: friendId.id,
-            fr_state: false,
+            acceptor_id: friend.id,
+            fr_state:     false,
           },
         });
         return true;
