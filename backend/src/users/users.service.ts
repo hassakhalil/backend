@@ -301,7 +301,17 @@ export class UsersService {
   async getProfileData(un: string) {
       try {
           const PersonalData = await this.findByUsername(un);
-          const FriendList = await this.getFriends(PersonalData.id);
+          const FriendIds = await this.getFriends(PersonalData.id);
+          //get friends usernames and avatars
+          let FriendList = [];
+          for (let i = 0; i < FriendIds.length ; i++){
+            const friend = await this.findById(FriendIds[i].id);
+            FriendList.push({
+              id:         FriendIds[i].id,
+              username:   friend.username,
+              avatar:     friend.avatar,
+            });
+          }
           const MatchHistory = await this.getMatchHistory(PersonalData.id);
           const UserAchievements = await this.getAchievements(PersonalData.id);
           let wins = 0;
