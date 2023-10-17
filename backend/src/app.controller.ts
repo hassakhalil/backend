@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode, ParseFilePipeBuilder, HttpStatus, HttpException, Param} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode, ParseFilePipeBuilder, HttpStatus, HttpException, Param, Delete} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Jwt2faAuthGuard } from './auth/jwt-2fa-auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -394,23 +394,45 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       return 'Room joined seccussfully';
   }
     
-  // @Post('/leave-room')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async leaveRoom(){
+  @Delete('/leave-room/:roomId')
+  @UseGuards(Jwt2faAuthGuard)
+  async leaveRoom(@Req() req: Request, @Param('roomId') roomId: string){
+      const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+      const isLeft = await this.usersService.leaveRoom(user.id, +roomId);
+      if (!isLeft)
+        throw new HttpException('Failed to leave room', HttpStatus.BAD_REQUEST);
+      return 'Room left seccussfully';
+  }
 
-  // }
+  @Post('/add-member/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async AddMember(@Req() req: Request, @Param('username') username: string, @Body() body: RoomSettingsDto){
+    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    //check if the user is the owner of the room
+    const isUserAdmin = await this.usersService.checkIfUserIsOwner(user.id, body);
+    if (!isUserAdmin)
+      throw new HttpException('You are not the owner of this room', HttpStatus.BAD_REQUEST);
+    const isAdded = await this.usersService.addMember(username, body);
+    if (!isAdded)
+      throw new HttpException('Failed to add member', HttpStatus.BAD_REQUEST);
+    return 'Member added seccussfully';
+    //
+  }
 
-  // @Post('/accept-member')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async acceptMember(){
-
-  // }
-
-  // @Post('/set-admin')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async setAdmin(){
-
-  // }
+  @Post('/set-admin/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async setAdmin(@Req() req: Request, @Param('username') username :string, @Body() body: RoomSettingsDto) {
+    //check if the user is the owner of the room
+    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    //check if the user is the owner of the room
+    const isUserAdmin = await this.usersService.checkIfUserIsOwner(user.id, body);
+    if (!isUserAdmin)
+      throw new HttpException('You are not the owner of this room', HttpStatus.BAD_REQUEST);
+    const isAdminSet = await this.usersService.setAdmin(username, body);
+    if (!isAdminSet)
+      throw new HttpException('Failed to set admin', HttpStatus.BAD_REQUEST);
+    return 'Admin set seccussfully';
+  }
 
 
   // @Post('/set-room-password')

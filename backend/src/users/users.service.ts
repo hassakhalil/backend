@@ -610,4 +610,83 @@ export class UsersService {
       return false;
     }
   }
+
+  async leaveRoom(memberId: number, roomId: number): Promise<boolean> {
+      try{
+        const isDeleted = await this.prisma.managements.deleteMany({
+          where: {
+            user_id: memberId,
+            room_id: roomId,
+          },
+        });
+        if (!isDeleted)
+          return false;
+        return true;
+      }
+      catch(error){
+          return false;
+      }
+  }
+
+  async checkIfUserIsOwner(userId: number, body: RoomSettingsDto): Promise<boolean> {
+    try{
+      const room = await this.findRoomByName(body.name);
+      const isOwner = await this.prisma.managements.findMany({
+        where: {
+          user_id: userId,
+          room_id: room.id,
+          role: 'owner',
+        },
+      });
+      if (!isOwner[0])
+        return false;
+      return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
+  async addMember(userName: string, body: RoomSettingsDto): Promise<boolean> {
+    try{
+      const user = await this.findByUsername(userName);
+      const room = await this.findRoomByName(body.name);
+      const isAdded = await this.prisma.managements.create({
+        data: {
+          user_id: user.id,
+          room_id: room.id,
+          role: 'member',
+        },
+      });
+      if (!isAdded)
+        return false;
+      return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
+  async setAdmin(userName: string, body: RoomSettingsDto) : Promise<boolean> {
+      try{ 
+          const user = await this.findByUsername(userName);
+          const room = await this.findRoomByName(body.name);
+          const isAdminSet = await this.prisma.managements.updateMany({
+            where: {
+              user_id: user.id,
+              room_id: room.id,
+            },
+            data: {
+              role: 'admin',
+            }
+          });
+          if (!isAdminSet)
+            return false;
+          return true;
+      }
+      catch(error) {
+        return false;
+      }
+  }
+
 }
