@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as fs from 'fs/promises';
-import * as path from 'path';
-import { first } from 'rxjs';
+import * as bcrypt from 'bcrypt';
+import { RoomSettingsDto } from './dto/roomSettings.dto';
 
 @Injectable()
 export class UsersService {
@@ -462,5 +459,155 @@ export class UsersService {
       return false;
     }
   }
+  async hashPassword(password: string): Promise<string> {
+    const saltOrrounds  = 10;
+    const hashedPassword = await bcrypt.hash(password, saltOrrounds);
+    return hashedPassword;
+  }
 
+
+  async CreateRoom(adminId: number, body: RoomSettingsDto): Promise<boolean> {
+    try {
+      if (body.type!=='public' && body.type!=='protected' && body.type!=='private')
+        return false;
+      if (body.type === 'protected')  {
+          if (!body.password)
+            return false;
+      }
+      //if the room is protected //hash the password
+      let hashedPassword = null;
+      if (body.password)
+        hashedPassword = await this.hashPassword(body.password);
+      //create the room in rooms table
+      const Room = await this.prisma.rooms.create({
+        data: {
+          name: body.name,
+          type: body.type,
+          password: hashedPassword,
+        },
+      });
+      if (!Room)
+        return false;
+      //add the admin  to the management table
+      const isManagementCreated = await this.prisma.managements.create({
+        data: {
+          user_id: adminId,
+          room_id: Room.id,
+          role: 'owner',
+        },
+      });
+      return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
+  async findRoomByName(roomName: string) {
+    try {
+      const room = await this.prisma.rooms.findUnique({
+        where: {
+          name: roomName,
+        },
+      });
+      return room;
+    }
+    catch(error){
+      return null;
+    }
+  }
+
+  async joinRoom(memberId: number, body: RoomSettingsDto): Promise<boolean> {
+    try {
+      //search the database for that room
+      if (body.type === 'direct')
+        return false;
+      const room = await this.findRoomByName(body.name);
+      if (!room)
+        return false;
+      //if type is direct ---join 
+      //if public --join
+      if (room.type === 'public'){
+        const isJoined = await this.prisma.managements.create({
+            data: {
+              room_id: room.id,
+              user_id: memberId,
+              role: 'member',
+            }
+        });
+      }
+      else if (room.type === 'protected'){
+        //--check the password
+        const isMatch = await bcrypt.compare(body.password, room.password);
+        if (!isMatch)
+          return false;
+        const isJoined = await this.prisma.managements.create({
+            data: {
+              room_id: room.id,
+              user_id: memberId,
+              role: 'member',
+            }
+        });
+      }
+      else {
+        //private room
+        //if private --the user should receive an invitation to join
+        return false;
+      }
+      return true;
+    }
+    catch(error) {
+      return false;
+    }
+  }
+
+  async createDirectRoom(userId: number, friendUsername: string): Promise<boolean> {
+      try{
+        //get friend id
+        const friend  = await this.findByUsername(friendUsername);
+        const Room = await this.prisma.rooms.create({
+          data: {
+            name: null,
+            type: 'direct',
+            password: null,
+          },
+        });
+        const isUserAdded = await this.prisma.managements.create({
+          data: {
+            user_id: userId,
+            room_id: Room.id,
+            role: 'member',
+          },
+        });
+        const isFriendAdded = await this.prisma.managements.create({
+          data: {
+            user_id: friend.id,
+            room_id: Room.id,
+            role: 'member',
+          },
+        });
+        return true;
+      }
+      catch(error){
+        return false;
+      }
+  }
+
+  async checkIfUserExistsInRoom(userId: number, roomName: string): Promise<boolean> {
+    try{
+        const room = await this.findRoomByName(roomName);
+        const isUserInRoom = await this.prisma.managements.findMany({
+            where: {
+              room_id: room.id,
+              user_id: userId,
+            }
+        });
+        if (isUserInRoom[0])
+          return true;
+        return false;
+    }
+    catch(error) {
+      return false;
+    }
+  }
 }

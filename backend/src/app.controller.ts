@@ -161,7 +161,7 @@ async activateTwoFactorAuth(@Req() req: Request, @Body() body) {
   }
   const isActivated = await this.usersService.updateTwoFactorAuthState(this.authService.extractIdFromPayload(req.user), true);
   if (!isActivated){
-    throw new HttpException('Failed to activate 2fa', HttpStatus.INTERNAL_SERVER_ERROR);
+    throw new HttpException('Failed to activate 2fa', HttpStatus.BAD_REQUEST);
   }
   return 'You successfully activated 2fa';
 }
@@ -179,7 +179,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   }
   const isDesactivated = await this.usersService.updateTwoFactorAuthState(this.authService.extractIdFromPayload(req.user), false);
   if (!isDesactivated){
-    throw new HttpException('Failed to deactivate 2fa', HttpStatus.INTERNAL_SERVER_ERROR);
+    throw new HttpException('Failed to deactivate 2fa', HttpStatus.BAD_REQUEST);
   }
   return 'You successfully deactivated 2fa';
 }
@@ -201,7 +201,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       }
       const isSaved = this.usersService.updateAvatar(file.path, this.authService.extractIdFromPayload(req.user));
       if (!isSaved){
-        throw new HttpException('Failed to upload avatar', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException('Failed to upload avatar', HttpStatus.BAD_REQUEST);
       }
       return 'Avatar uploaded seccussfully';
     }
@@ -214,7 +214,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       const path = await this.usersService.getAvatar(username); 
       if (!path)
       {
-        throw new HttpException('avatar not found', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException('avatar not found', HttpStatus.BAD_REQUEST);
       }
       if (path.indexOf('cdn.intra.42.fr') !== -1)
       {
@@ -330,6 +330,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       throw new HttpException('Failed to accept friend', HttpStatus.BAD_REQUEST);
     }
     //create rooms for private chat here
+    const isCreated = await this.usersService.createDirectRoom(us.id, username);
     return 'Friend accepted seccussfully';
   }
 
@@ -368,13 +369,34 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   @Post('/create-room')
   @UseGuards(Jwt2faAuthGuard)
   async createRoom(@Req() req: Request, @Body() body: RoomSettingsDto){
-
+        const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+        const isCreated = await  this.usersService.CreateRoom(user.id, body);
+        if (!isCreated)
+          throw new HttpException('Failed to create room', HttpStatus.BAD_REQUEST);
+        return 'Room created seccussfully';
   }
-
-
-  // @Post('/join-room')
+  
+  
+  @Post('/join-room')
+  @UseGuards(Jwt2faAuthGuard)
+  async joinRoom(@Req() req: Request, @Body() body: RoomSettingsDto){
+    //check the user is already in the room
+    const user  = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+      const userExits = await this.usersService.checkIfUserExistsInRoom(user.id, body.name);
+      if (userExits)
+        throw new HttpException('You are already in this room', HttpStatus.BAD_REQUEST);
+      if (body.type === 'private'){
+        //notify the room owner
+      }
+      const isJoined = await this.usersService.joinRoom(user.id, body);
+      if (!isJoined)
+        throw new HttpException('Failed to join room', HttpStatus.BAD_REQUEST);
+      return 'Room joined seccussfully';
+  }
+    
+  // @Post('/leave-room')
   // @UseGuards(Jwt2faAuthGuard)
-  // async joinRoom(){
+  // async leaveRoom(){
 
   // }
 
@@ -384,27 +406,54 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
 
   // }
 
-  // @Post('/leave-room')
+  // @Post('/set-admin')
   // @UseGuards(Jwt2faAuthGuard)
-  // async leaveRoom(){
+  // async setAdmin(){
 
   // }
 
+
+  // @Post('/set-room-password')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async setRoomPassword(){
+
+  // }
+
+
+  // @Post('/change-room-password')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async changeRoomPassword(){
+
+  // }
+
+  // @Post('/remove-room-password')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async removeRoomPassword(){
+
+  // }
+
+  // @Post('/kick-member')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async kickMember(){
+
+  // }
+
+
   // @Post('/mute-member')
   // @UseGuards(Jwt2faAuthGuard)
-  // async addFriend(){
+  // async muteMember(){
 
   // }
 
   // @Post('/unmute-member')
   // @UseGuards(Jwt2faAuthGuard)
-  // async addFriend(){
+  // async unmuteMember(){
 
   // }
 
   // @Post('/ban-member')
   // @UseGuards(Jwt2faAuthGuard)
-  // async allowMember(){
+  // async banMember(){
 
   // }
 

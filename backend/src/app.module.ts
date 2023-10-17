@@ -13,6 +13,7 @@ import { GameModule } from './game/game/game.module';
     UsersModule,
     PrismaModule,
     GameModule,
+    ChatModule,
   ],
   controllers: [AppController],
 })
