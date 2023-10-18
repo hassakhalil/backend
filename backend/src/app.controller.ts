@@ -385,9 +385,6 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       const userExits = await this.usersService.checkIfUserExistsInRoom(user.id, body.name);
       if (userExits)
         throw new HttpException('You are already in this room', HttpStatus.BAD_REQUEST);
-      if (body.type === 'private'){
-        //notify the room owner
-      }
       const isJoined = await this.usersService.joinRoom(user.id, body);
       if (!isJoined)
         throw new HttpException('Failed to join room', HttpStatus.BAD_REQUEST);
@@ -424,7 +421,6 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   async setAdmin(@Req() req: Request, @Param('username') username :string, @Body() body: RoomSettingsDto) {
     //check if the user is the owner of the room
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
-    //check if the user is the owner of the room
     const isUserAdmin = await this.usersService.checkIfUserIsOwner(user.id, body);
     if (!isUserAdmin)
       throw new HttpException('You are not the owner of this room', HttpStatus.BAD_REQUEST);
@@ -435,43 +431,55 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   }
 
 
-  // @Post('/set-room-password')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async setRoomPassword(){
+  @Post('/set-room-password')
+  @UseGuards(Jwt2faAuthGuard)
+  async setRoomPassword(@Req() req: Request, @Body() body: RoomSettingsDto){
+        // check if the user is the owner of the room
+        const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+        const isUserAdmin = await this.usersService.checkIfUserIsOwner(user.id, body);
+        if (!isUserAdmin)
+          throw new HttpException('You are not the owner of this room', HttpStatus.BAD_REQUEST);
+        // change the room type to protected
+        // update the password
+        const isPasswordSet = await this.usersService.setRoomPassword(body);
+        if (!isPasswordSet)
+          throw new HttpException('Failed to set password', HttpStatus.BAD_REQUEST);
+        return 'Password set seccussfully';        
+  }
 
-  // }
-
-
-  // @Post('/change-room-password')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async changeRoomPassword(){
-
-  // }
-
-  // @Post('/remove-room-password')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async removeRoomPassword(){
-
-  // }
+  @Post('/remove-room-password')
+  @UseGuards(Jwt2faAuthGuard)
+  async removeRoomPassword(@Req() req: Request, @Body() body: RoomSettingsDto){
+        // check if the user is the owner of the room
+        const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+        const isUserAdmin = await this.usersService.checkIfUserIsOwner(user.id, body);
+        if (!isUserAdmin)
+          throw new HttpException('You are not the owner of this room', HttpStatus.BAD_REQUEST);
+        // change the room type to public
+        const isPasswordRemoved = await this.usersService.removeRoomPassword(body);
+        if (!isPasswordRemoved)
+          throw new HttpException('Failed to remove password', HttpStatus.BAD_REQUEST);
+        return 'Password removed seccussfully';
+  }
 
   // @Post('/kick-member')
   // @UseGuards(Jwt2faAuthGuard)
   // async kickMember(){
-
+        //check if the user is the owner/admin of the room
+        //dont let the owner/admin kick himself or other admins
+        //check if the 
+        //kick the member
   // }
 
 
   // @Post('/mute-member')
   // @UseGuards(Jwt2faAuthGuard)
   // async muteMember(){
+        //check if the user is the owner/admin of the room
+        //mute (X min) the member
 
   // }
 
-  // @Post('/unmute-member')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async unmuteMember(){
-
-  // }
 
   // @Post('/ban-member')
   // @UseGuards(Jwt2faAuthGuard)

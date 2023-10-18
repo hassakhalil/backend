@@ -689,4 +689,50 @@ export class UsersService {
       }
   }
 
+  async setRoomPassword(body: RoomSettingsDto): Promise<boolean> {
+      try{
+          //get the room id
+          const room = await this.findRoomByName(body.name);
+          const hashedPassword = await this.hashPassword(body.password);
+          const isPasswordSet = await this.prisma.rooms.update({
+            where : {
+              id: room.id,
+            },
+            data: {
+              type: 'protected',
+              password: hashedPassword,
+            }
+          });
+          if (!isPasswordSet)
+            return false;
+          return true;
+      }
+      catch(erro){
+        return false;
+      }
+  }
+
+  async removeRoomPassword(body: RoomSettingsDto): Promise<boolean> {
+    try{
+      //get the room id
+      const room = await this.findRoomByName(body.name);
+      const isPasswordRemoved = await this.prisma.rooms.update({
+        where : {
+          id: room.id,
+        },
+        data: {
+          type: 'public',
+          password: null,
+        }
+      });
+      if (!isPasswordRemoved)
+        return false;
+      return true;
+  }
+  catch(erro){
+    return false;
+  }
+
+  }
+
 }
