@@ -785,4 +785,29 @@ export class UsersService {
     }
   }
 
+  async updateBan(userName: string, body: RoomSettingsDto, state: boolean): Promise<boolean> {
+    try { 
+        const user = await this.findByUsername(userName);
+        const isOwner = await this.checkIfUserIsOwner(user.id, body);
+        if (isOwner)
+          return false; 
+        const room  = await this.findRoomByName(body.name);
+        const isBanned = await this.prisma.managements.updateMany({
+          where: {
+            user_id: user.id,
+            room_id: room.id,
+          },
+          data: {
+            is_banned: state,
+          }
+        });
+        if (!isBanned)
+          return false;
+        return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
 }

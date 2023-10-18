@@ -486,18 +486,35 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   // }
 
 
-  // @Post('/ban-member')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async banMember(){
+  @Post('/ban-member/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async banMember(@Req() req: Request, @Param('username') username: string, @Body() body: RoomSettingsDto){
+        // check if the user is admin
+        const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+        const isAmdin = await this.usersService.checkIfUserIsAdmin(user.id, body);
+        if (!isAmdin)
+          throw new HttpException('You are not an admin of this room', HttpStatus.BAD_REQUEST);
+        const isBanned = await this.usersService.updateBan(username, body, true);
+        if (!isBanned)
+          throw new HttpException('Failed to ban member', HttpStatus.BAD_REQUEST);
+        return 'Member banned seccussfully';
+        // ban the member
+  }
 
-  // }
 
-
-  // @Post('/allow-member')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async allowMember(){
-
-  // }
+  @Post('/allow-member/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async allowMember(@Req() req: Request, @Param('username') username: string, @Body() body: RoomSettingsDto){
+    // check if the user is admin
+    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    const isAmdin = await this.usersService.checkIfUserIsAdmin(user.id, body);
+    if (!isAmdin)
+      throw new HttpException('You are not an admin of this room', HttpStatus.BAD_REQUEST);
+    const isAllowed = await this.usersService.updateBan(username, body, false);
+    if (!isAllowed)
+      throw new HttpException('Failed to unban member', HttpStatus.BAD_REQUEST);
+    return 'Member unbanned seccussfully';
+  }
 
   // @Get('get-all-rooms')
   // @UseGuards(Jwt2faAuthGuard)
