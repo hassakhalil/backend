@@ -735,4 +735,54 @@ export class UsersService {
 
   }
 
+  async checkIfUserIsAdmin(userId: number, body: RoomSettingsDto): Promise<boolean> {
+      try{
+        const room = await this.findRoomByName(body.name);
+        const isOwner = await this.prisma.managements.findMany({
+          where: {
+            user_id: userId,
+            room_id: room.id,
+            role: 'owner',
+          },
+        });
+        const isAdmin = await this.prisma.managements.findMany({
+          where: {
+            user_id: userId,
+            room_id: room.id,
+            role: 'admin',
+          },
+        });
+
+        if (!isOwner[0] && !isAdmin[0])
+          return false;
+        return true;
+      }
+      catch(error){
+        return false;
+      }
+  }
+
+  async kickUser(userName: string, body: RoomSettingsDto): Promise<boolean> {
+    try{
+      const user = await this.findByUsername(userName);
+      const room = await this.findRoomByName(body.name);
+      const isUserOwner = await this.checkIfUserIsOwner(user.id, body);
+      if (isUserOwner)
+        return false;
+
+      const isKicked = await this.prisma.managements.deleteMany({
+        where: {
+          user_id: user.id,
+          room_id: room.id,
+        },
+      });
+      if (!isKicked)
+        return false;
+      return true;
+    }
+    catch(error){ 
+      return false;
+    }
+  }
+
 }

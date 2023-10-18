@@ -462,14 +462,19 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
         return 'Password removed seccussfully';
   }
 
-  // @Post('/kick-member')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async kickMember(){
-        //check if the user is the owner/admin of the room
-        //dont let the owner/admin kick himself or other admins
-        //check if the 
-        //kick the member
-  // }
+  @Post('/kick-member/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async kickMember(@Req() req: Request, @Param('username') username: string, @Body() body: RoomSettingsDto){
+        // check if the user is an admin of the room
+        const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+        const isAdmin = await this.usersService.checkIfUserIsAdmin(user.id, body);
+        if (!isAdmin)
+          throw new HttpException('You are not an admin of this room', HttpStatus.BAD_REQUEST);
+        const isKicked = await this.usersService.kickUser(username, body);
+        if (!isKicked)
+          throw new HttpException('Failed to kick member', HttpStatus.BAD_REQUEST);
+        return 'Member kicked successfully';
+  }
 
 
   // @Post('/mute-member')
