@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "managements" ALTER COLUMN "mute_start" SET DATA TYPE BIGINT,
+ALTER COLUMN "mute_end" SET DATA TYPE BIGINT;
