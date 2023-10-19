@@ -24,6 +24,7 @@ services:
       - postgres
     volumes:
       - /Users/hassan/Desktop/back/backend/src:/backend/src
+      - /Users/hassan/Desktop/back/backend/public:/backend/public
 volumes:
   postgres:
 

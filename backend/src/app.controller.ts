@@ -11,16 +11,18 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import { RoomSettingsDto } from './users/dto/roomSettings.dto';
+import { dirname, join } from 'path';
 
 export const multerConfig = {
   storage: diskStorage({
     destination: (req, file, cb) => {
-      cb(null,  process.env.UPLOAD_PATH);
+      cb(null,  join('/backend/public','avatars'));
     },
     filename:(req, file, cb) => {
-        const uniquePrefix = Date.now() + '-' + Math.round(Math.random()*1e9);
+        const uniquePrefix = Date.now();
         //add file type check (file filter)
-        cb(null, uniquePrefix+'-'+file.originalname);
+        let fileExt = file.originalname.split('.').pop();
+        cb(null, uniquePrefix+'.'+fileExt);
     },
   }),
   fileFilter: (req, file, cb) => {
@@ -132,7 +134,6 @@ export class AppController {
     return 'Username set seccussfully';
   }
   
-  @Post('')
 
 @Get('2fa/generate-qrcode')
 @UseGuards(Jwt2faAuthGuard)
@@ -198,36 +199,36 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
       const path  = await this.usersService.getAvatar(user.username);
       if (path.indexOf('cdn.intra.42.fr') === -1 && path !== null){
           //remove old avatar
-          fs.unlinkSync(path);
+          fs.unlinkSync(join('/backend/public','avatars', path));
       }
-      const isSaved = this.usersService.updateAvatar(file.path, this.authService.extractIdFromPayload(req.user));
+      const isSaved = this.usersService.updateAvatar(file.filename, this.authService.extractIdFromPayload(req.user));
       if (!isSaved){
         throw new HttpException('Failed to upload avatar', HttpStatus.BAD_REQUEST);
       }
       return 'Avatar uploaded seccussfully';
     }
 
-      //return the avatar of "username" instead of the current user
-  @Get('/get-avatar/:username')
-  @UseGuards(Jwt2faAuthGuard)
-  async getAvatar(@Param('username') username: string, @Req() req: Request, @Res() res: Response) {
-      //get the avatar path from the database
-      const path = await this.usersService.getAvatar(username); 
-      if (!path)
-      {
-        throw new HttpException('avatar not found', HttpStatus.BAD_REQUEST);
-      }
-      if (path.indexOf('cdn.intra.42.fr') !== -1)
-      {
-        throw new HttpException('Get this avatar from intra', HttpStatus.NOT_FOUND);
-      }
-      res.setHeader('Content-Type', 'application/octet-stream');
-      //get the proper filename from the path 
-      const filename = path.substring(path.lastIndexOf("/")+1); 
-      const hvalue = 'attachement; filename='+filename;
-      res.setHeader('Content-Disposition', hvalue);
-      return res.sendFile(path);
-  }
+  //     //return the avatar of "username" instead of the current user
+  // @Get('/get-avatar/:username')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async getAvatar(@Param('username') username: string, @Req() req: Request, @Res() res: Response) {
+  //     //get the avatar path from the database
+  //     const path = await this.usersService.getAvatar(username); 
+  //     if (!path)
+  //     {
+  //       throw new HttpException('avatar not found', HttpStatus.BAD_REQUEST);
+  //     }
+  //     if (path.indexOf('cdn.intra.42.fr') !== -1)
+  //     {
+  //       throw new HttpException('Get this avatar from intra', HttpStatus.NOT_FOUND);
+  //     }
+  //     res.setHeader('Content-Type', 'application/octet-stream');
+  //     //get the proper filename from the path 
+  //     const filename = path.substring(path.lastIndexOf("/")+1); 
+  //     const hvalue = 'attachement; filename='+filename;
+  //     res.setHeader('Content-Disposition', hvalue);
+  //     return res.sendFile(path);
+  // }
 
   //return profile of "username" instead of the current user
   @Get('/profile/:username')
