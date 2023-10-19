@@ -194,7 +194,8 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
         throw new HttpException('Only image files are allowed.', HttpStatus.BAD_REQUEST);
       }
       //check if the client already uploaded an avatar if yes replace it
-      const path  = await this.usersService.getAvatar(this.authService.extractIdFromPayload(req.user));
+      const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+      const path  = await this.usersService.getAvatar(user.username);
       if (path.indexOf('cdn.intra.42.fr') === -1 && path !== null){
           //remove old avatar
           fs.unlinkSync(path);
@@ -477,13 +478,19 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body) {
   }
 
 
-  // @Post('/mute-member')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async muteMember(){
-        //check if the user is the owner/admin of the room
-        //mute (X min) the member
-
-  // }
+  @Post('/mute-member/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async muteMember(@Req() req: Request, @Param('username') username: string, @Body() body: RoomSettingsDto){
+        // check if the user is the owner/admin of the room
+        const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+        const isAdmin = await this.usersService.checkIfUserIsAdmin(user.id, body);
+        if (!isAdmin)
+          throw new HttpException('You are not an admin of this room', HttpStatus.BAD_REQUEST);
+        const isMuted = await this.usersService.muteMemeber(username, body);
+        if (!isMuted)
+          throw new HttpException('Failed to mute member', HttpStatus.BAD_REQUEST);
+        return 'Member muted seccussfully';
+  }
 
 
   @Post('/ban-member/:username')

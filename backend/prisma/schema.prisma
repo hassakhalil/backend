@@ -99,8 +99,8 @@ model managements {
   user_id       Int
   role          String
   is_muted      Boolean @default(false)
-  mute_start    DateTime?
-  mute_end      DateTime?
+  mute_start    BigInt?
+  mute_end      BigInt?
   is_banned     Boolean @default(false)
   //relations
   //room

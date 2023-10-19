@@ -132,11 +132,11 @@ export class UsersService {
   }
 
   //avatar
-  async getAvatar(un: string): Promise<string | null> {
+  async getAvatar(userName: string): Promise<string | null> {
     try{
       const user = await this.prisma.users.findUnique({
         where: {
-          username: un,
+          username: userName,
         },
       });
       return user.avatar;
@@ -806,6 +806,35 @@ export class UsersService {
         return true;
     }
     catch(error){
+      return false;
+    }
+  }
+  async muteMemeber(userName: string, body: RoomSettingsDto){
+    try{
+        //
+        const user = await this.findByUsername(userName);
+        const isOwner = await this.checkIfUserIsOwner(user.id, body);
+        if (isOwner)
+          return false; 
+        const room  = await this.findRoomByName(body.name);
+        const start_time  = Date.now();
+        const end_time    = start_time + body.duration * 3600000;
+        const isMuted = await this.prisma.managements.updateMany({
+          where: {
+            user_id: user.id,
+            room_id: room.id,
+          },
+          data: {
+            is_muted: true,
+            mute_start: start_time,
+            mute_end: end_time,
+          },
+        });
+        if (!isMuted)
+          return false;
+        return true;
+      }
+    catch(error) {
       return false;
     }
   }
