@@ -19,6 +19,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     private logger = new Logger('ChatGateway');
 
+    @UseGuards(Jwt2faAuthGuard)
     @SubscribeMessage('chat')
     async handleChatEvent(@MessageBody() payload: any): Promise<any>{
         this.logger.log(payload);
