@@ -10,12 +10,15 @@ import { Jwt2faAuthGuard } from "src/auth/jwt-2fa-auth.guard";
 import { Logger } from "@nestjs/common";
 import { UsersService } from "src/users/users.service";
 import { Server, Socket }  from 'socket.io';
+import { JwtService } from "@nestjs/jwt";
+import { WsException } from "@nestjs/websockets";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-    constructor(private usersService: UsersService) {}
+    constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
     @WebSocketServer() server;
+    private clients: Map<number, Socket> = new Map();
 
     private logger = new Logger('ChatGateway');
 
@@ -42,14 +45,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     async handleConnection(socket: Socket): Promise<void> {
         // triger the user state change to active ( use event emeter) 
+        //debug
+        console.log(socket.handshake.headers.cookie);
+
+        //end debug
         //add auth here
-        //
-        this.logger.log(`Socket connected ${socket}`);
+        let Payload = null;
+        try {
+            const Cookie = socket.handshake.headers.cookie.split("=")[1];
+            console.log("Cookie = ",Cookie);
+            const payload = await this.jwtService.verifyAsync(Cookie, { secret: process.env.JWT_CONST });
+            Payload = payload;
+            // console.log("Payload = ",Payload);
+        }catch(error){
+            console.log(error);
+            // throw new WsException('unauthorized');
+            socket.disconnect();
+            //throw error
+        }
+        //add the client to the map
+        
+        // this.logger.log(`Socket connected ${socket}`);
     }
 
     async handleDisconnect(socket: any) {
         // triger the user state change to non active
-        this.logger.log(`Socket disconnected ${socket}`);
+        //remove the client form the map
+        // this.logger.log(`Socket disconnected ${socket}`);
         
     }
 }
