@@ -943,8 +943,8 @@ export class UsersService {
               role: memebersWithoutavatar[j].role,
               is_banned: memebersWithoutavatar[j].is_banned,
               is_muted: memebersWithoutavatar[j].is_muted,
-              mute_start: memebersWithoutavatar[j].mute_start,
-              mute_end: memebersWithoutavatar[j].mute_end,
+            //  mute_start: memebersWithoutavatar[j].mute_start,
+            //   mute_end: memebersWithoutavatar[j].mute_end,
             });
           }
           myrooms.push({
@@ -966,4 +966,106 @@ export class UsersService {
     }
   }
 
+  async hasAccessToRoom(userId: number, roomId: number): Promise<boolean> {
+    try{
+        //check if the user is a member of the room
+        const isMemeber = await this.prisma.managements.findMany({
+          where: {
+            user_id: userId,
+            room_id: roomId,
+          },
+        });
+        if (!isMemeber[0])
+          return false;
+        const room = await this.prisma.rooms.findUnique({
+          where: {
+            id: roomId,
+          }
+        });
+        if (room.type === 'direct'){
+          //not blocked if the room is direct
+          const friend = await this.prisma.managements.findMany({
+            where: {
+              room_id: roomId,
+              user_id: {
+                not: userId,
+              },
+            }
+          });
+          const friendId = friend[0].user_id;
+          const isBlocked = await this.isFriendBlocked(userId, friendId);
+          if (isBlocked)
+            return false;
+        }
+        else{
+          //not banned if the room is not direct
+          const isBanned = await this.prisma.managements.findMany({
+            where: {
+              user_id: userId,
+              room_id: roomId,
+              is_banned: true,
+            },
+          });
+          if (isBanned[0])
+            return false;
+        }
+        return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
+  async isMuted(userId: number, roomId: number): Promise<boolean> {
+    try{
+        const isMuted = await this.prisma.managements.findMany({
+          where: {
+            user_id: userId,
+            room_id: roomId,
+            is_muted: true,
+          },
+        });
+        if (!isMuted[0])
+          return false;
+        const now = Date.now();
+        if (now > isMuted[0].mute_end){
+          //unmute the user
+          const isUnmuted = await this.prisma.managements.updateMany({
+            where: {
+              user_id: userId,
+              room_id: roomId,
+            },
+            data: {
+              is_muted: false,
+              mute_start: null,
+              mute_end: null,
+            },
+          });
+          return false;
+        }
+        return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
+  async saveMessage(userId: number, roomId: number, message: string): Promise<boolean> {
+    try{
+        const isSaved = await this.prisma.messages.create({
+          data: {
+            user_id: userId,
+            room_id: roomId,
+            message: message,
+          },
+        });
+        if (!isSaved)
+          return false;
+        return true;
+    }
+    catch(error){
+      console.log(error);
+      return false;
+    }
+  }
 }

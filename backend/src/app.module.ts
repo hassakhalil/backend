@@ -13,7 +13,6 @@ import { join } from 'path';
     AuthModule,
     UsersModule,
     PrismaModule,
-    GameModule,
     ChatModule,
     ServeStaticModule.forRoot({
       rootPath: '/backend/public/',
