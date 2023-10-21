@@ -423,6 +423,23 @@ export class UsersService {
   
     try {
         const sender = await this.findByUsername(senderUsername);
+        const isAlreadyFriendSender = await this.prisma.friendships.findMany({
+          where: {
+              acceptor_id: acceptorId,
+              sender_id: sender.id,
+              fr_state: true,
+          }
+        });
+        const isAlreadyFriendAcceptor= await this.prisma.friendships.findMany({
+          where: {
+              acceptor_id: sender.id,
+              sender_id: acceptorId,
+              fr_state: true,
+          }
+        });
+
+        if (isAlreadyFriendSender[0] || isAlreadyFriendAcceptor[0])
+          return false;
         const isAccepted = await this.prisma.friendships.updateMany({
           where: {
             acceptor_id: acceptorId,
@@ -1068,4 +1085,66 @@ export class UsersService {
       return false;
     }
   }
+
+  async IsUsermemberOfRoom(userId: number, roomId: number): Promise<boolean> {
+    try{
+      const isMember = await this.prisma.managements.findMany({
+        where: {
+          user_id: userId,
+          room_id: roomId,
+        },
+      });
+      if (!isMember[0])
+        return false;
+      return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
+  async getOtherRooms(userId: number): Promise<any> {
+    try{
+        //get all rooms wich the user is a not a member of
+        //return room name -- id -- type
+        const allrooms = await this.prisma.rooms.findMany();
+        let otherRooms = [];
+        for( let i = 0; i < allrooms.length; i++){
+            const isMember = await this.IsUsermemberOfRoom(userId, allrooms[i].id);
+            if (!isMember && allrooms[i].type !== 'private'){
+              otherRooms.push({
+                id: allrooms[i].id,
+                name: allrooms[i].name,
+                type: allrooms[i].type,
+              });
+            }
+        }
+        return otherRooms;
+    }
+    catch(error){
+        return null;
+    }
+  }
+
+  async deleteFriend(userId: number, friendId: number): Promise<boolean> {
+    try{
+      const isSender = await this.prisma.friendships.deleteMany({
+        where: {
+          sender_id: friendId,
+          acceptor_id: userId,
+        },
+      });
+      const isAcceptor = await this.prisma.friendships.deleteMany({
+        where: {
+          sender_id: userId,
+          acceptor_id: friendId,
+        },
+      });
+      return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
 }

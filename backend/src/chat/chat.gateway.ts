@@ -49,6 +49,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
                         this.server.to(payload.roomId).emit('chat', payload); //broadcast messages
                     }
                 }
+                else{
+                    console.log("client is muted");
+                }
             }
         }
         return payload;  
@@ -67,6 +70,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
             // await this.server.in(payload.socketId).socketsJoin(payload.roomId);
             await client.join(payload.roomId);
 
+        }
+        else{
+            console.log("not joined room client does not have access to the room");
         }
     }
 

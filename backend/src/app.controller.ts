@@ -539,4 +539,25 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
       return myrooms;
   }
 
+  @Get('get-other-rooms/')
+  @UseGuards(Jwt2faAuthGuard)
+  async getOtherRooms(@Req() req: Request){
+    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+      const otherRooms = await this.usersService.getOtherRooms(user.id);
+      if (!otherRooms)
+        throw new HttpException('Failed to get rooms', HttpStatus.BAD_REQUEST);
+      return otherRooms;
+  }
+
+  @Post('delete-friend/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async deleteFriend(@Req() req: Request, @Param('username') username: string){
+    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    const friend= await this.usersService.findByUsername(username);
+    const isDeleted = await this.usersService.deleteFriend(user.id, friend.id);
+    if (!isDeleted)
+      throw new HttpException('Failed to delete friend', HttpStatus.BAD_REQUEST);
+    return 'Friend deleted seccussfully';
+  }
+
 }
