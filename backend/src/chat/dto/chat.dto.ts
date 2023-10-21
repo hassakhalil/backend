@@ -5,9 +5,6 @@ export class ChatDto {
     @IsString()
     @IsNumberString()
     roomId: string;
-
-    @IsString()
-    socketId: string;
     
     @IsString()
     @IsNotEmpty()
