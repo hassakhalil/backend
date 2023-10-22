@@ -7,6 +7,7 @@ import { ChatModule } from './chat/chat.module';
 import { GameModule } from './game/game/game.module';
 import { ServeStaticModule } from '@nestjs/serve-static/dist/serve-static.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { NotificationsService } from './chat/event.notifications';
 
 
 @Module({
@@ -22,5 +23,6 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     }),
   ],
   controllers: [AppController],
+  providers: [NotificationsService],
 })
 export class AppModule {}

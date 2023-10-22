@@ -13,6 +13,7 @@ import * as fs from 'fs';
 import { RoomSettingsDto } from './users/dto/roomSettings.dto';
 import { dirname, join } from 'path';
 import { TfaCodeDto } from './users/dto/tfaCode.dto';
+import { NotificationsService } from './chat/event.notifications';
 
 export const multerConfig = {
   storage: diskStorage({
@@ -48,6 +49,7 @@ export const multerConfig = {
 export class AppController {
   constructor(private readonly authService: AuthService,
               private readonly usersService: UsersService,
+              private readonly notifications: NotificationsService,
               ) {}
 
   @Get('/auth')
@@ -299,6 +301,8 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     if (!isAdded){
       throw new HttpException('Failed to add friend', HttpStatus.BAD_REQUEST);
     }
+    const friend = await this.usersService.findByUsername(username);
+    this.notifications.sendFriendRequestNotification(us.id, friend.id);
     //emit to notifications event "friend request"
     return 'Friend added seccussfully';
   }

@@ -13,10 +13,12 @@ import { JwtService } from "@nestjs/jwt";
 import { WsException } from "@nestjs/websockets";
 import { joinRoomDto } from "./dto/joinRoom.dto";
 import { ChatDto } from "./dto/chat.dto";
+import { OnEvent } from "@nestjs/event-emitter";
+import { NotificationsService } from "./event.notifications";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-    constructor(private usersService: UsersService, private jwtService: JwtService) {}
+    constructor(private usersService: UsersService, private jwtService: JwtService, private notifications: NotificationsService) {}
 
     @WebSocketServer() server: Server = new Server();
     private clients: Map<string, number> = new Map();
@@ -112,5 +114,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         // this.logger.log(`Socket disconnected ${socket}`);
         
     }
+
+    @OnEvent('friendRequest')
+    async handleFriendRequestEvent(userId: number, friendId: number) {
+        //get friend socket 
+        let friendSocketId = null;
+        for (let [key, value] of this.clients.entries()) {
+            if (value === friendId)
+              friendSocketId =  key;
+        }
+        const senderObject = await this.usersService.findById(userId);
+        console.log("senderObject = ",senderObject);
+        const sender = {id: userId, username: senderObject.username, avatar: senderObject.avatar};
+        if (friendSocketId){
+            this.server.to(friendSocketId).emit('friendRequest', sender); //broadcast messages
+        }
+    }
+
 }
 
