@@ -235,13 +235,14 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
             is_two_factor_auth_enabled: profileData.user_data.is_two_factor_auth_enabled,
 
         },
-        friends:        profileData.friends,
-        blocks:         profileData.blocks,
-        match_history:  profileData.match_history,
-        achievements:   profileData.achievements,
-        wins:           profileData.wins,
-        loses:          profileData.loses,
-        draws:          profileData.draws,
+        friends:          profileData.friends,
+        blocks:           profileData.blocks,
+        pending_requests: profileData.pending_requests,
+        match_history:    profileData.match_history,
+        achievements:     profileData.achievements,
+        wins:             profileData.wins,
+        loses:            profileData.loses,
+        draws:            profileData.draws,
       }
     }
     else{

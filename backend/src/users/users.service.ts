@@ -321,10 +321,39 @@ export class UsersService {
       }
   }
 
+  async getPendingRequests(userId: number) {
+      try{
+          const requests = await this.prisma.friendships.findMany({
+              where: {
+                acceptor_id: userId,
+                fr_state: false,
+              },
+              select: {
+                sender_id: true,
+              },
+          });
+          let pending_requests = [];
+          for (let i = 0; i < requests.length; i++){
+            const sender = await this.findById(requests[i].sender_id);
+            pending_requests.push({
+              id:         requests[i].sender_id,
+              username:   sender.username,
+              avatar:     sender.avatar,
+            });
+          }
+
+          return pending_requests;
+      }
+      catch(error){
+          return null;
+      }
+  }
+
   async getProfileData(un: string) {
       try {
           const PersonalData = await this.findByUsername(un);
           const FriendIds = await this.getFriends(PersonalData.id);
+          const Requests = await this.getPendingRequests(PersonalData.id);
           //get friends usernames and avatars
           let FriendList = [];
           let Blocks = [];
@@ -368,14 +397,15 @@ export class UsersService {
           });
 
           return {
-            user_data:     PersonalData,
-            friends:       FriendList,
-            blocks:         Blocks,
-            match_history: MatchHistory,
-            achievements:  UserAchievements,
-            wins:          wins,
-            loses:         loses,
-            draws:         draws,
+            user_data:        PersonalData,
+            friends:          FriendList,
+            blocks:           Blocks,
+            pending_requests: Requests,
+            match_history:    MatchHistory,
+            achievements:     UserAchievements,
+            wins:             wins,
+            loses:            loses,
+            draws:            draws,
           };
       }
       catch(error){
@@ -866,6 +896,7 @@ export class UsersService {
       return false;
     }
   }
+
   async muteMemeber(userName: string, body: RoomSettingsDto){
     try{
         //
@@ -976,9 +1007,6 @@ export class UsersService {
       return myrooms;
     }
     catch(error){ 
-      //debug
-      console.log(error);
-      //end debug
       return null;
     }
   }
