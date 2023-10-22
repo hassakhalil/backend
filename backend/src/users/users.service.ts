@@ -1147,4 +1147,57 @@ export class UsersService {
     }
   }
 
+  async deleteRequest(userId: number, friendUsername: string): Promise<boolean> {
+    try{
+      const friend = await this.findByUsername(friendUsername);
+      const isDeleted = await this.prisma.friendships.deleteMany({
+        where: {
+          acceptor_id: userId,
+          sender_id: friend.id,
+          fr_state: false,
+        },
+      });
+      return true;
+    }
+    catch(error){
+        return false;
+    }
+  }
+
+  async deleteRoom(userId: number, roomId:number): Promise<boolean> {
+    try{
+      const room = await this.prisma.rooms.findUnique({
+        where: {
+          id: roomId,
+        },
+      });
+      if (!room)
+        return false;
+      if (room.type === 'direct')
+        return false;
+      const isOwner = await this.checkIfUserIsOwner(userId, {name:room.name, type:room.type, password: null, duration: null});
+      if (!isOwner)
+        return false;
+      const deleteMessages = await this.prisma.messages.deleteMany({
+        where: {
+          room_id: roomId,
+        },
+      });
+      const deleteManagements = await this.prisma.managements.deleteMany({
+        where: {
+          room_id: roomId,
+        },
+      });
+      const isDeleted = await this.prisma.rooms.delete({
+        where: {
+          id: roomId,
+        },
+      });
+      return true;
+    }
+    catch(error){
+      return false;
+    }
+  }
+
 }

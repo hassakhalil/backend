@@ -212,29 +212,6 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
       return 'Avatar uploaded seccussfully';
     }
 
-  //     //return the avatar of "username" instead of the current user
-  // @Get('/get-avatar/:username')
-  // @UseGuards(Jwt2faAuthGuard)
-  // async getAvatar(@Param('username') username: string, @Req() req: Request, @Res() res: Response) {
-  //     //get the avatar path from the database
-  //     const path = await this.usersService.getAvatar(username); 
-  //     if (!path)
-  //     {
-  //       throw new HttpException('avatar not found', HttpStatus.BAD_REQUEST);
-  //     }
-  //     if (path.indexOf('cdn.intra.42.fr') !== -1)
-  //     {
-  //       throw new HttpException('Get this avatar from intra', HttpStatus.NOT_FOUND);
-  //     }
-  //     res.setHeader('Content-Type', 'application/octet-stream');
-  //     //get the proper filename from the path 
-  //     const filename = path.substring(path.lastIndexOf("/")+1); 
-  //     const hvalue = 'attachement; filename='+filename;
-  //     res.setHeader('Content-Disposition', hvalue);
-  //     return res.sendFile(path);
-  // }
-
-  //return profile of "username" instead of the current user
   @Get('/profile/:username')
   @UseGuards(Jwt2faAuthGuard)
   async  getProfile(@Param('username') username: string, @Req() req: Request){
@@ -296,7 +273,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
       return user;
   }
 
-  @Get('/logout')
+  @Post('/logout')
   @UseGuards(Jwt2faAuthGuard)
   logout(@Req() request: Request, @Res({ passthrough: true}) response: Response){
     //blacklist the jwt
@@ -469,7 +446,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
         return 'Password removed seccussfully';
   }
 
-  @Post('/kick-member/:username')
+  @Delete('/kick-member/:username')
   @UseGuards(Jwt2faAuthGuard)
   async kickMember(@Req() req: Request, @Param('username') username: string, @Body() body: RoomSettingsDto){
         // check if the user is an admin of the room
@@ -539,7 +516,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
       return myrooms;
   }
 
-  @Get('get-other-rooms/')
+  @Get('get-other-rooms')
   @UseGuards(Jwt2faAuthGuard)
   async getOtherRooms(@Req() req: Request){
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
@@ -549,7 +526,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
       return otherRooms;
   }
 
-  @Post('delete-friend/:username')
+  @Delete('delete-friend/:username')
   @UseGuards(Jwt2faAuthGuard)
   async deleteFriend(@Req() req: Request, @Param('username') username: string){
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
@@ -558,6 +535,28 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     if (!isDeleted)
       throw new HttpException('Failed to delete friend', HttpStatus.BAD_REQUEST);
     return 'Friend deleted seccussfully';
+  }
+
+  @Delete('delete-room/:roomId')
+  @UseGuards(Jwt2faAuthGuard) 
+  async deleteRoom(@Req() req: Request, @Param('roomId') roomId: string){
+    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    //check if the user is owner of the room
+    const isDeleted = await this.usersService.deleteRoom(user.id, +roomId);
+    if (!isDeleted)
+      throw new HttpException('Failed to delete room', HttpStatus.BAD_REQUEST);
+    return 'Room deleted seccussfully';
+  }
+
+  @Delete('delete-request/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async deleteRequest(@Req() req: Request, @Param('username') username: string){
+      //check if the user is the acceptor of the request
+      const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+      const isDeleted = await this.usersService.deleteRequest(user.id, username);
+      if (!isDeleted)
+        throw new HttpException('Failed to delete request', HttpStatus.BAD_REQUEST);
+      return 'Request deleted seccussfully';
   }
 
 }
