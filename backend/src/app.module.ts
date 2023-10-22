@@ -6,10 +6,12 @@ import { UsersModule } from './users/users.module';
 import { ChatModule } from './chat/chat.module';
 import { GameModule } from './game/game/game.module';
 import { ServeStaticModule } from '@nestjs/serve-static/dist/serve-static.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     AuthModule,
     UsersModule,
     PrismaModule,

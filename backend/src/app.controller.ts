@@ -517,6 +517,32 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
       return myrooms;
   }
 
+  @Get('get-room-members/:roomId')
+  @UseGuards(Jwt2faAuthGuard)
+  async getRoomMembers(@Req() req: Request, @Param('roomId') roomId: string){
+    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    const isMember = await this.usersService.checkIfUserExistsInRoomV2(user.id, +roomId);
+    if (!isMember)
+      throw new HttpException('You are not a member of this room', HttpStatus.BAD_REQUEST);
+    const members = await this.usersService.getRoomMembers(user.id, +roomId);
+    if (!members)
+      throw new HttpException('Failed to get members', HttpStatus.BAD_REQUEST);
+    return members;
+  }
+
+  @Get('get-room-messages/:roomId')
+  @UseGuards(Jwt2faAuthGuard)
+  async getRoomMessages(@Req() req: Request, @Param('roomId') roomId: string){
+    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    const isMember = await this.usersService.checkIfUserExistsInRoomV2(user.id, +roomId);
+    if (!isMember)
+      throw new HttpException('You are not a member of this room', HttpStatus.BAD_REQUEST);
+    const messages = await this.usersService.getRoomMessages(+roomId);
+    if (!messages)
+      throw new HttpException('Failed to get messages', HttpStatus.BAD_REQUEST);
+    return messages;
+  }
+
   @Get('get-other-rooms')
   @UseGuards(Jwt2faAuthGuard)
   async getOtherRooms(@Req() req: Request){

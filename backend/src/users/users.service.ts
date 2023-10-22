@@ -604,6 +604,20 @@ export class UsersService {
     }
   }
 
+  async findRoomById(roomId: number) {
+    try{
+        const room = await this.prisma.rooms.findUnique({
+          where: {
+            id: roomId,
+          },
+        });
+        return room;
+    }
+    catch(error){
+      return null;
+    }
+  }
+
   async joinRoom(memberId: number, body: RoomSettingsDto): Promise<boolean> {
     try {
       //search the database for that room
@@ -683,6 +697,7 @@ export class UsersService {
   async checkIfUserExistsInRoom(userId: number, roomName: string): Promise<boolean> {
     try{
         const room = await this.findRoomByName(roomName);
+
         const isUserInRoom = await this.prisma.managements.findMany({
             where: {
               room_id: room.id,
@@ -697,6 +712,25 @@ export class UsersService {
       return false;
     }
   }
+
+  async checkIfUserExistsInRoomV2(userId: number, roomId: number): Promise<boolean> {
+    try{
+
+        const isUserInRoom = await this.prisma.managements.findMany({
+            where: {
+              room_id: roomId,
+              user_id: userId,
+            }
+        });
+        if (isUserInRoom[0])
+          return true;
+        return false;
+    }
+    catch(error) {
+      return false;
+    }
+  }
+
 
   async leaveRoom(memberId: number, roomId: number): Promise<boolean> {
       try{
@@ -733,6 +767,7 @@ export class UsersService {
       return false;
     }
   }
+
 
   async addMember(userName: string, body: RoomSettingsDto): Promise<boolean> {
     try{
@@ -927,6 +962,60 @@ export class UsersService {
     }
   }
 
+  async getRoomMembers(userId: number, roomId: number) {
+    try{
+      let memebersWithoutavatar = await this.prisma.managements.findMany({
+        where: {
+          room_id: roomId,
+        },
+        select: {
+          user_id: true,
+          role: true,
+          is_banned: true,
+          is_muted: true,
+        },
+      });
+      let members = [];
+      if (memebersWithoutavatar.length !== 0)
+      {
+        for (let j  = 0; j < memebersWithoutavatar.length; j++){
+          const user = await this.findById(memebersWithoutavatar[j].user_id);
+          members.push({
+            id: memebersWithoutavatar[j].user_id,
+            username: user.username,
+            avatar: user.avatar,
+            role: memebersWithoutavatar[j].role,
+            is_banned: memebersWithoutavatar[j].is_banned,
+            is_muted: memebersWithoutavatar[j].is_muted,
+          });
+        }
+      }
+      return members;
+    }
+    catch(error){
+      return null;
+    }
+  }
+
+  async getRoomMessages(roomId: number) {
+    try{
+      const messages = await this.prisma.messages.findMany({
+        where: {
+          room_id: roomId,
+        },
+        select: {
+          user_id: true,
+          message: true,
+          date: true,
+        },
+      });
+      return messages;
+    }
+    catch(error){
+      return null;
+    }
+  }
+
   async getRooms(id: number) {
     try {
       //get all rooms wich the user is a member of and not banned from
@@ -954,55 +1043,11 @@ export class UsersService {
             type: true,
           }
         });
-        //messages [{userId, message, date}]
-        let messages = await this.prisma.messages.findMany({
-          where: {
-            room_id: rooms[i].room_id,
-          },
-          select: {
-            user_id: true,
-            message: true,
-            date: true,
-          },
+        myrooms.push({
+          id: roomData.id,
+          name: roomData.name,
+          type: roomData.type,
         });
-        //members [{id, username, avatar, role, isBanned, isMuted, mute_start, mute_end}]
-        let memebersWithoutavatar = await this.prisma.managements.findMany({
-          where: {
-            room_id: rooms[i].room_id,
-          },
-          select: {
-            user_id: true,
-            role: true,
-            is_banned: true,
-            is_muted: true,
-            mute_start: true,
-            mute_end: true,
-          },
-        });
-        let members = [];
-        if (memebersWithoutavatar.length !== 0)
-        {
-          for (let j  = 0; j < memebersWithoutavatar.length; j++){
-            const user = await this.findById(memebersWithoutavatar[j].user_id);
-            members.push({
-              id: memebersWithoutavatar[j].user_id,
-              username: user.username,
-              avatar: user.avatar,
-              role: memebersWithoutavatar[j].role,
-              is_banned: memebersWithoutavatar[j].is_banned,
-              is_muted: memebersWithoutavatar[j].is_muted,
-            //  mute_start: memebersWithoutavatar[j].mute_start,
-            //   mute_end: memebersWithoutavatar[j].mute_end,
-            });
-          }
-          myrooms.push({
-            id: roomData.id,
-            name: roomData.name,
-            type: roomData.type,
-            messages: messages,
-            members: members,
-          });
-        }
       } 
       return myrooms;
     }
