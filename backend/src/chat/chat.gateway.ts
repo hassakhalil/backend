@@ -26,7 +26,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('chat')
     @UsePipes(new ValidationPipe())
-    async handleChatEvent(@ConnectedSocket() client: Socket, @MessageBody() payload: ChatDto): Promise<any>{
+    async handleChatEvent(@MessageBody() payload: ChatDto, @ConnectedSocket() client: Socket): Promise<any>{
         //debug
         // console.log("payload in chat = ",payload);
         //end debug
@@ -61,7 +61,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('join-room')
     @UsePipes(new ValidationPipe())
-    async handleJoinRoomEvent(@ConnectedSocket() client: Socket, @MessageBody() payload: joinRoomDto) {
+    async handleJoinRoomEvent(@MessageBody() payload: ChatDto, @ConnectedSocket() client: Socket) {
         let hasAccess = false;
         if (this.clients.has(client.id)){
             hasAccess = await this.usersService.hasAccessToRoom(this.clients.get(client.id), +payload.roomId);
