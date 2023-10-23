@@ -80,6 +80,7 @@ export class UsersService {
         rating:                     user.rating,
         intra_id:                   user.intra_id,
         is_two_factor_auth_enabled: user.is_two_factor_auth_enabled,
+        state:                      user.state,
       };
     }
     catch(erro){
@@ -97,6 +98,7 @@ export class UsersService {
       return {
         username:                   user.username,
         avatar:                     user.avatar,
+        state:                      user.state,
       };
     }
     catch(erro){
@@ -366,6 +368,7 @@ export class UsersService {
                 id:         FriendIds[i].id,
                 username:   friend.username,
                 avatar:     friend.avatar,
+                state:      friend.state,
               });
             }
             else{
@@ -373,6 +376,7 @@ export class UsersService {
                 id:         FriendIds[i].id,
                 username:   friend.username,
                 avatar:     friend.avatar,
+                state:      friend.state,
               });
 
             }
@@ -1281,9 +1285,26 @@ export class UsersService {
           return true;
       }
       return false;
+      }
+      catch(error){
+        return false;
+      }
+  }
+
+  async saveUserState(userId: number, State: string): Promise<boolean> {
+    try{
+        const isSaved = await this.prisma.users.update({
+          where: {
+            id: userId,
+          },
+          data: {
+              state: State,
+          }
+        });
+        return true;
     }
-    catch(error){
+    catch(error) {
       return false;
     }
-}
+  }  
 }

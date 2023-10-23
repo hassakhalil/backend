@@ -14,6 +14,7 @@ import { RoomSettingsDto } from './users/dto/roomSettings.dto';
 import { dirname, join } from 'path';
 import { TfaCodeDto } from './users/dto/tfaCode.dto';
 import { NotificationsService } from './chat/event.notifications';
+import { profile } from 'console';
 
 export const multerConfig = {
   storage: diskStorage({
@@ -235,6 +236,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
             rating:     profileData.user_data.rating,
             me:         true,
             is_two_factor_auth_enabled: profileData.user_data.is_two_factor_auth_enabled,
+            state:      profileData.user_data.state,
 
         },
         friends:          profileData.friends,
@@ -254,7 +256,8 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
               username:   profileData.user_data.username,
               avatar:     profileData.user_data.avatar,
               rating:     profileData.user_data.rating,
-              me:        false,
+              me:         false,
+              state:      profileData.user_data.state,
           },
           friends:        profileData.friends,
           match_history:  profileData.match_history,

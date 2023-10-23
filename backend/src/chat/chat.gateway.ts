@@ -102,17 +102,28 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const user = await this.usersService.findOne(Payload.sub);
 
         this.clients.set(client.id, user.id);
-        console.log("clients after connect = ",this.clients);     
-        // this.logger.log(`Socket connected ${socket}`);
+        console.log("clients after connect = ",this.clients);  
+        //save the user state in the database
+        const isSaved = await this.notifications.saveUserState(user.id, "online");
+        //broadcast the user state change to all connected the users
+        this.server.emit('State', {id: user.id, username: user.username, avatar: user.avatar, state: "online"});
+           
     }
 
     async handleDisconnect(@ConnectedSocket() client: Socket) {
         // triger the user state change to non active
         //remove the client form the map
-        this.clients.delete(client.id);
         // console.log("clients after disconnect = ",this.clients);
         // this.logger.log(`Socket disconnected ${socket}`);
-        
+   
+        const userId = this.clients.get(client.id);
+        const user = await this.usersService.findById(userId);
+        //save the user state in the database
+        const isSaved = await this.notifications.saveUserState(userId, "offline");
+        //broadcast the user state change to all connected the users
+        this.server.emit('State', {id: userId, username: user.username, avatar: user.avatar, state: "offline"});
+        //remove client from map
+        this.clients.delete(client.id);
     }
 
     @OnEvent('friendRequest')
