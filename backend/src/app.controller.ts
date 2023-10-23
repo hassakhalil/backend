@@ -138,7 +138,7 @@ export class AppController {
       if (!isCreated)
         throw new HttpException('Failed to create user', HttpStatus.BAD_REQUEST);
     }
-    return 'Username set seccussfully';
+    return usernameDto.username;
   }
   
 
@@ -400,7 +400,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     //check if the user is the owner of the room
     const isUserAdmin = await this.usersService.checkIfUserIsOwner(user.id, body);
     if (!isUserAdmin)
-      throw new HttpException('You are not the owner of this room', HttpStatus.BAD_REQUEST);
+      throw new HttpException('You are not the owner of this room', HttpStatus.FORBIDDEN);
     const isAdded = await this.usersService.addMember(username, body);
     if (!isAdded)
       throw new HttpException('Failed to add member', HttpStatus.BAD_REQUEST);
@@ -415,7 +415,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     const isUserAdmin = await this.usersService.checkIfUserIsOwner(user.id, body);
     if (!isUserAdmin)
-      throw new HttpException('You are not the owner of this room', HttpStatus.BAD_REQUEST);
+      throw new HttpException('You are not the owner of this room', HttpStatus.FORBIDDEN);
     const isAdminSet = await this.usersService.setAdmin(username, body);
     if (!isAdminSet)
       throw new HttpException('Failed to set admin', HttpStatus.BAD_REQUEST);
@@ -430,7 +430,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
         const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
         const isUserAdmin = await this.usersService.checkIfUserIsOwner(user.id, body);
         if (!isUserAdmin)
-          throw new HttpException('You are not the owner of this room', HttpStatus.BAD_REQUEST);
+          throw new HttpException('You are not the owner of this room', HttpStatus.FORBIDDEN);
         // change the room type to protected
         // update the password
         const isPasswordSet = await this.usersService.setRoomPassword(body);
@@ -446,7 +446,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
         const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
         const isUserAdmin = await this.usersService.checkIfUserIsOwner(user.id, body);
         if (!isUserAdmin)
-          throw new HttpException('You are not the owner of this room', HttpStatus.BAD_REQUEST);
+          throw new HttpException('You are not the owner of this room', HttpStatus.FORBIDDEN);
         // change the room type to public
         const isPasswordRemoved = await this.usersService.removeRoomPassword(body);
         if (!isPasswordRemoved)
@@ -461,7 +461,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
         const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
         const isAdmin = await this.usersService.checkIfUserIsAdmin(user.id, body);
         if (!isAdmin)
-          throw new HttpException('You are not an admin of this room', HttpStatus.BAD_REQUEST);
+          throw new HttpException('You are not an admin of this room', HttpStatus.FORBIDDEN);
         const isKicked = await this.usersService.kickUser(username, body);
         if (!isKicked)
           throw new HttpException('Failed to kick member', HttpStatus.BAD_REQUEST);
@@ -476,7 +476,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
         const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
         const isAdmin = await this.usersService.checkIfUserIsAdmin(user.id, body);
         if (!isAdmin)
-          throw new HttpException('You are not an admin of this room', HttpStatus.BAD_REQUEST);
+          throw new HttpException('You are not an admin of this room', HttpStatus.FORBIDDEN);
         const isMuted = await this.usersService.muteMemeber(username, body);
         if (!isMuted)
           throw new HttpException('Failed to mute member', HttpStatus.BAD_REQUEST);
@@ -491,7 +491,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
         const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
         const isAmdin = await this.usersService.checkIfUserIsAdmin(user.id, body);
         if (!isAmdin)
-          throw new HttpException('You are not an admin of this room', HttpStatus.BAD_REQUEST);
+          throw new HttpException('You are not an admin of this room', HttpStatus.FORBIDDEN);
         const isBanned = await this.usersService.updateBan(username, body, true);
         if (!isBanned)
           throw new HttpException('Failed to ban member', HttpStatus.BAD_REQUEST);
@@ -507,7 +507,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     const isAmdin = await this.usersService.checkIfUserIsAdmin(user.id, body);
     if (!isAmdin)
-      throw new HttpException('You are not an admin of this room', HttpStatus.BAD_REQUEST);
+      throw new HttpException('You are not an admin of this room', HttpStatus.FORBIDDEN);
     const isAllowed = await this.usersService.updateBan(username, body, false);
     if (!isAllowed)
       throw new HttpException('Failed to unban member', HttpStatus.BAD_REQUEST);
@@ -530,7 +530,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     const isMember = await this.usersService.checkIfUserExistsInRoomV2(user.id, +roomId);
     if (!isMember)
-      throw new HttpException('You are not a member of this room', HttpStatus.BAD_REQUEST);
+      throw new HttpException('You are not a member of this room', HttpStatus.FORBIDDEN);
     const members = await this.usersService.getRoomMembers(user.id, +roomId);
     if (!members)
       throw new HttpException('Failed to get members', HttpStatus.BAD_REQUEST);
@@ -543,7 +543,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     const isMember = await this.usersService.checkIfUserExistsInRoomV2(user.id, +roomId);
     if (!isMember)
-      throw new HttpException('You are not a member of this room', HttpStatus.BAD_REQUEST);
+      throw new HttpException('You are not a member of this room', HttpStatus.FORBIDDEN);
     const messages = await this.usersService.getRoomMessages(+roomId);
     if (!messages)
       throw new HttpException('Failed to get messages', HttpStatus.BAD_REQUEST);
@@ -608,6 +608,12 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
       throw new HttpException('Failed to invite friend to game', HttpStatus.BAD_REQUEST);
     this.notifications.sendGameRequestNotification(user.id, friend.id);
       return 'Friend invited seccussfully';
+  }
+
+  @Get('is-loggedin')
+  @UseGuards(Jwt2faAuthGuard)
+  isLoggedin(){
+    return true;
   }
 
 }
