@@ -131,5 +131,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
     }
 
+    @OnEvent('gameRequest')
+    async handleGameRequestEvent(userId: number, friendId: number) {
+        //get friend socket
+        let friendSocketId = null;
+        for (let [key, value] of this.clients.entries()) {
+            if (value === friendId)
+              friendSocketId =  key;
+        }
+        const senderObject = await this.usersService.findById(userId);
+        console.log("senderObject = ",senderObject);
+        const sender = {id: userId, username: senderObject.username, avatar: senderObject.avatar};
+        if (friendSocketId){
+            this.server.to(friendSocketId).emit('gameRequest', sender); //broadcast messages
+        }
+
+    }
+
 }
 

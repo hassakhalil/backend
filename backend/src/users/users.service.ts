@@ -1273,4 +1273,17 @@ export class UsersService {
     }
   }
 
+  async checkIfFriends(userId: number, friendId: number): Promise<boolean> {
+      try{
+      const friends = await this.getFriends(userId);
+      for (let i=0; i< friends.length; i++){
+        if (friends[i].id ===  friendId)
+          return true;
+      }
+      return false;
+    }
+    catch(error){
+      return false;
+    }
+}
 }

@@ -14,6 +14,10 @@ export class NotificationsService {
     }
 
     sendGameRequestNotification(userId: number, friendId: number) {
+        //debug
+        console.log("sendGameRequestNotification triggered");
+        //end debug
+
         this.eventEmitter.emit('gameRequest', userId, friendId);
     }
 
