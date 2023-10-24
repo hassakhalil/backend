@@ -89,6 +89,7 @@ export class AppController {
             method: 'POST',
             body:   '{"twoFactorAuthCode": "string"}',
           }
+          //return res.redirect("http://localhost:5173/2fa");
         }
         else{
           //generate token
@@ -97,6 +98,7 @@ export class AppController {
           res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
         }
       }
+      //return res.redirect("http://localhost:5173/profile/me");
       return user.username;
     }
     
@@ -118,7 +120,7 @@ export class AppController {
       }
       const token = await this.authService.loginWith2fa(req.user, us.is_two_factor_auth_enabled);
       res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
-      return us.username;
+      // return us.username;
 }
       
   @Post('/set-username')
@@ -206,13 +208,19 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
       const path  = await this.usersService.getAvatar(user.username);
       if (path.indexOf('cdn.intra.42.fr') === -1 && path !== null){
           //remove old avatar
-          fs.unlinkSync(join('/backend/public','avatars', path));
+          //update path before romeving it
+          //ectract the filename from the path
+          let newPath = path.split('/').pop();
+          //debug
+          console.log(newPath);
+          //end debug
+          fs.unlinkSync(join('/backend/public','avatars', newPath));
       }
       const isSaved = this.usersService.updateAvatar(file.filename, this.authService.extractIdFromPayload(req.user));
       if (!isSaved){
         throw new HttpException('Failed to upload avatar', HttpStatus.BAD_REQUEST);
       }
-      return 'Avatar uploaded seccussfully';
+      return file.filename;
     }
 
   @Get('/profile/:username')
@@ -269,15 +277,15 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     }
   }
 
-  @Get('/load-user/:id')
-  @UseGuards(Jwt2faAuthGuard)
-  async loadUser(@Param('id') id: string) {
-      const user = await this.usersService.findById(+id);
-      if (!user){
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-      }
-      return user;
-  }
+  // @Get('/load-user/:id')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async loadUser(@Param('id') id: string) {
+  //     const user = await this.usersService.findById(+id);
+  //     if (!user){
+  //       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  //     }
+  //     return user;
+  // }
 
   @Post('/logout')
   @UseGuards(Jwt2faAuthGuard)
@@ -287,6 +295,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     this.authService.addToBlacklist(token);
     //clear the cookie
     response.clearCookie('jwt');
+    //response.redirect('http://localhost:5173');
     return 'Logged out seccussfully';
   }
 
