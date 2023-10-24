@@ -1,4 +1,4 @@
-import { UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { UseFilters, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { WebSocketGateway,
     WebSocketServer,
     SubscribeMessage,
@@ -6,6 +6,8 @@ import { WebSocketGateway,
     OnGatewayDisconnect,
     MessageBody,
     ConnectedSocket,
+    BaseWsExceptionFilter,
+    WsResponse,
 } from "@nestjs/websockets";
 import { UsersService } from "src/users/users.service";
 import { Server, Socket }  from 'socket.io';
@@ -15,18 +17,19 @@ import { joinRoomDto } from "./dto/joinRoom.dto";
 import { ChatDto } from "./dto/chat.dto";
 import { OnEvent } from "@nestjs/event-emitter";
 import { NotificationsService } from "./event.notifications";
+import { CustomWsExceptionsFilter } from "./custom-ws-exception.filter";
 
 @WebSocketGateway()
+@UsePipes(ValidationPipe)
+@UseFilters(CustomWsExceptionsFilter)
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     constructor(private usersService: UsersService, private jwtService: JwtService, private notifications: NotificationsService) {}
 
     @WebSocketServer() server: Server = new Server();
     private clients: Map<string, number> = new Map();
 
-
     @SubscribeMessage('chat')
-    @UsePipes(new ValidationPipe())
-    async handleChatEvent(@MessageBody() payload: ChatDto, @ConnectedSocket() client: Socket): Promise<any>{
+    async handleChatEvent(@MessageBody() payload: ChatDto, @ConnectedSocket() client: Socket){
         //debug
         // console.log("payload in chat = ",payload);
         //end debug
@@ -51,24 +54,25 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
                         this.server.to(payload.roomId).emit('chat', payload); //broadcast messages
                     }
                 }
-                else{
-                    console.log("client is muted");
-                }
+                // else{
+                //     console.log("client is muted");
+                // }
             }
         }
-        return payload;  
+        // return  payload;  
     }
 
     @SubscribeMessage('join-room')
-    @UsePipes(new ValidationPipe())
-    async handleJoinRoomEvent(@MessageBody() payload: ChatDto, @ConnectedSocket() client: Socket) {
+    // @UsePipes(CustomValidationPipe)
+    async handleJoinRoomEvent(@MessageBody() payload: joinRoomDto, @ConnectedSocket() client: Socket) {
+        // console.log("payload in join room = ",payload);
         let hasAccess = false;
         if (this.clients.has(client.id)){
             hasAccess = await this.usersService.hasAccessToRoom(this.clients.get(client.id), +payload.roomId);
         }
         if (hasAccess){
             //let the client join the room to recieve reel time updates
-            console.log("joined room");
+            // console.log("joined room");
             // await this.server.in(payload.socketId).socketsJoin(payload.roomId);
             await client.join(payload.roomId);
 
@@ -79,34 +83,30 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     async handleConnection(@ConnectedSocket() client: Socket): Promise<void> {
-        // triger the user state change to active ( use event emeter) 
-        //debug
-        // console.log(socket.id);
-
-        //end debug
-        //add auth here
-        let Payload = null;
         try {
             const Cookie = client.handshake.headers.cookie.split("=")[1];
             // console.log("Cookie = ",Cookie);
             const payload = await this.jwtService.verifyAsync(Cookie, { secret: process.env.JWT_CONST });
-            Payload = payload;
             // console.log("Payload = ",Payload);
+            //add the client to the map
+            // console.log('payload = ',payload)
+            const user = await this.usersService.findOne(payload.sub);
+            if (user){
+                // console.log("user = ",user);
+                this.clients.set(client.id, user.id);
+                // console.log("clients after connect = ",this.clients);  
+                //save the user state in the database
+                const isSaved = await this.notifications.saveUserState(user.id, "online");
+                //broadcast the user state change to all connected the users
+                this.server.emit('State', {id: user.id, username: user.username, avatar: user.avatar, state: "online"});
+            }
         }catch(error){
-            console.log(error);
+            // console.log(error);
             // throw new WsException('unauthorized');
             client.disconnect();
+            // throw new Error('unauthorized');
             //throw error
         }
-        //add the client to the map
-        const user = await this.usersService.findOne(Payload.sub);
-
-        this.clients.set(client.id, user.id);
-        console.log("clients after connect = ",this.clients);  
-        //save the user state in the database
-        const isSaved = await this.notifications.saveUserState(user.id, "online");
-        //broadcast the user state change to all connected the users
-        this.server.emit('State', {id: user.id, username: user.username, avatar: user.avatar, state: "online"});
            
     }
 
@@ -115,15 +115,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         //remove the client form the map
         // console.log("clients after disconnect = ",this.clients);
         // this.logger.log(`Socket disconnected ${socket}`);
-   
-        const userId = this.clients.get(client.id);
-        const user = await this.usersService.findById(userId);
-        //save the user state in the database
-        const isSaved = await this.notifications.saveUserState(userId, "offline");
-        //broadcast the user state change to all connected the users
-        this.server.emit('State', {id: userId, username: user.username, avatar: user.avatar, state: "offline"});
-        //remove client from map
-        this.clients.delete(client.id);
+        try{
+            const userId = this.clients.get(client.id);
+            const user = await this.usersService.findById(userId);
+            //save the user state in the database
+            if (user){
+                const isSaved = await this.notifications.saveUserState(userId, "offline");
+                //broadcast the user state change to all connected the users
+                this.server.emit('State', {id: userId, username: user.username, avatar: user.avatar, state: "offline"});
+                //remove client from map
+                this.clients.delete(client.id);
+            }
+        }
+        catch(error){
+            // console.log(error);
+            return ;
+        }
     }
 
     @OnEvent('friendRequest')

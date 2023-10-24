@@ -7,13 +7,16 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { BaseWsExceptionFilter } from '@nestjs/websockets';
+import { IoAdapter } from '@nestjs/platform-socket.io';
+import { CustomWsExceptionsFilter } from './chat/custom-ws-exception.filter';
+import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 
 
 async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create(AppModule, new ExpressAdapter());
   app.useGlobalPipes(new ValidationPipe());
-
   app.enableCors( {
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
