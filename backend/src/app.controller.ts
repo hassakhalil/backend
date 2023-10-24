@@ -11,10 +11,9 @@ import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import { RoomSettingsDto } from './users/dto/roomSettings.dto';
-import { dirname, join } from 'path';
+import { join } from 'path';
 import { TfaCodeDto } from './users/dto/tfaCode.dto';
 import { NotificationsService } from './chat/event.notifications';
-import { profile } from 'console';
 
 export const multerConfig = {
   storage: diskStorage({

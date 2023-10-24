@@ -11,9 +11,7 @@ services:
     ports:
       - '5432:5432'
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: ./backend/
     container_name: backend
     env_file:
       - backend/.env
