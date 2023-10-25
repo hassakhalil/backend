@@ -1,0 +1,12 @@
+<svg width="200" height="100" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Mask Group">
+<mask id="mask0_602_28364" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="100">
+<rect id="Rectangle 16" width="200" height="100" rx="20" fill="#F44771"/>
+</mask>
+<g mask="url(#mask0_602_28364)">
+<rect id="Rectangle 17" x="159.71" width="200" height="100" rx="50" transform="rotate(45 159.71 0)" fill="#FF7193"/>
+<rect id="Rectangle 18" x="121" y="-21" width="200" height="100" rx="50" fill="white" fill-opacity="0.3"/>
+<rect id="Rectangle 19" x="69.6261" y="49.6259" width="199" height="99" rx="49.5" transform="rotate(-72.7023 69.6261 49.6259)" stroke="white" stroke-opacity="0.3"/>
+</g>
+</g>
+</svg>

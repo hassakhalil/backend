@@ -1,0 +1,59 @@
+.react-p5-wrapper{
+  display: flex;
+  justify-content: center; /* Horizontally center */
+  align-items: center; /* Vertically center */
+  /* min-height: 100vh; Ensure it takes up the full viewport height */
+  /* border: 2px solid #333; */
+}
+
+#myDiv  
+{
+    /* width: 809px;
+    height: 458.5px;
+    padding: 17.5px 32px 32px;
+    border-radius: 33px;
+    box-shadow: 0 0 40px 3px rgba(233, 132, 65, 0.8); */
+    /* #myDiv { */
+      /* border-color: #6C5DD3; */
+      padding: 10px;
+      background-color: #6C5DD3;
+      border: 1px solid black;
+      position: absolute;
+      /* right: 0%; */
+      width: 200px;
+      height: 100px;
+    /* } */
+}
+/* 
+.canvas-pong
+{
+  border-radius: 30px;
+  position: relative;
+} */
+
+canvas {
+  border: 16px solid;
+  border-radius: 30px;
+  /* padding: 17.5px 32px 32px; */
+  border-color: #6C5DD3;
+  border-radius: 33px;
+  /* object-fit: cover; */
+  background-position: center;
+  /* background-repeat: no-repeat; */
+  /* box-shadow: 0 0 40px 3px rgba(233, 132, 65, 0.8); */
+  background: white;
+}
+
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#root {
+  box-sizing: border-box;
+    width: 100vw; /* 100% of the viewport width */
+    height: 100vh; /* 100% of the viewport height */
+    /* Add any other styles you want here */ 
+}
