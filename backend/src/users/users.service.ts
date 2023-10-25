@@ -1047,12 +1047,30 @@ export class UsersService {
             type: true,
           }
         });
+        let Avatar = `http://${process.env.NEST_APP_HOST}/avatars/room.png`;
+        let Name  = roomData.name;
+        if (roomData.type === 'direct'){
+          //get the friend
+          const friendId = await this.prisma.managements.findMany({
+            where: {
+              room_id: roomData.id,
+              user_id: {
+                not: id,
+              },
+            }
+          });
+          const friend = await this.findById(friendId[0].user_id);
+          Avatar = friend.avatar;
+          Name = friend.username;
+        }
         myrooms.push({
           id: roomData.id,
-          name: roomData.name,
+          name: Name,
           type: roomData.type,
+          avatar: Avatar,
         });
       } 
+      //filter
       return myrooms;
     }
     catch(error){ 
@@ -1193,6 +1211,7 @@ export class UsersService {
                 id: allrooms[i].id,
                 name: allrooms[i].name,
                 type: allrooms[i].type,
+                avatar: `http://${process.env.NEST_APP_HOST}/avatars/room.png`,
               });
             }
         }
