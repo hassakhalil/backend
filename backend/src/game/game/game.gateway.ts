@@ -14,7 +14,7 @@ import { Jwt2faAuthGuard } from 'src/auth/jwt-2fa-auth.guard';
 @WebSocketGateway(
   {
     cors: {
-      origin: ['http://localhost:5173'],
+      origin: [`http://${process.env.REACT_APP_HOST}`],
     },
   }
 )

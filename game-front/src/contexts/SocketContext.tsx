@@ -15,7 +15,7 @@ interface SocketProviderProps {
 export const SocketContext = createContext<Socket>({} as Socket);
 
 export const SocketProvider = ({ children, customParam }: SocketProviderProps) => {
-    const socket = io("http://localhost:3000", {
+    const socket = io(`http://${import.meta.env.VITE_API_UR}`, {
       query: {
         gameMode: customParam.gameMode,
         gameDuration : customParam.gameDuration,

@@ -156,7 +156,7 @@ export class UsersService {
           intra_id: id ,
         },
         data: {
-          avatar: "http://localhost:3000/avatars/" + path,
+          avatar: `http://${process.env.NEST_APP_HOST}/avatars/` + path,
         },
       });
       return true;
