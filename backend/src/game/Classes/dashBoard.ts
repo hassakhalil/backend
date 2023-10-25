@@ -21,5 +21,6 @@ export class dashBoard
     // queue: queueClass[] = [];
     // gameId: number
     allPlayersIDs : playersIdType[] = []
+    allUsersIDs : number[] =[];
     playersNumber : playersType[] = []
 }

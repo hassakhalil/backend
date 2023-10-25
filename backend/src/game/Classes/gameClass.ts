@@ -11,6 +11,7 @@ export class gameClass{
     initialTime : number;
     players : playerClass[] = [];
     intervalId : NodeJS.Timeout
+    
     currentTime : number[] = [];
     // score: number[] = [];
     gameType: string;

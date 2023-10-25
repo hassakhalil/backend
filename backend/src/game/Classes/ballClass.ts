@@ -9,6 +9,7 @@ export class ballClass {
   yspeed = 1 ;
   progress_speed = 0;
   bot_error_ratio = 0.20;
+  RATE = 1000 / 60;
   constructor(height: number, width: number) {
     this.height = height;
     this.width = width;
@@ -19,6 +20,7 @@ export class ballClass {
     this.y = this.y + this.yspeed;
     // if (gameMode === 'botMode')
       this.progress_speed += 0.005;
+      this.RATE -= 0.96997; 
     // this.progress_speed += 0.000025;
   }
   // if (this.y - this.r < p.y + p.h/2 &&
@@ -69,22 +71,18 @@ export class ballClass {
       this.yspeed  = this.yspeed * -1;
     if (this.x - 10 >= this.width)
     {
-      if (botMode)
-      {
-        if (this.bot_error_ratio === 0.10)
-          this.bot_error_ratio -= 0.05;
-        else
-          this.bot_error_ratio -= 0.10;
-      }
       this.reset();
       this.score[0] += 1;
       this.progress_speed = 0;
+      this.RATE = 1000 / 60;
+      // RATE = 60;
     }
     if (this.x + 10 <= 0)
     {
       this.reset();
       this.score[1] += 1;
       this.progress_speed = 0;
+      this.RATE = 1000 / 60;
     }
   }
 }

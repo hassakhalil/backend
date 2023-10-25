@@ -6,7 +6,7 @@ import { DkChatConv } from "./DkChatConv";
 import { ChatConv } from "./Chatconv";
 // import { UserContext } from "../../pages/Profile";
 // import { UserContext } from "../../pages/Chat";
-// import { ChatSocketContext } from "./contexts/chatContext";
+// import { Chat   } from "./contexts/chatContext";
 interface Friend {
   id: number;
   username: string;

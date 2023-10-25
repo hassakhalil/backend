@@ -18,6 +18,7 @@ import { UsersService } from './users/users.service';
     AuthModule,
     UsersModule,
     PrismaModule,
+    GameModule,
     ChatModule,
     ServeStaticModule.forRoot({
       rootPath: '/backend/public/',

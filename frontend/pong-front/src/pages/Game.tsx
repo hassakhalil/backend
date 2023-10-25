@@ -13,12 +13,6 @@ import React from "react";
 
 
 
-// interface customParam
-// {
-
-//   gameDuration: string;
-// }
-
 export function Game () {
 	const socket = useContext(SocketContext);
 
@@ -33,7 +27,7 @@ export function Game () {
 			</div>
 				<GameApp />
 			<div className="pt-32 lg:pl-28 pl-10 pb-10">
-				<GameTitle/>
+				{/* <GameTitle/> */}
 			</div>
 			</div>
 			</div>

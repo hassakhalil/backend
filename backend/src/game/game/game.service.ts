@@ -12,13 +12,20 @@ import { coordonationDTO } from '../DTOs/coordonation.DTO';
 import { paddleClass } from '../Classes/paddleClass';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { botClass } from '../Classes/botClass';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { UsersService } from 'src/users/users.service';
 // import { GameGateway } from './game.gateway';
+
+// let RATE = 60;
 @Injectable()
 export class gameService {
     private dashBoard: dashBoard;
-    constructor() {
+    // private prisma: PrismaService;
+
+    constructor(private prisma: PrismaService, private user: UsersService) {
+        this.prisma = prisma;
         this.dashBoard = new dashBoard();
-        for (let i = 1; i <= 5; i++) {
+        for (let i = 1; i <= 6; i++) {
             this.dashBoard.games.push(new gameTypes());
             this.dashBoard.playersNumber.push(new playersType());
             this.dashBoard.allPlayersIDs.push(new playersIdType());
@@ -28,18 +35,24 @@ export class gameService {
         let gameDuration = this.getGameDuration(socket);
 
         const gp_index = this.matchPlayerFromSocketId(socket);
-        console.log("socket" + socket.id);
-        console.log("game_index" + gp_index[0]);
-        console.log("gamDuration" + gameDuration);
+        if (this.IsDataValid(gameDuration, gp_index[0]))
+            return;
+        // //console("socket" + socket.id);
+        // //console("game_index" + gp_index[0]);
+        // //console("gamDuration" + gameDuration);
         return (this.dashBoard.games[gameDuration].game[gp_index[0]].gameId);
     }
     isGameOpen(gameDuration: number) {
-        console.log(this.dashBoard.playersNumber[gameDuration].Number % 2)
+        //console(gameDuration);
+        // //console("players module"  + this.dashBoard.playersNumber[gameDuration].Number % 2)
+        // //console("player number = " + this.dashBoard.playersNumber[gameDuration].Number);
+        if (!this.dashBoard.playersNumber[gameDuration])
+            return (0);
         return (this.dashBoard.playersNumber[gameDuration].Number % 2)
     }
     getGameDuration(socket: Socket) {
         let gp_index: number[] = []
-        let gameDuration = 1;
+        let gameDuration = 0
 
         while (gameDuration !== 5) {
             if (this.dashBoard.allPlayersIDs[gameDuration].PlayersIDs.indexOf(socket.id) !== -1)
@@ -48,22 +61,24 @@ export class gameService {
         }
         return (-1);
     }
-
+    
     matchPlayerFromSocketId(socket: Socket): number[] {
         let gp_index: number[] = [];
-        let gameDuration = 1;
-        let tmp_value = 1;
+        let gameDuration = 0;
+        let tmp_value = 0;
         let index = 0;
-        while (tmp_value !== 4) {
+        while (tmp_value !== 5) {
             if (this.dashBoard.allPlayersIDs[tmp_value].PlayersIDs)
-                index = this.dashBoard.allPlayersIDs[tmp_value].PlayersIDs.indexOf(socket.id)
+            index = this.dashBoard.allPlayersIDs[tmp_value].PlayersIDs.indexOf(socket.id)
             if (index !== -1)
-                break;
-            tmp_value += 1;
+            break;
+        tmp_value += 1
         }
         gameDuration = tmp_value
-        if (!this.dashBoard.games[gameDuration])
+        if (!this.dashBoard.games[gameDuration].game)
+        {
             return;
+        }
         for (let index = 0; index <= this.dashBoard.games[gameDuration].game.length - 1; index++) {
             if (this.dashBoard.games[gameDuration].game[index].players[0].socketId === socket.id) {
                 gp_index.push(index)
@@ -76,10 +91,12 @@ export class gameService {
                 break;
             }
         }
-        console.log(gp_index[0], gp_index[1]);
         return (gp_index);
     }
-    createGame(@ConnectedSocket() socket: Socket , gameDuration: string | string[]) {
+    
+
+
+    createGame(@ConnectedSocket() socket: Socket , gameDuration: string | string[], user_id : number) {
         const metaData =
         {
             windowWidth: 683, windowHeight: 331,
@@ -88,24 +105,27 @@ export class gameService {
         let gameInstance = new gameClass();
         let playerInstance = new playerClass(0 + 10,
             metaData.windowHeight);
-        let ballInstance = new ballClass(metaData.windowHeight, metaData.windowWidth);
-        gameInstance.players.push(playerInstance);
-        gameInstance.players[0].socketId = socket.id;
-        gameInstance.gameDuration = parseInt(gameDuration.toString(), 10) - 1;
-        console.log("gameDuration + " + gameInstance.gameDuration);
-        gameInstance.ball = ballInstance;
-        // gameInstance.gameMode = gameMode;
-        gameInstance.gameStatus = 'Waiting'
-        gameInstance.ball.score.push(0);
-        gameInstance.ball.score.push(0);
-        gameInstance.gameId = randomUUID()
-        socket.join(gameInstance.gameId);
-        // console.log("gameDuration = +" + gameDuration);
+            playerInstance.user_id = user_id;
+            console.log("me user_id" + playerInstance.user_id);
+            let ballInstance = new ballClass(metaData.windowHeight, metaData.windowWidth);
+            gameInstance.players.push(playerInstance);
+            gameInstance.players[0].socketId = socket.id;
+            gameInstance.gameDuration = parseInt(gameDuration.toString(), 10) - 1;
+            // //console("gameDuration + " + gameInstance.gameDuration);
+            gameInstance.ball = ballInstance;
+            // gameInstance.gameMode = gameMode;
+            gameInstance.gameStatus = 'Waiting'
+            gameInstance.ball.score.push(0);
+            gameInstance.ball.score.push(0);
+            gameInstance.gameId = randomUUID()
+            socket.join(gameInstance.gameId);
+        // //console("gameDuration = +" + gameDuration);
         this.dashBoard.games[gameInstance.gameDuration].game.push(gameInstance)
         this.dashBoard.playersNumber[gameInstance.gameDuration].Number += 1;
         this.dashBoard.allPlayersIDs[gameInstance.gameDuration].PlayersIDs.push(socket.id);
+        this.dashBoard.allUsersIDs.push(user_id);
     }
-
+    
     botJoinGame(gameDuration: number) {
         const metaData =
         {
@@ -114,38 +134,61 @@ export class gameService {
         };
         let playerInstance = new botClass(metaData.windowWidth - 10,
             metaData.windowHeight);
-        this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].players.push(playerInstance);
-        this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].players[1].socketId = "botMode";
-        this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].gameStatus = 'playing';
-        this.dashBoard.playersNumber[gameDuration].Number += 1;
-        return this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].gameId;
+            playerInstance.user_id = 42;
+            playerInstance.socketId = 'AI player';
+            this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].players.push(playerInstance);
+            this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].gameStatus = 'playing';
+            this.dashBoard.playersNumber[gameDuration].Number += 1;
+            return this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].gameId;
+        }
+        
+        gameTimer(socket: Socket, time?: number) {
+            let gp_index = this.matchPlayerFromSocketId(socket);
+            let gameDuration = this.getGameDuration(socket);
+            let score = this.getScore(socket);
+            let PlayersID = this.getPlayersId(socket);
+            
+            if (time) {
+                this.dashBoard.games[gameDuration].game[gp_index[0]].initialTime = new Date().getTime();
+                this.startInterval(socket);
+            }
+            if (!this.dashBoard.games[gameDuration].game[gp_index[0]])
+                return ;
+            var currentTime = new Date().getTime(); 
+            var timeDifference = currentTime - this.dashBoard.games[gameDuration].game[gp_index[0]].initialTime;
+            socket.emit('Score', this.getScore(socket));
+            this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime[0] = Math.floor(timeDifference / (1000 * 60));
+            this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime[1] = Math.floor((timeDifference % (1000 * 60)) / 1000);
+            if (this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime[0] === gameDuration + 1) {
+            if (score[0] > score[1])
+            {
+                this.dashBoard.games[gameDuration].game[gp_index[0]].res[1] = PlayersID[0];
+            }
+            else if (score[0] < score[1])
+            this.dashBoard.games[gameDuration].game[gp_index[0]].res[1] = PlayersID[1];
+            else
+            {
+                console.log('---------> Draw');
+                this.dashBoard.games[gameDuration].game[gp_index[0]].res[1] = 'Draw';
+            }
+        this.dashBoard.games[gameDuration].game[gp_index[0]].res[0] = 'false';
+        socket.emit('delay', this.getGameResult(socket));
+        socket.disconnect();
+    }
+}
+    userInGame(user_id : number)
+    {
+        return (this.dashBoard.allUsersIDs.indexOf(user_id));
     }
 
-    gameTimer(socket: Socket, time?: number) {
-        let gp_index = this.matchPlayerFromSocketId(socket);
+    async botAchievement(socket: Socket)
+    {
+        let gp_index = this.matchPlayerFromSocketId(socket)
         let gameDuration = this.getGameDuration(socket);
-        let score = this.getScore(socket);
-        let PlayersID = this.getPlayersId(socket);
+        let id_0 = this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].user_id;
 
-        if (time) {
-            this.dashBoard.games[gameDuration].game[gp_index[0]].initialTime = new Date().getTime();
-            this.startInterval(socket);
-        }
-
-        var currentTime = new Date().getTime(); 
-        var timeDifference = currentTime - this.dashBoard.games[gameDuration].game[gp_index[0]].initialTime;
-        this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime[0] = Math.floor(timeDifference / (1000 * 60));
-        this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime[1] = Math.floor((timeDifference % (1000 * 60)) / 1000);
-        if (this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime[0] === gameDuration + 1) {
-            if (score[0] > score[1])
-                this.dashBoard.games[gameDuration].game[gp_index[0]].res[1] = PlayersID[0];
-            else if (score[0] < score[1])
-                this.dashBoard.games[gameDuration].game[gp_index[0]].res[1] = PlayersID[1];
-            this.dashBoard.games[gameDuration].game[gp_index[0]].res[0] = 'false';
-            socket.emit('delay', this.getGameResult(socket));
-            console.log("res = " + this.getGameResult(socket));
-            socket.disconnect();
-        }
+        if (this.dashBoard.games[gameDuration].game[gp_index[0]].ball.score[0] === 5)
+            await this.checkAchievements(socket, 'Won Over AI Player', id_0);
     }
 
     botTimer(socket: Socket, start ?: number) {
@@ -153,41 +196,184 @@ export class gameService {
         let gameDuration = this.getGameDuration(socket);
         let score = this.getScore(socket);
         let PlayersID = this.getPlayersId(socket);
-
+        
         if (start)
-            this.botstartInterval(socket);
-        if (score[0] === 5 || score[1] === 5)
+        this.botstartInterval(socket);
+    socket.emit('Score', this.getScore(socket));
+    // score[0] = 5;
+    if (score[0] === 5 || score[1] === 5)
+    {
+        if (score[0] > score[1])
         {
-            // console.log(score);
-            if (score[0] > score[1])
-                this.dashBoard.games[gameDuration].game[gp_index[0]].res[1] = PlayersID[0];
-            else if (score[0] < score[1])
-                this.dashBoard.games[gameDuration].game[gp_index[0]].res[1] = PlayersID[1];
-            this.dashBoard.games[gameDuration].game[gp_index[0]].res[0] = 'false';
-            socket.emit('delay', this.getGameResult(socket));
-            console.log("res = " + this.getGameResult(socket));
-            socket.disconnect();
+            this.dashBoard.games[gameDuration].game[gp_index[0]].res[1] = 'You Won';
+            console.log('me won');
+        }
+    this.dashBoard.games[gameDuration].game[gp_index[0]].res[0] = 'false';
+    socket.emit('delay', this.getGameResult(socket));
+    socket.disconnect();
+
+    }
+}
+
+    setResult(socket : Socket)
+    {
+        let gp_index = this.matchPlayerFromSocketId(socket)
+        let gameDuration = this.getGameDuration(socket);
+
+        if (this.IsDataValid(gameDuration, gp_index[0]))
+        return;
+        if (this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].socketId === socket.id)
+        {
+            this.dashBoard.games[gameDuration].game[gp_index[0]].ball.score[0] = 0;
+            this.dashBoard.games[gameDuration].game[gp_index[0]].ball.score[1] = 3;
+        }
+        else
+        {
+            this.dashBoard.games[gameDuration].game[gp_index[0]].ball.score[0] = 3;
+            this.dashBoard.games[gameDuration].game[gp_index[0]].ball.score[1] = 0;
         }
     }
+    Probability(rating_0, rating_1) {
+        return (
+            (1.0 * 1.0) / (1 + 1.0 * Math.pow(10, (1.0 * (rating_0 - rating_1)) / 400))
+        );
+    }
+    updateEloSystem(rating_0: number, rating_1: number, res : number)
+    {
+        const K = 30;
+        let P_1 = this.Probability(rating_0, rating_1);
+        let P_0 = this.Probability(rating_1, rating_0);
+        let new_rating : number[] = [];
+
+        if (res === 0) {
+            new_rating[0] = rating_0 + K * (1 - P_0);
+            new_rating[1] = rating_1 + K * (0 - P_1);
+        }
+        else if (res === 1){
+            new_rating[0] = rating_0 + K * (0 - P_0);
+            new_rating[1] = rating_1 + K * (1 - P_1);
+        }   
+        else
+        {
+            new_rating[0] = rating_0 + K * (0.5 - P_0);
+            new_rating[1] = rating_1 + K * (0.5 - P_1);
+        }
+        return (new_rating);
+}
+
+async giveAchievement(Name : string, id : number)
+{
+    console.log("give achievement");
+    await this.prisma.achievements.create(
+        {
+            data:
+            {
+                name : Name,
+                user_id : id,
+            }
+        }
+    )
+}
+
+async  checkAchievements(socket : Socket, achieveName : string, userId : number)
+{
+    let gp_index = this.matchPlayerFromSocketId(socket)
+    let gameDuration = this.getGameDuration(socket);
+
+    let current = await this.prisma.achievements.findMany({where: {user_id: userId}});
+    // let i = 0;
+    // console.log("achievement");
+    console.log('check');
+    for (let i = 0; i <= current.length - 1; i++)
+    {
+        if (current[i].name === achieveName)
+            return;
+    }
+    await this.giveAchievement(achieveName, userId);
+}
+
+async saveGame(socket : Socket)
+{
+    let gp_index = this.matchPlayerFromSocketId(socket)
+    let gameDuration = this.getGameDuration(socket);
+    let id_0 = this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].user_id;
+    let id_1 = this.dashBoard.games[gameDuration].game[gp_index[0]].players[1].user_id;
+    let score = this.getScore(socket);
+    let newRating;
+
+    // save new game 
+    await this.prisma.games.create({
+        data: {
+            player_one_id:       this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].user_id,
+            player_two_id:       this.dashBoard.games[gameDuration].game[gp_index[0]].players[1].user_id,
+            player_one_score:    this.dashBoard.games[gameDuration].game[gp_index[0]].ball.score[0],
+            player_two_score:    this.dashBoard.games[gameDuration].game[gp_index[0]].ball.score[1],
+        },
+    });
+    // save new game  elo
+    let user_0 = await this.prisma.users.findUnique({ where: { id: id_0 }});
+    let user_1 = await this.prisma.users.findUnique({where: { id : id_1}});
+
+    await this.checkAchievements(socket, 'Played Your First Game', id_0);
+    await this.checkAchievements(socket, 'Played Your First Game', id_1);
+    if (score[0] > score[1])
+        newRating = this.updateEloSystem(user_0.rating, user_1.rating, 0);
+    else if (score[1] > score[0])
+        newRating = this.updateEloSystem(user_0.rating, user_1.rating, 0);
+    else
+        newRating = this.updateEloSystem(user_0.rating, user_1.rating, 0.5);
+         await this.prisma.users.update({
+              where: { id: id_0 },
+              data: { rating:  newRating[0]},
+            });
+        await this.prisma.users.update({
+            where: { id: id_1 },
+              data: { rating:  newRating[1]},
+            })
+    // elo achievement
+    if (newRating[0] === 800)
+        await this.checkAchievements(socket, 'Get 800 Elo Point', id_0);
+    else if (newRating[1] === 800)
+        await this.checkAchievements(socket, 'Get 800 Elo Point', id_1);
+    let username = await this.user.findById(id_0);
+    let userData = await this.user.getProfileData(username.username);
+    const friends = userData.friends;
+    if (userData.loses + userData.wins + userData.draws === 7)
+        await this.checkAchievements(socket, 'Played 7 Games', id_0);
+    for (let i = 0; i <= friends.length - 1; i++)
+    {
+        if (friends[i].id === id_1)
+        {
+            await this.giveAchievement('Played a Game With Friend', id_0);
+            await this.giveAchievement('Played a Game With Friend', id_1);
+            break;
+        }
+    }
+    username = await this.user.findById(id_1);
+    userData = await this.user.getProfileData(username.username);
+    if (userData.loses + userData.wins + userData.draws === 7)
+        await this.checkAchievements(socket, 'Played 7 Games', id_1);
+}
 
     getGameResult(socket: Socket) {
-        let gp_index = this.matchPlayerFromSocketId(socket);
-        let gameDuration = this.getGameDuration(socket);
+    let gp_index = this.matchPlayerFromSocketId(socket);
+    let gameDuration = this.getGameDuration(socket);
+    
+    return (this.dashBoard.games[gameDuration].game[gp_index[0]].res);
+}
 
-        return (this.dashBoard.games[gameDuration].game[gp_index[0]].res);
-    }
+botstartInterval(socket: Socket) {
+    let gp_index = this.matchPlayerFromSocketId(socket);
+    let gameDuration = this.getGameDuration(socket);
+    
+    if (gameDuration === -1)
+    return;
+this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(() => {
 
-    botstartInterval(socket: Socket) {
-        let gp_index = this.matchPlayerFromSocketId(socket);
-        let gameDuration = this.getGameDuration(socket);
-
-        if (gameDuration === -1)
-            return;
-        this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(() => {
-            if (this.dashBoard.games[gameDuration].game[gp_index[0]]) {
-                this.updateballposition(socket);
-                this.botTimer(socket);
-            }
+        if (this.dashBoard.games[gameDuration].game[gp_index[0]]) {
+            this.updateballposition(socket);
+            this.botTimer(socket);
+        }
         }
             , 16)
     }
@@ -204,13 +390,15 @@ export class gameService {
                 this.gameTimer(socket);
             }
         }
-            , 16)
+            , this.dashBoard.games[gameDuration].game[gp_index[0]].ball.RATE)
     }
 
     getTime(socket: Socket) {
         let gp_index = this.matchPlayerFromSocketId(socket)
         let gameDuration = this.getGameDuration(socket);
 
+        if (this.IsDataValid(gameDuration, gp_index[0]))
+            return;
         return (this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime);
     }
 
@@ -218,7 +406,7 @@ export class gameService {
         let gp_index = this.matchPlayerFromSocketId(socket);
         let gameDuration = this.getGameDuration(socket);
 
-        console.log(this.dashBoard.games[gameDuration].game[gp_index[0]])
+        // //console(this.dashBoard.games[gameDuration].game[gp_index[0]])
         if (this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId)
             clearInterval(this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId);
     }
@@ -240,7 +428,7 @@ export class gameService {
             this.dashBoard.games[gameDuration].game[gp_index[0]].ball.edges(490, 1062);
     }
 
-    joinGame(socket: Socket, gameDuration: number) {
+    joinGame(socket: Socket, gameDuration: number, user_id : number) {
         const metaData =
         {
             windowWidth: 683, windowHeight: 331,
@@ -248,12 +436,16 @@ export class gameService {
         };
         let playerInstance = new playerClass(metaData.windowWidth - 10,
             metaData.windowHeight);
-        this.dashBoard.playersNumber[gameDuration].Number += 1;
+        this.dashBoard.playersNumber[gameDuration].Number += 1
         playerInstance.socketId = socket.id;
+        playerInstance.user_id = user_id;
+        console.log("me user_id" + playerInstance.user_id);
+        // //console( this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1]);
         this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].players.push(playerInstance);
         socket.join(this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].gameId);
         this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].gameStatus = 'playing';
         this.dashBoard.allPlayersIDs[gameDuration].PlayersIDs.push(socket.id);
+        this.dashBoard.allUsersIDs.push(user_id);
         return this.dashBoard.games[gameDuration].game[this.dashBoard.games[gameDuration].game.length - 1].gameId;
     }
 
@@ -266,11 +458,14 @@ export class gameService {
     }
 
     drawPaddles(socket: Socket) {
+        
         let gp_index = this.matchPlayerFromSocketId(socket);
         let gameDuration = this.getGameDuration(socket);
 
         let coordonation = new coordonationDTO;
-        // console.log(gp_index[0]);
+        // //console(gp_index[0]);
+        if (this.IsDataValid(gameDuration, gp_index[0]))
+        return;
         coordonation.x = this.dashBoard.games[gameDuration].game[gp_index[0]].players[gp_index[1]].paddle.x
         coordonation.y = this.dashBoard.games[gameDuration].game[gp_index[0]].players[gp_index[1]].paddle.y
         coordonation.w = this.dashBoard.games[gameDuration].game[gp_index[0]].players[gp_index[1]].paddle.w
@@ -298,6 +493,8 @@ export class gameService {
         let gp_index = this.matchPlayerFromSocketId(socket);
         let gameDuration = this.getGameDuration(socket);
 
+        if (this.IsDataValid(gameDuration, gp_index[0]))
+            return;
         this.dashBoard.games[gameDuration].game[gp_index[0]].
             players[gp_index[1]].paddle.update();
         if ((gameDuration === 4) && Math.random() < 0.75
@@ -325,8 +522,10 @@ export class gameService {
     gameloaded(socket: Socket) {
         let gameDuration = this.getGameDuration(socket);
 
-        if (gameDuration === -1 || this.dashBoard.allPlayersIDs[gameDuration].PlayersIDs.indexOf(socket.id) == -1)
-            return (undefined);
+        if (gameDuration === -1 || this.dashBoard.allPlayersIDs[gameDuration].PlayersIDs.indexOf(socket.id) === -1)
+        {
+            return (undefined)
+        }
         return (1);
     }
 
@@ -337,11 +536,13 @@ export class gameService {
         let leftPaddle;
         let rightPaddle;
 
-        if (!this.dashBoard.games[gameDuration].game[gp_index[0]])
-            return;
+        if (this.IsDataValid(gameDuration, gp_index[0]))
+        return;
+        // //console("game = " + this.dashBoard.games[gameDuration].game[gp_index[0]].ball.x)
         leftPaddle = this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].paddle;
         rightPaddle = this.dashBoard.games[gameDuration].game[gp_index[0]].players[1].paddle;
         this.dashBoard.games[gameDuration].game[gp_index[0]].ball.update();
+        
         this.dashBoard.games[gameDuration].game[gp_index[0]].ball.checkRightPaddle(rightPaddle.x,
             rightPaddle.y, rightPaddle.h);
         this.dashBoard.games[gameDuration].game[gp_index[0]].ball.checkLeftPaddle(leftPaddle.x,
@@ -350,6 +551,7 @@ export class gameService {
             this.dashBoard.games[gameDuration].game[gp_index[0]].ball.edges(490, 1062, 1);
         else
             this.dashBoard.games[gameDuration].game[gp_index[0]].ball.edges(490, 1062);
+            // //console("game = " + this.dashBoard.games[gameDuration].game[gp_index[0]].ball.x);
     }
 
     removeGame(socket: Socket) {
@@ -357,11 +559,15 @@ export class gameService {
         let gameDuration = this.getGameDuration(socket);
 
         const gameId = this.getGameId(socket);
+        if (!this.dashBoard.games[gameDuration] || !this.dashBoard.games[gameDuration].game[gp_index[0]] 
+            || !this.dashBoard.games[gameDuration].game[gp_index[0]])
+            return;
+        // console.log('game removed');
         if (this.dashBoard.games[gameDuration].game[gp_index[0]].players[1]) {
-            console.log("before = " + this.dashBoard.allPlayersIDs)
+            // console.log("before = " + this.dashBoard.allPlayersIDs)
             this.dashBoard.allPlayersIDs[gameDuration].PlayersIDs = this.dashBoard.allPlayersIDs[gameDuration].PlayersIDs
                 .filter(playerId => playerId !== this.dashBoard.games[gameDuration].game[gp_index[0]].players[1].socketId);
-            console.log("after" + this.dashBoard.allPlayersIDs)
+            // console.log("after" + this.dashBoard.allPlayersIDs)
             this.dashBoard.playersNumber[gameDuration].Number -= 1
         }
         if (this.dashBoard.games[gameDuration].game[gp_index[0]].players[0]) {
@@ -369,13 +575,12 @@ export class gameService {
                 .filter(playerId => playerId !== this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].socketId);
             this.dashBoard.playersNumber[gameDuration].Number -= 1;
         }
-        console.log("-----gameSIZE" + this.dashBoard.games[gameDuration].game.length)
-        // console.log("before" + this.dashBoard.games[gameDuration].game[0]);
-        // console.log("gameId" + gameId);
-        // console.log("gameId" + this.dashBoard.games[1].game[0].gameId);
+        if (this.dashBoard.games[gameDuration].game[gp_index[0]].players[1])
+            this.dashBoard.allUsersIDs = this.dashBoard.allUsersIDs
+                .filter(user_id => user_id !== this.dashBoard.games[gameDuration].game[gp_index[0]].players[1].user_id);
+        this.dashBoard.allUsersIDs = this.dashBoard.allUsersIDs
+        .filter(user_id => user_id !== this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].user_id);
         this.dashBoard.games[gameDuration].game.splice(gp_index[0], 1);
-        // console.log("aftre" + this.dashBoard.games[gameDuration].game[0]);
-        // console.log("-----gameSIZE" + this.dashBoard.games[gameDuration].game.length)
     }
 
     getballposition(socket: Socket) {
@@ -383,11 +588,13 @@ export class gameService {
         let gp_index = this.matchPlayerFromSocketId(socket);
         let gameDuration = this.getGameDuration(socket);
         // console.log("players number = " + this.dashBoard.playersNumber);
+        if (this.IsDataValid(gameDuration, gp_index[0]))
+        return;
         let leftPaddle = this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].paddle;
         let rightPaddle = this.dashBoard.games[gameDuration].game[gp_index[0]].players[1].paddle;
 
         ball_coordonation[0] = this.dashBoard.games[gameDuration].game[gp_index[0]].ball.x;
-        ball_coordonation[1] = this.dashBoard.games[gameDuration].game[gp_index[0]].ball.y;
+        ball_coordonation[1] = this.dashBoard.games[gameDuration].game[gp_index[0]].ball.y
 
         return (ball_coordonation);
     }
@@ -395,20 +602,36 @@ export class gameService {
         let gameDuration = this.getGameDuration(socket);
 
         let players_score: number[] = [];
-        console.log(gameDuration);
-        let game_index = this.matchPlayerFromSocketId(socket);
+        // console.log(gameDuration);
+        let game_index = this.matchPlayerFromSocketId(socket)
+        if (this.IsDataValid(gameDuration, game_index[0]))
+        return;
+        // console.log("game duration = " + gameDuration);
         players_score.push(this.dashBoard.games[gameDuration].game[game_index[0]].ball.score[0]);
         players_score.push(this.dashBoard.games[gameDuration].game[game_index[0]].ball.score[1]);
         return (players_score);
     }
 
+    IsDataValid(gameDuration :number,  index : number)
+    {
+        // console.log(this.dashBoard.games[gameDuration])
+        if (!this.dashBoard.games[gameDuration] ||
+            ! this.dashBoard.games[gameDuration].game[index] ||
+            !this.dashBoard.games[gameDuration].game[index].players[0] ||
+            !this.dashBoard.games[gameDuration].game[index].players[1])
+            return (1);
+        return (0);
+    }
     getPlayersId(socket: Socket) {
         const players_id: string[] = [];
         const gp_index = this.matchPlayerFromSocketId(socket)
         let gameDuration = this.getGameDuration(socket);
 
+        
+        if (this.IsDataValid(gameDuration, gp_index[0]))
+            return;
         players_id.push(this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].socketId);
         players_id.push(this.dashBoard.games[gameDuration].game[gp_index[0]].players[1].socketId);
         return players_id;
     }
-}
+}   

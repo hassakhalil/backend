@@ -17,7 +17,7 @@ export const SocketContext = createContext<Socket>({} as Socket);
 // console.log()
 export const SocketProvider = ({ children, customParam }: SocketProviderProps) => {
   // console.log(customParam.username + " r");
-    const socket = io(`http://${import.meta.env.VITE_API_URL}`, 
+    const socket = io("http://localhost:3000", 
     {
       withCredentials: true,
       transports: ['websocket'],

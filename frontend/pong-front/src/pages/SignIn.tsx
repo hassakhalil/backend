@@ -4,6 +4,7 @@ import background from "/src/assets/onboarding.png"
 import React from "react";
 
 export function SignIn() {
+    console.log('sign')
     return (
         <>
             <div className="mobile-bg h-screen w-screen">

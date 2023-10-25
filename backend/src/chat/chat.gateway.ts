@@ -15,17 +15,19 @@ import { JwtService } from "@nestjs/jwt";
 import { WsException } from "@nestjs/websockets";
 import { joinRoomDto } from "./dto/joinRoom.dto";
 import { ChatDto } from "./dto/chat.dto";
+import { StateDto } from "./dto/state.dto";
+
 import { OnEvent } from "@nestjs/event-emitter";
 import { NotificationsService } from "./event.notifications";
 import { CustomWsExceptionsFilter } from "./custom-ws-exception.filter";
 
 @WebSocketGateway(
-    {
-        path: '/chat',
-        cors: {
-            origin: [`http://${process.env.REACT_APP_HOST}`],
-        },
-    }
+    // {
+    //     path: '/chat',
+    //     cors: {
+    //         origin: [`http://${process.env.REACT_APP_HOST}`],
+    //     },
+    // }
     )
 @UsePipes(ValidationPipe)
 @UseFilters(CustomWsExceptionsFilter)
@@ -96,6 +98,22 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         catch(error){
             console.log(error);
             throw new WsException('Error occured while leaving the room');
+        }
+    }
+
+    @SubscribeMessage('State')
+    async handleStateEvent(@MessageBody() payload: StateDto, @ConnectedSocket() client: Socket) {
+            //save the state to the database
+            try{
+                const userId = this.clients.get(client.id);
+                const user = await this.usersService.findById(userId);
+                const isSaved = await this.notifications.saveUserState(userId, payload.state);
+                if (isSaved)
+                    this.server.emit('State', {id: userId, username: user.username, avatar: user.avatar, state: payload.state});
+        }
+        catch(error){
+            // console.log(error);
+            throw new WsException('Error occured while saving the state');
         }
     }
 

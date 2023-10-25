@@ -19,11 +19,10 @@ export const SetUsername = () => {
 
       const handleFormSubmit = async () => {
           try {
-         	const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/set-username`, formData, { withCredentials: true });
-			if (response) {
-				console.log(response.data);
+         	const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/set-username`, formData, { withCredentials: true })
+			.then ((response) => {
 				navigate("/profile/me");
-			}
+			} )
         } catch (error) {
           console.error('POST request failed:', error);
 		  Seterror(true);

@@ -42,8 +42,10 @@ export const UserContext = createContext<{
   } | undefined>(undefined);
   
 export function Profile() {
-	const { username } = useParams();
+	let { username } = useParams();
 
+    if (!username)
+      username = 'me';
 	React.useEffect(() => {
 		var timer = sessionStorage.getItem("Timer");
 		var table = sessionStorage.getItem("Table");
