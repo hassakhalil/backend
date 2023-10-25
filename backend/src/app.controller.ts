@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode, ParseFilePipeBuilder, HttpStatus, HttpException, Param, Delete} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards , UseInterceptors, UploadedFile, UnauthorizedException, HttpCode, UseFilters, HttpStatus, HttpException, Param, Delete} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Jwt2faAuthGuard } from './auth/jwt-2fa-auth.guard';
 import { AuthService } from './auth/auth.service';
@@ -14,6 +14,7 @@ import { RoomSettingsDto } from './users/dto/roomSettings.dto';
 import { join } from 'path';
 import { TfaCodeDto } from './users/dto/tfaCode.dto';
 import { NotificationsService } from './chat/event.notifications';
+import { CustomExceptionsFilter } from './CustomExceptionsFilter';
 
 export const multerConfig = {
   storage: diskStorage({
@@ -46,6 +47,7 @@ export const multerConfig = {
 
 
 @Controller()
+@UseFilters(CustomExceptionsFilter)
 export class AppController {
   constructor(private readonly authService: AuthService,
               private readonly usersService: UsersService,

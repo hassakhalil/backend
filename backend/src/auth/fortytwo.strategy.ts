@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable , HttpException, HttpStatus} from "@nestjs/common";
 import { PassportStrategy } from "@nestjs/passport";
 import { Strategy , VerifyCallback} from "passport-42";
 
@@ -29,8 +29,9 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
             };
             return done(null, user);
           } catch (error) {
-            console.log("Error in 42 strategy == ",error);
-            return done(error, false);
+            console.log("Error in 42 strategy == ");
+            // return done(error, false);
+            throw new HttpException('Error in 42 strategy', HttpStatus.BAD_REQUEST);
           }
     }
 }
