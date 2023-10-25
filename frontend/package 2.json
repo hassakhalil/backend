@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@types/js-cookie": "^3.0.4",
-    "axios": "^1.5.1"
-    
-  }
-}
