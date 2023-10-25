@@ -68,13 +68,13 @@ export class AppController {
           //set the token in a cookie
           res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
           // user does not exist 
-          // return {
-          //   message: 'you have to setup a username',
-          //   nextEndpoint:     '/set-username',
-          //   method: 'POST',
-          //   body:  '{"username": "string"}'
-          // };
-          return res.redirect(`http://${process.env.REACT_APP_HOST}/set_username`);
+          return {
+            message: 'you have to setup a username',
+            nextEndpoint:     '/set-username',
+            method: 'POST',
+            body:  '{"username": "string"}'
+          };
+          // return res.redirect(`http://${process.env.REACT_APP_HOST}/set_username`);
       }
       else {
         if (user.is_two_factor_auth_enabled){
@@ -82,13 +82,13 @@ export class AppController {
           const token  = await this.authService.login(req.user, true);
           //set the token in a cookie
           res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
-          // return {
-          //   message: 'you have to 2fa autenticate',
-          //   nextEndpoint: '2fa/authenticate',
-          //   method: 'POST',
-          //   body:   '{"twoFactorAuthCode": "string"}',
-          // }
-          return res.redirect(`http://${process.env.REACT_APP_HOST}/2fa`);
+          return {
+            message: 'you have to 2fa autenticate',
+            nextEndpoint: '2fa/authenticate',
+            method: 'POST',
+            body:   '{"twoFactorAuthCode": "string"}',
+          }
+          // return res.redirect(`http://${process.env.REACT_APP_HOST}/2fa`);
         }
         else{
           //generate token
@@ -97,8 +97,8 @@ export class AppController {
           res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
         }
       }
-      return res.redirect(`http://${process.env.REACT_APP_HOST}/profile/me`);
-      // return user.username;
+      // return res.redirect(`http://${process.env.REACT_APP_HOST}/profile/me`);
+      return user.username;
     }
     
   @Post('2fa/authenticate')
@@ -294,8 +294,8 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     this.authService.addToBlacklist(token);
     //clear the cookie
     response.clearCookie('jwt');
-    response.redirect(`http://${process.env.REACT_APP_HOST}`);
-    // return 'Logged out seccussfully';
+    // response.redirect(`http://${process.env.REACT_APP_HOST}`);
+    return 'Logged out seccussfully';
   }
 
   //chat

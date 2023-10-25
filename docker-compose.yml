@@ -23,16 +23,13 @@ services:
     volumes:
       - /Users/hassan/Desktop/back/backend/src:/backend/src
       - /Users/hassan/Desktop/back/backend/public:/backend/public
-  frontend:
-    build: ./frontend/
-    container_name: frontend
-    ports:
-      - '5173:5173'
-    # volumes:
-    #   - /Users/hassan/Desktop/back/frontend/src:/frontend/src
-    #   - /Users/hassan/Desktop/back/frontend/public:/frontend/public
-    depends_on:
-      - backend
+  # frontend:
+  #   build: ./frontend/
+  #   container_name: frontend
+  #   ports:
+  #     - '5173:5173'
+  #   depends_on:
+  #     - backend
 volumes:
   postgres:
 

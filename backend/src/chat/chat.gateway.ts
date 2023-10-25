@@ -72,13 +72,23 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
         if (hasAccess){
             //let the client join the room to recieve reel time updates
-            // console.log("joined room");
+            console.log("joined room");
             // await this.server.in(payload.socketId).socketsJoin(payload.roomId);
             await client.join(payload.roomId);
-
         }
         else{
             console.log("not joined room client does not have access to the room");
+        }
+    }
+
+    @SubscribeMessage('leave-room')
+    async handleLeaveRoomEvent(@MessageBody() payload: joinRoomDto, @ConnectedSocket() client: Socket) {
+        try{
+            await client.leave(payload.roomId);
+        }
+        catch(error){
+            console.log(error);
+            throw new WsException('Error occured while leaving the room');
         }
     }
 
