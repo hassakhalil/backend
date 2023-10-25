@@ -1,0 +1,14 @@
+<svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="add button" clip-path="url(#clip0_989_6246)">
+<circle id="bg" cx="36" cy="36" r="36" fill="#6C5DD3"/>
+<g id="e-add">
+<path id="Path" d="M36 26V46" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Path_2" d="M46 36H26" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_989_6246">
+<rect width="72" height="72" fill="white"/>
+</clipPath>
+</defs>
+</svg>
