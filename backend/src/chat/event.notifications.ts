@@ -23,6 +23,22 @@ export class NotificationsService {
         this.eventEmitter.emit('gameRequest', userId, friendId);
     }
 
+    sendGameStartNotification(gameState: string, userId: number) {
+        //debug
+        console.log("sendGameStartNotification triggered");
+        //end debug
+        this.eventEmitter.emit('gameStart', userId, "ingame");
+
+    }
+
+    sendGameEndNotification(gameState: string, userId: number) {
+        //debug
+        console.log("sendGameEndNotification triggered");
+        //end debug
+        this.eventEmitter.emit('gameEnd', userId, "online");
+    }
+
+
     //save user state
     async saveUserState(userId: number, state: string):Promise<boolean> {
         //debug
