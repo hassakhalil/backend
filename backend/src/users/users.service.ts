@@ -1364,4 +1364,23 @@ export class UsersService {
       return null;
     }
   }
+
+  async getRoomById(roomId: number) {
+    try{
+        const room = await this.prisma.rooms.findUnique({
+        where: {
+          id: roomId,
+        },
+        select: {
+          id:true,
+          name: true,
+          type: true,
+        }
+      });
+      return room;
+    }
+    catch(error){
+      return null;
+    }
+  }
 }

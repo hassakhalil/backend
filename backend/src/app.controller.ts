@@ -645,4 +645,14 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     return users;
   }
 
+  @Get('get-room/:roomId')
+  @UseGuards(Jwt2faAuthGuard)
+  async getRoom(@Req() req: Request, @Param('roomId') roomId: string){
+    const room = await this.usersService.getRoomById(+roomId);
+    // console.log(room)
+    if (!room)
+      throw new HttpException('Failed to get room', HttpStatus.BAD_REQUEST);
+    return room;
+  }
+
 }
