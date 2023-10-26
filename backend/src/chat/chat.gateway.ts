@@ -61,7 +61,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
                     //send the message to the room
                     if (isSaved){
                         //exclude the blocked users
-                        const room = this.server.sockets.adapter.rooms.get(payload.roomId);
+                        // const roomClients = this.server.sockets.adapter.rooms.get(payload.roomId);
+                        // if (roomClients){
+                        //     const ClientSocketIds = Array.from(roomClients);
+
+                        //     // for (let i=0; i< ClientSocketIds.length; i++){
+                        //     //     // if his not blocked send the message
+                        //     //     const userId = this.clients.get(ClientSocketIds[i]);
+                        //     //     const isblocked = await this.usersService.isFriendBlocked(userId, this.clients.get(client.id));
+                        //     //     if (!isblocked)
+                        //     //         this.server.to(clientSocketId).emit('chat', payload); //send message
+                        //     // }
+                        // }
                         // this.server.to(payload.roomId).except(payload.blockedUsers).emit('chat', payload); //broadcast messages
                         this.server.to(payload.roomId).emit('chat', payload); //broadcast messages
                     }

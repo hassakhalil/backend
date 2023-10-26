@@ -663,4 +663,16 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     return room;
   }
 
+  @Get('get-member-role/:username')
+  @UseGuards(Jwt2faAuthGuard)
+  async getMemberRole(@Req() req: Request, @Param('username') username: string, @Body() body: RoomSettingsDto){
+    const user = await this.usersService.findByUsername(username);
+    const room = await this.usersService.findRoomByName(body.name);
+    const role = await this.usersService.getMyRole(user.id, room.id);
+    if (!role)
+      throw new HttpException('Failed to get role', HttpStatus.BAD_REQUEST);
+    return role;
+  }
+
+
 }
