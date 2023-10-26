@@ -3,7 +3,7 @@ import { Chatprofile } from "./Chatprofile"
 import { DirectMsg } from "./DirectMsg"
 import { GroupMsg } from "./GroupMsg"
 import { SocketContext } from './contexts/SocketContext';
-import { SocketProvider } from "./contexts/chatContext";
+// import { SocketProvider } from "./contexts/chatContext";
 import React from "react";
 interface MyUserData {
 	user_data: {

@@ -3,9 +3,21 @@ import { GameCard } from "../Home/GameCard/GameCard";
 import rmv from "/src/assets/remove.svg"
 import React from "react";
 import axios from "axios";
-
+import { useDataContext } from "./States/stateContext";
 interface Props {
 	hide: () => void
+}
+
+interface friendsList{
+	id:  '',
+	username: '',
+	avatar:    '',
+	state:    '',
+  }
+
+  interface DataContextProps {
+	data: friendsList[];
+	setData: React.Dispatch<React.SetStateAction<any>>;
 }
 
 export function MbGameMode ( {hide}: Props ) {
@@ -28,7 +40,7 @@ export function MbGameMode ( {hide}: Props ) {
 	loses: 0,
 	draws: 0,
 	});
-
+	const state = useDataContext();
 	useEffect(() => {
 	const fetchData = async () => {
 		try {
@@ -42,10 +54,14 @@ export function MbGameMode ( {hide}: Props ) {
 	fetchData();
 	}, []);
 
+	// let Mystate: "" | undefined = ;
+	// console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.");
+	// let is_current = "ingame";
+	// let current = (state?.data[state?.data.length && state?.data.length - 1])?.state;
 	return (
 		<>
 			{
-				remove ? null : (
+				remove ? null : ( 
 					<div className="blur-background z block lg:hidden">
 						<div className="centered-component sm:pt-28 pt-32">
 							<div className="flex flex-col w-screen h-screen bg-white shadow-lg pt-10 rounded-custom pb-5">

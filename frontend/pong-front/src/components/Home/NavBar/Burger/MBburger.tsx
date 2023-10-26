@@ -13,10 +13,40 @@ import { MbGameMode } from "../../../Profile/MbGameMode"
 import { MyContext, UserContext } from "../../../../pages/Profile"
 import { useContext } from "react";
 import { MbSettings } from "../../../settings/MbSettings"
+import { useDataContext } from "../../../Profile/States/stateContext"
+import { ChatSocketContext } from "../../../Chat/contexts/chatContext"
+
+
+
+interface friendsList{
+	id:  '',
+	username: '',
+	avatar:    '',
+	state:    '',
+  }
 
 export function  MBburger (  ) {
 
 	const data = useContext(MyContext);
+	const state = useDataContext();
+	const chatContext = useContext(ChatSocketContext);
+	useEffect(()=>
+	{
+		if (chatContext?.connected)
+		console.log('connected >>>>>>>>>>>>>>>>>>	')
+	chatContext?.on('State', (friendState : friendsList)=>
+	{
+	console.log('on state --------------------------------------<>')
+	state?.setData((old) =>
+	old.map((item : friendsList) => (item.id === friendState.id ? { ...item, ...friendState } : item))
+	)})
+
+	}, [chatContext])
+	// const {param} = useParams();
+	// let isOnline = 'ingame'
+		// console.log('before comparison-----------------------')
+		// console.log('comparison = ---------------',  (state?.data[state?.data.length - 1].state && state?.data[state?.data.length - 1].state === isOnline));
+	// console.log(param + " this is you param");
 
 
 	const initialColors: { [key: string]: string } = {
@@ -157,12 +187,13 @@ export function  MBburger (  ) {
 				<MbSettings hide={() => SetSettings(false)}/>
 			</div>
 		}
-		{game &&
-			<div>
-				<GameMode hide={() => Setgame(!game)}/>
-				<MbGameMode hide={() => Setgame(!game)}/>
-			</div> 
-		}
+		{game  && 
+					<div>
+						<GameMode hide={() => {}}/>
+						<MbGameMode  hide={() => {}}/>
+					</div>
+
+				}
 		</>
 	)
 }

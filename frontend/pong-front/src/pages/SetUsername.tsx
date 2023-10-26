@@ -3,11 +3,15 @@ import rec from "/src/assets/rectangle.svg"
 import imgPath from "/src/assets/onboarding.png"
 import React, { useContext } from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 // import { UserError } from "./Error/UserError";
 
-export const SetUsername = () => {
+interface Props {
+	setLogin: () => void
+}
+
+export const SetUsername = ( {setLogin}: Props ) => {
 	
 	// const data = useContext
 
@@ -21,6 +25,7 @@ export const SetUsername = () => {
           try {
          	const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/set-username`, formData, { withCredentials: true })
 			.then ((response) => {
+				setLogin();
 				navigate("/profile/me");
 			} )
         } catch (error) {

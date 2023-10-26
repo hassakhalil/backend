@@ -4,6 +4,8 @@ import { SocketContext, SocketProvider } from "../contexts/SocketContext";
 import { coordonation } from "./SketchInterfaces/coordonation";
 import { P5CanvasInstance, ReactP5Wrapper} from "react-p5-wrapper";
 import { createContext } from "react";
+import { ChatSocketContext, ChatsocketProvider } from "../../components/Chat/contexts/chatContext";
+import { useDataContext } from "../../components/Profile/States/stateContext";
 
 // import { Result } from "postcss";
 
@@ -11,16 +13,29 @@ import { createContext } from "react";
 // interface Props {
 //   parentCallback: (Score_holder: number[]) => void;
 // } 
+interface friendsList{
+	id:  '',
+	username: '',
+	avatar:    '',
+	state:    '',
+  }
+  interface DataContextProps {
+	  data: friendsList[];
+	  setData: React.Dispatch<React.SetStateAction<any>>;
+	}
 
 const GameCanvas = ( ) => {
   const socket = useContext(SocketContext);
+  
   const Score : number[] = [];
   let div : any;
   let canvasTime : string[] = [];
   canvasTime[0] = 'false';
   canvasTime[1] = 'waiting'
   let time : number[] = [];
+  let leaveGame = 'online';
   // let backgroundImage : Image;
+  // let gamestate;
   console.log("GameCanvas");
   useEffect(() =>
   {
@@ -28,6 +43,7 @@ const GameCanvas = ( ) => {
     {
       canvasTime[0] = state[0];
       canvasTime[1] = state[1];
+        // chatSocket?.emit('join-room'{roomId});
       console.log(canvasTime);
     })
 
@@ -36,7 +52,7 @@ const GameCanvas = ( ) => {
       time[0] = currentTime[0];
       time[1] = currentTime[1];
     })
-
+    
     return() =>
     {
       socket.off('delay');
@@ -53,9 +69,13 @@ const GameCanvas = ( ) => {
     p5.setup = () => { 
       const canvas = p5.createCanvas(p5.windowWidth / 2, p5.windowHeight / 2);
       paddles = new Paddles(p5);
+      // chatSocket.emit('State', 'inGame');
+      // console.log('in game data li jat', state?.data);
+      // chatSocket.emit('state');
     };
-
+    
     p5.draw = () => {
+      // chatSocket.emit()
       p5.resizeCanvas(p5.windowWidth / 2, p5.windowHeight / 2);
       if  (canvasTime[0] === 'true')
       {
@@ -101,6 +121,13 @@ const GameCanvas = ( ) => {
       }
       else
       {
+        // if (leaveGame === 'ingame')
+        //   {
+        //     let state = 'online';
+        //     if (chatSocket?.connected)
+        //       chatSocket?.emit('State', {state});
+        //     leaveGame = 'online';
+        //   }
         // console.log("text");
         p5.fill('#6C5DD3');
         p5.textSize(32);
@@ -118,6 +145,7 @@ const GameCanvas = ( ) => {
         }
         else
         {
+          console.log(canvasTime[1]);
           // console.log(canvasTime[1] + " && " + client_id);
           p5.text('Game Over', p5.map(683 / 2, 0, 683, 0, (p5.windowWidth / 2)) ,
           p5.map(331 / 2, 0, 331, 0, (p5.windowHeight / 2)));

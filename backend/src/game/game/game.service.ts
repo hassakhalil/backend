@@ -201,6 +201,7 @@ export class gameService {
         this.botstartInterval(socket);
     socket.emit('Score', this.getScore(socket));
     // score[0] = 5;
+
     if (score[0] === 5 || score[1] === 5)
     {
         if (score[0] > score[1])

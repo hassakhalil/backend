@@ -45,10 +45,10 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 		roomId: room.id.toString()
 	};
 	console.log("--------------------------------", prop_room, members)
-	socket.emit('join-room', joinRoom);
+	socket?.emit('join-room', joinRoom);
 
 	useEffect(() => {
-		socket.on('chat', (data: ChatDto) => {
+		socket?.on('chat', (data: ChatDto) => {
 
 			// console.log(data.roomId === prop_room.id.toString())
 			// if (prop_room.id === data.roomId.toString())
@@ -72,7 +72,7 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 		// console.log('wa7ed akhor');
 
 		return () => {
-			socket.off('chat');
+			socket?.off('chat');
 		};
 	}, []);
 	// }, [rerender]);
@@ -98,7 +98,7 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 			userId: profile.user_data.id,
 			message: message,
 		}
-		socket.emit('chat', chat);
+		socket?.emit('chat', chat);
 		// memoizedRef.current = [...memoizedRef.current, Data];
 		console.log('new msg update ref');
 		// const updatedMessages = [...messages, {

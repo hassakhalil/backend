@@ -4,20 +4,27 @@ import { SocketContext } from './contexts/SocketContext';
 // import {socket} from './contexts/SocketContext'
 import "./gameApp.css"
 import { useEffect } from 'react';
-// interface Prop1 {
-//   onpropChange1: (prop1: number) => void;
-// }
 
-// interface Prop2 {
-//   onpropChange2: (prop2: number) => void;
-// }
-
-// interface Props {
-//   parentCallback: (Score_holder: number[]) => void;
-// }
+interface friendsList{
+  id:  '',
+  username: '',
+  avatar:    '',
+  state:    '',
+}
+interface DataContextProps {
+	data: friendsList[];
+	setData: React.Dispatch<React.SetStateAction<any>>;
+  }
+  
 
 function GameApp() {
   console.log("error-game");
+  // let state : DataContextProps | undefined;
+
+	// const chatContext = useContext(ChatSocketContext);
+  // state = useDataContext();
+
+  // state?.setData('new data');
   const socket = useContext(SocketContext);
   let custom_msg: string;
   const [RenderCanvas, setRenderCanvas] = useState(true);
@@ -27,6 +34,8 @@ function GameApp() {
   // socket.emit('game Mode', gameMode);
   console.log('GameApp loaded');
   useEffect(() => {
+
+    // leaveGame = 'ingame'
     socket.on('disconnectAll', () => {
       socket.disconnect();
     })

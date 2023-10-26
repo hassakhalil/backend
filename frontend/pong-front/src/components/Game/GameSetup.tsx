@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { SocketProvider } from "../../game/contexts/SocketContext";
 import axios from "axios";
+import { GameRoute } from "./GameRoute";
 
 interface customParam
 {
@@ -12,6 +13,7 @@ interface customParam
 
 export const GameSetup  = () =>
 {
+  
   const {state} = useLocation();
   let customParam;
 
@@ -20,11 +22,11 @@ export const GameSetup  = () =>
             gameDuration : state.gameDuration,
             user_id : state.user_id,
         };
-
   return (
     <>
     <SocketProvider customParam={customParam}>
-      <Game/>
+    <GameRoute/>
+      <Game />
     </SocketProvider>
     </>
   );

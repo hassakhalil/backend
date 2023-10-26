@@ -3,6 +3,7 @@ import { GameCard } from "../Home/GameCard/GameCard";
 import rmv from "/src/assets/remove.svg"
 import axios from "axios";
 import React from "react";
+import { useDataContext } from "./States/stateContext";
 
 interface Props {
 	hide: () => void;
@@ -41,6 +42,9 @@ export function GameMode ( {hide}: Props ) {
 
 	}, []);
 
+		// const state = useDataContext();
+		// let isCurrent : string  = 'ingame';
+		// if 
 	return (
 		<>
 			{

@@ -54,7 +54,7 @@ export class GameGateway implements OnGatewayDisconnect {
         result[1] = 'You Won'
     }
     // console.log("console.logitha" + ids[1]);
-    if(ids && ids[1] !== undefined)
+    if (ids && ids[1] !== undefined)
     {
       if (ids[1] !== 'AI player' )
         await this.gameService.saveGame(Client);

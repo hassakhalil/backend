@@ -27,7 +27,7 @@ export class NotificationsService {
         //debug
         console.log("sendGameStartNotification triggered");
         //end debug
-        this.eventEmitter.emit('gameStart', userId, "ingame");
+        this.eventEmitter.emit('gameState', userId, "ingame");
 
     }
 
@@ -35,7 +35,7 @@ export class NotificationsService {
         //debug
         console.log("sendGameEndNotification triggered");
         //end debug
-        this.eventEmitter.emit('gameEnd', userId, "online");
+        this.eventEmitter.emit('gameState', userId, "online");
     }
 
 
