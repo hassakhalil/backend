@@ -777,6 +777,9 @@ export class UsersService {
     try{
       const user = await this.findByUsername(userName);
       const room = await this.findRoomByName(body.name);
+      const isUserInRoom = await this.checkIfUserExistsInRoom(user.id, body.name);
+      if (isUserInRoom)
+        return false;
       const isAdded = await this.prisma.managements.create({
         data: {
           user_id: user.id,
