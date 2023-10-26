@@ -1348,4 +1348,20 @@ export class UsersService {
       return null;
     }
   }
+
+  async getAllUsers(): Promise<any> {
+    try{
+      const users = await this.prisma.users.findMany({
+        select: {
+          id: true,
+          username: true,
+          avatar: true,
+        },
+      });
+      return users;
+    }
+    catch(error){
+      return null;
+    }
+  }
 }

@@ -636,4 +636,13 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     return role;
   }
 
+  @Get('get-all-users')
+  @UseGuards(Jwt2faAuthGuard)
+  async getAllUsers(@Req() req: Request){
+    const users = await this.usersService.getAllUsers();
+    if (!users)
+      throw new HttpException('Failed to get users', HttpStatus.BAD_REQUEST);
+    return users;
+  }
+
 }
