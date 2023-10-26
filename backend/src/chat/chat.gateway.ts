@@ -22,12 +22,12 @@ import { NotificationsService } from "./event.notifications";
 import { CustomWsExceptionsFilter } from "./custom-ws-exception.filter";
 
 @WebSocketGateway(
-    // {
-    //     path: '/chat',
-    //     cors: {
-    //         origin: [`http://${process.env.REACT_APP_HOST}`],
-    //     },
-    // }
+    {
+        path: '/chat',
+        cors: {
+            origin: [`http://${process.env.REACT_APP_HOST}`],
+        },
+    }
     )
 @UsePipes(ValidationPipe)
 @UseFilters(CustomWsExceptionsFilter)
