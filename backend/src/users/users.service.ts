@@ -988,6 +988,7 @@ export class UsersService {
             id: memebersWithoutavatar[j].user_id,
             username: user.username,
             avatar: user.avatar,
+            state: user.state,
             role: memebersWithoutavatar[j].role,
             is_banned: memebersWithoutavatar[j].is_banned,
             is_muted: memebersWithoutavatar[j].is_muted,
