@@ -1383,4 +1383,29 @@ export class UsersService {
       return null;
     }
   }
+
+  async checkIfUserIsBlocked(userId: number, friendId: number){
+    try{
+        const isUserSenderBlocked = await this.prisma.friendships.findMany({
+          where: {
+            sender_id: friendId,
+            acceptor_id: userId,
+            is_sender_blocked: true,
+          },
+        });
+        const isUserAcceptorBlocked = await this.prisma.friendships.findMany({
+          where: {
+            sender_id: userId,
+            acceptor_id: friendId,
+            is_acceptor_blocked: true,
+          },
+        });
+        if (isUserAcceptorBlocked[0] || isUserSenderBlocked[0])
+          return true;
+        return false;
+    }
+    catch(error){
+      return null;
+    }
+  }
 }

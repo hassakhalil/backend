@@ -557,7 +557,15 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     const messages = await this.usersService.getRoomMessages(+roomId);
     if (!messages)
       throw new HttpException('Failed to get messages', HttpStatus.BAD_REQUEST);
-    return messages;
+    //filter out messages of blocked users
+    let filteredMessages = [];
+    for (let i = 0; i < messages.length; i++){
+      const isBlocked = await this.usersService.checkIfUserIsBlocked(user.id, messages[i].user_id);
+      if (!isBlocked){
+        filteredMessages.push(messages[i]);
+      }
+    }
+    return filteredMessages;
   }
 
   @Get('get-other-rooms')

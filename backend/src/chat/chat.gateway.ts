@@ -60,6 +60,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
                     // console.log("isSaved = ",isSaved);
                     //send the message to the room
                     if (isSaved){
+                        //exclude the blocked users
+                        const room = this.server.sockets.adapter.rooms.get(payload.roomId);
+                        // this.server.to(payload.roomId).except(payload.blockedUsers).emit('chat', payload); //broadcast messages
                         this.server.to(payload.roomId).emit('chat', payload); //broadcast messages
                     }
                 }
