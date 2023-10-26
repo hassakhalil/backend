@@ -663,7 +663,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     return room;
   }
 
-  @Get('get-member-role/:username')
+  @Post('get-member-role/:username')
   @UseGuards(Jwt2faAuthGuard)
   async getMemberRole(@Req() req: Request, @Param('username') username: string, @Body() body: RoomSettingsDto){
     const user = await this.usersService.findByUsername(username);
