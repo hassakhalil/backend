@@ -1330,4 +1330,22 @@ export class UsersService {
       return false;
     }
   }  
+
+  async getMyRole(userId: number, roomId: number){
+    try{
+        const role = await this.prisma.managements.findMany({
+          where: {
+            user_id: userId,
+            room_id: roomId,
+          },
+          select: {
+            role: true,
+          },
+        });
+        return role[0].role;
+    }
+    catch(error){
+      return null;
+    }
+  }
 }
