@@ -44,7 +44,7 @@ export const StateProvider: React.FC<StateProviderProps> = ({ children }: StateP
     const fetchData = async () => {
       try {
         // Replace the URL with your API endpoint
-        const response = await axios.get('http://localhost:3000/profile/me', { withCredentials: true });
+        const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true });
 
         // const result = await response.json();
         console.log('data = ', response.data.friends);

@@ -43,7 +43,7 @@ export function CheckProfile ()  {
         const fetchData = async () => {
             let response
           try {
-            response = await axios.get(`http://localhost:3000/check-user/${username}`, {        
+            response = await axios.get(`http://${import.meta.env.VITE_API_URL}/check-user/${username}`, {        
                 withCredentials: true,
             });
             // console.log('response ', response.data);

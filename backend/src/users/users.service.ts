@@ -738,6 +738,9 @@ export class UsersService {
 
   async leaveRoom(memberId: number, roomId: number): Promise<boolean> {
       try{
+        const room = await this.findRoomById(roomId);
+        if (room.type === 'direct')
+          return false;
         const isDeleted = await this.prisma.managements.deleteMany({
           where: {
             user_id: memberId,
