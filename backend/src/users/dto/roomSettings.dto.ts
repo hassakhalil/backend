@@ -1,4 +1,4 @@
-import { IsStrongPassword, IsString, IsIn, IsOptional, IsDecimal, IsNumber } from "class-validator";
+import { IsStrongPassword, IsString, IsIn, IsOptional, IsNumber , Length} from "class-validator";
 
 
 export class RoomSettingsDto {
@@ -12,6 +12,7 @@ export class RoomSettingsDto {
     @IsString()
     @IsOptional()
     @IsStrongPassword()
+    @Length(8, 100)
     password:   string;
 
     @IsNumber()
