@@ -894,13 +894,18 @@ export class UsersService {
       }
   }
 
-  async kickUser(userName: string, body: RoomSettingsDto): Promise<boolean> {
+  async kickUser(userName: string, body: RoomSettingsDto, loggeduserId: number): Promise<boolean> {
     try{
       const user = await this.findByUsername(userName);
       const room = await this.findRoomByName(body.name);
       const isUserOwner = await this.checkIfUserIsOwner(user.id, body);
       if (isUserOwner)
         return false;
+
+        const isOwnerTwo = await this.checkIfUserIsOwner(loggeduserId, body);
+        const isAdmin = await this.checkIfUserIsAdmin(user.id, body);
+        if (isAdmin && !isOwnerTwo)
+          return false;
 
       const isKicked = await this.prisma.managements.deleteMany({
         where: {
@@ -917,12 +922,18 @@ export class UsersService {
     }
   }
 
-  async updateBan(userName: string, body: RoomSettingsDto, state: boolean): Promise<boolean> {
+  async updateBan(userName: string, body: RoomSettingsDto, state: boolean, loggeduserId: number): Promise<boolean> {
     try { 
         const user = await this.findByUsername(userName);
         const isOwner = await this.checkIfUserIsOwner(user.id, body);
         if (isOwner)
           return false; 
+
+        //check if both of them are admins ----return false
+        const isOwnerTwo = await this.checkIfUserIsOwner(loggeduserId, body);
+        const isAdmin = await this.checkIfUserIsAdmin(user.id, body);
+        if (isAdmin && !isOwnerTwo)
+          return false;
         const room  = await this.findRoomByName(body.name);
         const isBanned = await this.prisma.managements.updateMany({
           where: {
@@ -942,14 +953,19 @@ export class UsersService {
     }
   }
 
-  async muteMemeber(userName: string, body: RoomSettingsDto){
+  async muteMemeber(userName: string, body: RoomSettingsDto, loggeduserId: number ){
     try{
         //
         const user = await this.findByUsername(userName);
         const isOwner = await this.checkIfUserIsOwner(user.id, body);
         if (isOwner)
           return false; 
-        const room  = await this.findRoomByName(body.name);
+        //check if both of them are admins ----return false
+        const isOwnerTwo = await this.checkIfUserIsOwner(loggeduserId, body);
+        const isAdmin = await this.checkIfUserIsAdmin(user.id, body);
+        if (isAdmin && !isOwnerTwo)
+          return false;
+          const room  = await this.findRoomByName(body.name);
         const start_time  = Date.now();
         const end_time    = start_time + body.duration * 3600000;
         const isMuted = await this.prisma.managements.updateMany({
@@ -990,6 +1006,7 @@ export class UsersService {
       {
         for (let j  = 0; j < memebersWithoutavatar.length; j++){
           const user = await this.findById(memebersWithoutavatar[j].user_id);
+          if (memebersWithoutavatar[j].user_id !== userId){
           members.push({
             id: memebersWithoutavatar[j].user_id,
             username: user.username,
@@ -999,6 +1016,7 @@ export class UsersService {
             is_banned: memebersWithoutavatar[j].is_banned,
             is_muted: memebersWithoutavatar[j].is_muted,
           });
+        }
         }
       }
       return members;
