@@ -17,8 +17,6 @@ import { useDataContext } from "../../../Profile/States/stateContext"
 import { ChatSocketContext } from "../../../Chat/contexts/chatContext"
 import { useProfilecontext } from "../../../../ProfileContext"
 
-
-
 interface friendsList{
 	id:  '',
 	username: '',

@@ -595,6 +595,8 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
   async deleteFriend(@Req() req: Request, @Param('username') username: string){
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     const friend= await this.usersService.findByUsername(username);
+    if (!friend)
+      throw new HttpException('Failed to delete friend', HttpStatus.BAD_REQUEST);
     const isDeleted = await this.usersService.deleteFriend(user.id, friend.id);
     if (!isDeleted)
       throw new HttpException('Failed to delete friend', HttpStatus.BAD_REQUEST);

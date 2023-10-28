@@ -8,6 +8,7 @@ export class CustomExceptionsFilter extends BaseExceptionFilter {
         const ctx = host.switchToHttp();
         const response = ctx.getResponse<Response>();
         const request = ctx.getRequest<Request>();
+        console.log("CustomExceptionsFilter status == ", exception.getStatus());
         // const status = exception.getStatus();
         // console.log("---------------------------------------",exception);
 

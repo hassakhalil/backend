@@ -1,5 +1,6 @@
 import React from "react"
 
+
 interface Props {
 	buttonColors: { [key: string]: string }
 	strokeColor: { [key: string]: string }
