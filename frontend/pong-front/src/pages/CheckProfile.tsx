@@ -47,6 +47,7 @@ export function CheckProfile ()  {
                 withCredentials: true,
             });
             // console.log('response ', response.data);
+            console.log('boolean ', response.data.boolean);
             setIsprofile(response.data.boolean);
             console.log('res', response.data);
         } catch (error) {
@@ -58,7 +59,7 @@ export function CheckProfile ()  {
         };
 
         fetchData();
-      }, [username,]);
+      }, [username]);
     
         // fetchData();
     //   }, [isProfile]);

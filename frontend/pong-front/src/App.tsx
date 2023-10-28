@@ -12,8 +12,12 @@
 	import { GameSetup } from "./components/Game/GameSetup"
 	import axios from "axios"
 	import { CheckProfile } from "./pages/CheckProfile"
-	import { StateProvider, useDataContext } from "./components/Profile/States/stateContext"
+	import { ProfileProvider,useProfilecontext } from "./ProfileContext"
+	import { StateProvider, useDataContext, } from "./components/Profile/States/stateContext"
 import { ChatSocketContext, ChatSocketProvider } from "./components/Chat/contexts/chatContext"
+import { NavBar } from "./components/Home/NavBar/NavBar"
+// import { ProfileProvider } from "./ProfileContext"
+
 
 
 interface friendsList{
@@ -30,18 +34,19 @@ interface friendsList{
 	// 	state: string;
 	// }
 	// @IsIn(['online', 'offline', 'ingame'])
-  
 	const App: React.FC = ()=> {
 		const [islogin, setIslogin] = useState(false);
 		const [isLoading, setIsLoading] = useState(true);
 		let state : DataContextProps | undefined;
 		state = useDataContext();
 		// const chatContext = useContext(ChatSocketContext);
-
+		const Profile_data = useProfilecontext();
+		
 		// state?.setData('new data');
 		useEffect(() => {
 			// chatContext?.emit('join-room', {})
 			
+
 		const checkAuthentication = async () => {
 			try {
 			const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/is-loggedin`, { withCredentials: true });
@@ -64,12 +69,17 @@ interface friendsList{
 		return <div>Loading...</div>;
 		}
 		console.log(islogin);
+		
+
 		return (
 			<>
-			  {islogin ? (
+			  {(islogin && Profile_data) ? (
 				<ChatSocketProvider>
+				<ProfileProvider>
 				<StateProvider>
+
 				  <BrowserRouter>
+						<NavBar/>
 					<Routes>
 					  {/* Your logged-in routes go here */}
 					  <Route path={`/Profile/:username`} element={<CheckProfile />} />
@@ -81,10 +91,12 @@ interface friendsList{
 					  <Route path="/error" element={<ForOFor />} />
 					  <Route path="/" element={<Profile />} />
 					  <Route path="*" element={<ForOFor />} />
+				{/* </NavBar> */}
 					  {/* <Route path="chat/*" element={<ForOFor/>}/> */}
 					</Routes>
 				  </BrowserRouter>
 				</StateProvider>
+				</ProfileProvider>
 				</ChatSocketProvider>
 			  ) : (
 				// Your not-logged-in routes go here

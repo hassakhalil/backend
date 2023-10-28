@@ -20,9 +20,9 @@
 
 		const [game, Setgame] = React.useState(false);
 		const state = useDataContext();
-		let isOnline = 'online'
-		console.log('before comparison-----------------------')
-		console.log('comparison = ---------------',  (state?.data[state?.data.length - 1].state === isOnline));
+		// let isOnline = 'online'
+		// console.log('before comparison-----------------------')
+		// console.log('comparison = ---------------',  (state?.data[state?.data.length - 1].state === isOnline));
 		// console.log(state.);
 		// let isCurrent = 'ingame';
 		
@@ -80,7 +80,7 @@
 					<div className={`pl-8 text-[${strokeColor.img4}] font-semibold text-base`}>Games</div>
 				</button>
 					</div>
-				{game  && ((state?.data[state?.data.length - 1].state !== undefined) && (state?.data[state?.data.length - 1].state === isOnline)) && 
+				{game   && 
 					<div>
 						<GameMode hide={() => {}}/>
 						<MbGameMode  hide={() => {}}/>

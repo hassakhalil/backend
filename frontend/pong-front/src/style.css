@@ -536,382 +536,403 @@ video {
 }
 
 .gap-05 {
-  gap: 0.5rem;
-}
-
-.gap-1 {
-  gap: 1rem;
-}
-
-.gap-2 {
-  gap: 2rem;
-}
-
-.paddingLeft-40 {
-  padding-left: 40px;
-}
-
-.paddingLeft-80 {
-  padding-left: 40px;
-}
-
-.paddingLeft-10 {
-  padding-left: 10px;
-}
-
-.z-min { 
-	z-index: 99;
-}
-
-.z {
-  z-index: 9999;
-}
-
-.z1 {
-	z-index: 80000;
-  }
-
-.above-all {
-	position: absolute; /* Position the div absolutely */
-	top: 0; /* Place it at the top of the viewport */
-	left: 0; /* Place it at the left of the viewport */
-	width: 100%; /* Make it as wide as the viewport */
-	height: 100%; /* Make it as tall as the viewport */
-	z-index: 9999; /* Set a high z-index value to place it above other content */
-  }
-
-.left-5 {
-  left: 2rem;
-}
-
-.color-gray {
-  background-color: #1B1D21;
-  color: #1B1D21;
-}
-
-.p-1 {
-  padding-top: 10px;
-}
-
-.bbc {
-  -o-object-fit: cover;
-  object-fit: cover;
-}
-
-.bba {
-  width: 100vw;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-
-.zz {
-  z-index: 100000;
-}
-
-.zz1 {
-  z-index: 103;
-}
-
-.line-break {
-  border-top: 1px solid rgb(195, 195, 195);
-  width: 100%;
-}
-
-.rounded-custom {
-  border-radius: 33px;
-}
-
-.rounded-custom-b {
-  border-radius: 33px 0px 0px 33px;
-}
-
-.rounded-custom-img {
-  border-radius: 33px 33px 0px 0px;
-}
-
-.path {
-  background-image: url("/src/assets/Start.png");
-}
-
-.path1 {
-  background-image: url("/src/assets/Starting.png");
-}
-
-.path2 {
-	background-image: url("/src/assets/ProfileWive.png");
-}
-
-  .path3 {
-	background-image: url("/src/assets/qrcode.svg");
-  }
-
-.state1 {
-	background-image: url("/src/assets/state1.svg");
-}
-
-.state2 {
-	background-image: url("/src/assets/state2.svg");
-}
-
-.state3 {
-	background-image: url("/src/assets/state3.svg");
-}
-
-.state4 {
-	background-image: url("/src/assets/state4.svg");
-}
-
-.shadow {
-  filter: drop-shadow(25 25px 25px rgba(82, 54, 255, 0.10));
-}
-
-
-.scrollable-div-ver{
-  height: 600px;
-  /* Adjust the height as needed */
-  overflow: auto;
-}
-
-
-.scrollable-div-ver2{
-	height: 700px;
-	/* Adjust the height as needed */
-	overflow: auto;
+	gap: 0.5rem;
   }
   
-.scrollable-div-ver3{
-	height: 850px;
-	/* Adjust the height as needed */
-	overflow: auto;
-}
+  .gap-1 {
+	gap: 1rem;
+  }
   
-.scrollable-div-ver4{
-	height: 730px;
-	/* Adjust the height as needed */
-	overflow: auto;
-}
-
-.scrollable-div-ver5{
-	/* height: 10px; */
-	/* Adjust the height as needed */
-	/* overflow: auto; */
-}
-
-.scrollable-div-ver6{
-	height: 200px;
-	/* Adjust the height as needed */
-	overflow: auto;
-}
-
-.scrollable-div-ver8{
+  .gap-2 {
+	gap: 2rem;
+  }
+  
+  .paddingLeft-40 {
+	padding-left: 40px;
+  }
+  
+  .paddingLeft-80 {
+	padding-left: 40px;
+  }
+  
+  .paddingLeft-10 {
+	padding-left: 10px;
+  }
+  
+  .z-min { 
+	  z-index: 99;
+  }
+  
+  .z {
+	z-index: 9999;
+  }
+  
+  .z1 {
+	  z-index: 80000;
+	}
+  
+  .above-all {
+	  position: absolute; /* Position the div absolutely */
+	  top: 0; /* Place it at the top of the viewport */
+	  left: 0; /* Place it at the left of the viewport */
+	  width: 100%; /* Make it as wide as the viewport */
+	  height: 100%; /* Make it as tall as the viewport */
+	  z-index: 9999; /* Set a high z-index value to place it above other content */
+	}
+  
+  .left-5 {
+	left: 2rem;
+  }
+  
+  .color-gray {
+	background-color: #1B1D21;
+	color: #1B1D21;
+  }
+  
+  .p-1 {
+	padding-top: 10px;
+  }
+  
+  .bbc {
+	-o-object-fit: cover;
+	object-fit: cover;
+  }
+  
+  .bba {
+	width: 100vw;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+  }
+  
+  .zz {
+	z-index: 100000;
+  }
+  
+  .zz1 {
+	z-index: 103;
+  }
+  
+  .line-break {
+	border-top: 1px solid rgb(195, 195, 195);
+	width: 100%;
+  }
+  
+  .rounded-custom {
+	border-radius: 33px;
+  }
+  
+  .rounded-custom-b {
+	border-radius: 33px 0px 0px 33px;
+  }
+  
+  .rounded-custom-img {
+	border-radius: 33px 33px 0px 0px;
+  }
+  
+  .path {
+	background-image: url("/src/assets/Start.png");
+  }
+  
+  .path1 {
+	background-image: url("/src/assets/Starting.png");
+  }
+  
+  .path2 {
+	  background-image: url("/src/assets/ProfileWive.png");
+  }
+  
+	.path3 {
+	  background-image: url("/src/assets/qrcode.svg");
+	}
+  
+  .state1 {
+	  background-image: url("/src/assets/state1.svg");
+  }
+  
+  .state2 {
+	  background-image: url("/src/assets/state2.svg");
+  }
+  
+  .state3 {
+	  background-image: url("/src/assets/state3.svg");
+  }
+  
+  .state4 {
+	  background-image: url("/src/assets/state4.svg");
+  }
+  
+  .shadow {
+	filter: drop-shadow(25 25px 25px rgba(82, 54, 255, 0.10));
+  }
+  
+  
+  .scrollable-div-ver{
 	height: 600px;
 	/* Adjust the height as needed */
 	overflow: auto;
-}
-
-.scrollable-div-hor {
-  overflow: auto;
-  width: 97.5%;
-}
-
-.scrollable-div-hor1 {
-  overflow: auto;
-  width: 630px;
-}
-
-.scrollable-div-hor2 {
-	overflow: auto;
-	width: 730px;
-  }
-
-.scrollable-div-ver7 {
-  height: 500px;
-  /* Adjust the height as needed */
-  overflow: auto;
-	position: relative;
-	bottom: 0;
-}
-
-.scrollable-div-ver9 {
-	height: 250px;
-	/* Adjust the height as needed */
-	overflow: auto;
-  }
-
-  .scrollable-div-ver10 {
-	height: 470px;
-	/* Adjust the height as needed */
-	overflow: auto;
-  }
-
-  .scrollable-container {
-    height: calc(60vh); /* Set height to 100% of the viewport height */
-    overflow-y: auto; /* Enable vertical scrolling */
-}
-
-.notif-container {
-  background: white;
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  top: 0;
-  left: 0;
-  z-index: 99;
-}
-
-.nav-container {
-  position: fixed;
-  width: 100%;
-  /* z-index: 999; */
-  background: white;
-  margin-bottom: 50px;
-}
-
-.message-bubble {
-    display: inline-block;
-    /* width: 100%; Make it fit the full width of the container */
-    min-width: 0px;
-	max-width: 250px;
-	height: auto;
-	min-height: 40px;
-    padding: 10px;
-    border: 1px solid #f2f2f2;
-    background-color: #f2f2f2;
-    border-radius: 8px 16px 16px 16px;
-    margin: 5px 0;
-    word-wrap: break-word;
-}
-
-.friend {
-  overflow-block: 99;
-}
-
-.original-stroke {
-	stroke: #808191; /* Original stroke color */
   }
   
-  .white-stroke {
-	stroke: #FFFFFF; /* White stroke color */
+  
+  .scrollable-div-ver2{
+	  height: 700px;
+	  /* Adjust the height as needed */
+	  overflow: auto;
+	}
+	
+  .scrollable-div-ver3{
+	  height: 850px;
+	  /* Adjust the height as needed */
+	  overflow: auto;
   }
-
-
-@media (max-width: 640px) {
-  .mobile-bg {
-    background-color: #F4F5F7;
-  }
-  .mobile-nav-bar {
-	display: none;
-  }
-  .notif-display {
-	display: block;
-  }
-
-  .game-mobile {
-	display: flex;
-	flex-direction: column;
-	gap: 30px;
-  }
-}
-
-.z-max {
-	z-index: 10000;
-}
-
-.file-input-wrapper {
-	position: relative;
-	overflow: hidden;
+	
+  .scrollable-div-ver4{
+	  height: 730px;
+	  /* Adjust the height as needed */
+	  overflow: auto;
   }
   
-  .file-input {
-	position: absolute;
-	font-size: 100px;
-	opacity: 0;
+  .scrollable-div-ver5{
+	  /* height: 10px; */
+	  /* Adjust the height as needed */
+	  /* overflow: auto; */
   }
-
-  .hover-grow:hover {
-    transform: scale(1.1); /* Increase the size on hover */
-    transition: transform 0.4s ease; /* Add a smooth transition effect */
-}
-
-.selected {
-    border: 4px solid #6C5DD3; /* Change the border style to indicate selection */
-    box-shadow: 0 0 5px rgba(108, 93, 211, 0.5); /* Update box shadow color */
-}
-
-.centered-component {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 100000; /* To place it above other components */
-	/* Additional styling for your centered component */
+  
+  .scrollable-div-ver6{
+	  height: 200px;
+	  /* Adjust the height as needed */
+	  overflow: auto;
   }
-
-.blur-background {
+  
+  .scrollable-div-ver8{
+	  height: 600px;
+	  /* Adjust the height as needed */
+	  overflow: auto;
+  }
+  
+  .scrollable-div-hor {
+	overflow: auto;
+	width: 97.5%;
+  }
+  
+  .scrollable-div-hor1 {
+	overflow: auto;
+	width: 630px;
+  }
+  
+  .scrollable-div-hor2 {
+	  overflow: auto;
+	  width: 730px;
+	}
+  
+  .scrollable-div-ver7 {
+	height: 500px;
+	/* Adjust the height as needed */
+	overflow: auto;
+	  position: relative;
+	  bottom: 0;
+  }
+  
+  .scrollable-div-ver9 {
+	  height: 250px;
+	  /* Adjust the height as needed */
+	  overflow: auto;
+	}
+  
+	.scrollable-div-ver10 {
+	  height: 470px;
+	  /* Adjust the height as needed */
+	  overflow: auto;
+	}
+  
+	.scrollable-container {
+	  height: calc(60vh); /* Set height to 100% of the viewport height */
+	  overflow-y: auto; /* Enable vertical scrolling */
+  }
+  
+  .notif-container {
+	background: white;
 	position: fixed;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
 	top: 0;
 	left: 0;
-	height: 100vh;
+	z-index: 99;
+  }
+  
+  .nav-container {
+	position: fixed;
 	width: 100%;
-	z-index: 999;
-	backdrop-filter: blur(6px);
-}
-
-  
-
-.fixed-button {
-    position: fixed;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-body::-webkit-scrollbar {
-	width: 10px;
+	/* z-index: 999; */
+	background: white;
+	margin-bottom: 50px;
   }
   
-  body::-webkit-scrollbar-thumb {
-	background-color: #555;
-  }
-  
-  body::-webkit-scrollbar-track {
-	background-color: #ddd;
+  .message-bubble {
+	  display: inline-block;
+	  /* width: 100%; Make it fit the full width of the container */
+	  min-width: 0px;
+	  max-width: 250px;
+	  height: auto;
+	  min-height: 40px;
+	  padding: 10px;
+	  border: 1px solid #f2f2f2;
+	  background-color: #f2f2f2;
+	  border-radius: 8px 16px 16px 16px;
+	  margin: 5px 0;
+	  word-wrap: break-word;
   }
   
   
-
-@media (min-width: 0px) and  (max-width: 1024px) {
-	.Dk-display {
-		display: none;
+  .message-bubble-me {
+	  display: inline-block;
+	  /* width: 100%; Make it fit the full width of the container */
+	  min-width: 0px;
+	  max-width: 250px;
+	  height: auto;
+	  min-height: 40px;
+	  padding: 10px;
+	  border: 1px solid #6C5DD3;
+	  background-color: #6C5DD3;
+	  border-radius: 8px 16px 16px 16px;
+	  margin: 5px 0;
+	  word-wrap: break-word;
+  }
+  
+  .friend {
+	overflow-block: 99;
+  }
+  
+  .original-stroke {
+	  stroke: #808191; /* Original stroke color */
 	}
-
-	.scrollable-div-ver0{
-		height: 350px;
-		overflow: auto;
-	  }
-
-	  .scrollable-div-ver1{
-		height: 400px;
-		/* Adjust the height as needed */
-		overflow: auto;
-	  }
-
-	  .scrollable-div-ver2{
-	height: 700px;
-	/* Adjust the height as needed */
-	overflow: auto;
+	
+	.white-stroke {
+	  stroke: #FFFFFF; /* White stroke color */
+	}
+  
+  
+  @media (max-width: 640px) {
+	.mobile-bg {
+	  background-color: #F4F5F7;
+	}
+	.mobile-nav-bar {
+	  display: none;
+	}
+	.notif-display {
+	  display: block;
+	}
+  
+	.game-mobile {
+	  display: flex;
+	  flex-direction: column;
+	  gap: 30px;
+	}
   }
-}
-
-@media (min-width: 0px) {
-  .mobile-display {
-    display: none;
+  
+  .z-max {
+	  z-index: 10000;
   }
-}
+  
+  .file-input-wrapper {
+	  position: relative;
+	  overflow: hidden;
+	}
+	
+	.file-input {
+	  position: absolute;
+	  font-size: 100px;
+	  opacity: 0;
+	}
+  
+	.hover-grow:hover {
+	  transform: scale(1.1); /* Increase the size on hover */
+	  transition: transform 0.4s ease; /* Add a smooth transition effect */
+  }
+  
+  .selected {
+	  border: 4px solid #6C5DD3; /* Change the border style to indicate selection */
+	  box-shadow: 0 0 5px rgba(108, 93, 211, 0.5); /* Update box shadow color */
+  }
+  
+  .centered-component {
+	  position: fixed;
+	  top: 50%;
+	  left: 50%;
+	  transform: translate(-50%, -50%);
+	  z-index: 100000; /* To place it above other components */
+	  /* Additional styling for your centered component */
+	}
+  
+  .blur-background {
+	  position: fixed;
+	  top: 0;
+	  left: 0;
+	  height: 100vh;
+	  width: 100%;
+	  z-index: 999;
+	  backdrop-filter: blur(6px);
+  }
+  
+  .chat-container {
+	  max-height: 300px; /* Set your desired max height */
+	  overflow-y: auto;
+	  scroll-behavior: smooth;
+	  scroll-padding-top: 1000px; /* Set a large padding value */
+	}
+  
+  .fixed-button {
+	  position: fixed;
+	  bottom: 0;
+	  left: 50%;
+	  transform: translateX(-50%);
+	  background-color: #007bff;
+	  color: #fff;
+	  padding: 10px 20px;
+	  border: none;
+	  border-radius: 5px;
+	  cursor: pointer;
+  }
+  body::-webkit-scrollbar {
+	  width: 1px;
+	}
+	
+	body::-webkit-scrollbar-thumb {
+	  background-color: #555;
+	}
+	
+	body::-webkit-scrollbar-track {
+	  background-color: #ddd;
+	}
+	
+	
+  
+  @media (min-width: 0px) and  (max-width: 1024px) {
+	  .Dk-display {
+		  display: none;
+	  }
+  
+	  .scrollable-div-ver0{
+		  height: 350px;
+		  overflow: auto;
+		}
+  
+		.scrollable-div-ver1{
+		  height: 400px;
+		  /* Adjust the height as needed */
+		  overflow: auto;
+		}
+  
+		.scrollable-div-ver2{
+	  height: 700px;
+	  /* Adjust the height as needed */
+	  overflow: auto;
+	}
+  }
+  
+  @media (min-width: 0px) {
+	.mobile-display {
+	  display: none;
+	}
+  }

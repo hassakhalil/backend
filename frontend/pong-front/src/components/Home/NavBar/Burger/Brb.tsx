@@ -22,6 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { Avatar } from "../Avatar";
 import { Friends } from "../../Friends/friends";
 import { UserContext } from "../../../../pages/Profile";
+import { useProfilecontext } from "../../../../ProfileContext";
 
 export function Brb() {
   const initialColors: { [key: string]: string } = {
@@ -53,7 +54,8 @@ export function Brb() {
     setstrokeColor(newImgs);
   };
 
-	const data = useContext(UserContext);
+    const profile = useProfilecontext();
+	// const data = useContext(UserContext);
 
   return (
     <>
@@ -87,7 +89,7 @@ export function Brb() {
 
           <div className="scrollable-div-ver6">
             <div>
-				{data?.userData?.friends?.map((friend: {avatar: string; username: string} , index: number) => (
+				{profile.data?.userData?.friends?.map((friend: {avatar: string; username: string} , index: number) => (
 					<div key={index}>
 						<BrFriends profile={friend.avatar} name={friend.username} status="/src/assets/live.svg"/>
 					</div>

@@ -3,7 +3,7 @@ import { Chatprofile } from "./Chatprofile"
 import { DirectMsg } from "./DirectMsg"
 import { GroupMsg } from "./GroupMsg"
 import { SocketContext } from './contexts/SocketContext';
-// import { SocketProvider } from "./contexts/chatContext";
+import { SocketProvider } from "./contexts/chatContext";
 import React from "react";
 interface MyUserData {
 	user_data: {
@@ -23,7 +23,7 @@ interface MyUserData {
 
 
   interface MbChatProps {
-	profile: MyUserData;
+	profile: MyUserData | undefined;
   }
 
 export function MbChat ({profile }: MbChatProps) {
@@ -36,9 +36,9 @@ export function MbChat ({profile }: MbChatProps) {
 			{/* <SzocketProvider> */}
 				<DirectMsg profile={profile}/>
     		{/* </SocketProvider> */}
-				<div className="pt-8">
+				{/* <div className="pt-8"> */}
 					{/* <GroupMsg/> */}
-				</div> 
+				{/* </div>  */}
 			  </div>
 		</>
 	)

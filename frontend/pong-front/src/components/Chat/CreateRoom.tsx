@@ -1,9 +1,43 @@
-import React from "react";
+import React, { useState } from "react";
 import rmv from "/src/assets/remove.svg"
+import axios from "axios";
 
 
-export function CreateRoom() {
-	const [remove, SetRemove] = React.useState(false);
+interface Props {
+	hide: () => void;
+}
+
+interface Data {
+	roomName: string,
+	RoomType: string,
+	pass: string
+}
+
+const handleCreateRoom = async ( {roomName, RoomType, pass}: Data ) => {
+	const jsonData = {
+		name: roomName,
+		type: RoomType,
+		password: pass,
+	};
+	
+	try {
+		const response = await axios.post("http://localhost:3000/create-room", jsonData, {withCredentials: true})
+		.then((response) => {
+			console.log(response.data);
+		})
+	}
+	catch (error) {
+		console.log(error);
+	}
+}
+
+export function CreateRoom( {hide}: Props ) {
+
+	const [data, setData] = useState<Data>({
+		roomName: '',
+		RoomType: '',
+		pass: '',
+	  });
 	
 	const defalutColor: { [key: string]: string }  = {
 		button1: "#E4E4E47F",
@@ -20,7 +54,7 @@ export function CreateRoom() {
 	
 	const [buttoms, Setbuttoms] = React.useState(defalutColor);
 	const [textColor, SetTextColor] = React.useState(defaultTextColor);
-
+	
 	const handleClick = (num: string) => {
 		const newColor = {...defalutColor};
 		const newTextColor = {...defaultTextColor};
@@ -29,17 +63,17 @@ export function CreateRoom() {
 		Setbuttoms(newColor);
 		SetTextColor(newTextColor);
 	}
-  
+	
+	const [clicked, setClick] = React.useState(true);
 	return (
 	  <>
-		{!remove ? (
-		  <div className="blur-background z">
-			<div className="h-5/6 fixed top-1/4 w-full pr-8 pl-8 lg:w-6/12 xl:w-4/12 lg:right-[25%] xl:right-[35%] lg:h-5/6">
-			  <div className="w-full h-5/6 bg-white shadow-2xl rounded-custom">
-				<div className="flex items-center justify-between w-full p-8">
+		<div className="centred-component">
+			<div className="absolute left-[30%] xl:left-[40%] top-[30%] z">
+			  <div className="h-[500px] bg-white shadow-2xl rounded-custom">
+				<div className="flex items-center justify-between p-8">
 				  <div className="text-lg text-[#11142D] font-semibold">Create new room chat</div>
 				  <button
-					onClick={() => SetRemove(!remove)}
+					onClick={hide}
 					className="flex items-center justify-center border border-white rounded-full w-[48px] h-[48px] shadow-xl"
 				  >
 					<img src={rmv}/>
@@ -48,31 +82,41 @@ export function CreateRoom() {
 				<div className="flex flex-col justify-between h-[80%] p-8 pt-0">
 					<div className="flex flex-col gap-[10px]">
 						<div className="text-xs text-[#808191]">Room name</div>
-					<input
-						className="w-full h-12 px-4 rounded-xl bg-gray-100 focus:outline-none text-[#11142D]"
-					/>
+					<input 
+						className="w-full h-12 px-4 rounded-xl bg-gray-100 focus:outline-none text-[#11142D] shadow-md"
+						value={data.roomName}
+						onChange={(e) => {
+							e.preventDefault();
+							setData({ ...data, roomName: e.target.value });
+						}}
+						/>
 					</div>
 					<div className="flex flex-col gap-[10px]">
 
 					<div className="text-xs text-[#808191]">Password</div>
 					<input type="password"
-						className="w-full h-12 px-4 rounded-xl bg-gray-100 focus:outline-none text-[#11142D]"
+						className="w-full h-12 px-4 rounded-xl bg-gray-100 focus:outline-none text-[#11142D] shadow-md"
+						value={data.pass}
+						onChange={(e) => {
+							e.preventDefault();
+								setData({ ...data, pass: e.target.value });
+						}}
 						/>
 					</div>
 
-					<div className="flex items-center justify-around">
-						<button onClick={() => handleClick('button1')} style={{backgroundColor: buttoms.button1}} className={`h-[40px] w-[70px] lg:w-[100px] rounded-xl text-sm lg:text-lg text-[${textColor.button1}]`}>Public</button>
-						<button  onClick={() => handleClick('button2')} style={{backgroundColor: buttoms.button2}} className={`h-[40px] w-[70px] lg:w-[100px] rounded-xl text-sm lg:text-lg text-[${textColor.button2}]  `}>Protected</button>
-						<button  onClick={() => handleClick('button3')} style={{backgroundColor: buttoms.button3}} className={` h-[40px] w-[70px] lg:w-[100px] rounded-xl text-sm lg:text-lg text-[${textColor.button3}] `}>Private</button>
+					<div className="flex items-center gap-1 justify-around">
+						<button onClick={() => {handleClick('button1'), setData((prevData) => ({ ...prevData, RoomType: 'public' }))}} style={{backgroundColor: buttoms.button1}} className={`h-[40px] w-[70px] lg:w-[100px] shadow-md rounded-xl text-sm lg:text-lg text-[${textColor.button1}]`}> Public</button>
+						<button  onClick={() => {handleClick('button2'), setData((prevData) => ({ ...prevData, RoomType: 'protected' }))}} style={{backgroundColor: buttoms.button2}}  className={`h-[40px] w-[70px] lg:w-[100px] rounded-xl shadow-md text-sm lg:text-lg text-[${textColor.button2}]  `}>Protected</button>
+						<button  onClick={() => {handleClick('button3'), setData((prevData) => ({ ...prevData, RoomType: 'private' }))}}  style={{backgroundColor: buttoms.button3}} className={` h-[40px] w-[70px] lg:w-[100px] rounded-xl text-sm shadow-md lg:text-lg text-[${textColor.button3}] `}>Private</button>
 					</div>
-					<div className="flex items-center justify-center">
-						<div className="flex items-center justify-center w-full lg:w-6/12 h-[50px] bg-[#6C5DD3] rounded-xl text-white font-bold tracking-wider">Create Room</div>
-					</div>
+					<button className="flex items-center justify-center" onClick={() => handleCreateRoom(data)}>
+						<div className="flex items-center justify-center w-full lg:w-6/12 h-[50px] bg-[#6C5DD3] rounded-xl text-white font-bold tracking-wider shadow-md">Create Room</div>
+					</button>
 				</div>
 			  </div>
-			</div>
-		  </div>
-		) : null}
+			 </div>
+		</div>
+
 	  </>
 	);
   }

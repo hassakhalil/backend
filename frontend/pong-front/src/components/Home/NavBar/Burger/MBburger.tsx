@@ -15,6 +15,7 @@ import { useContext } from "react";
 import { MbSettings } from "../../../settings/MbSettings"
 import { useDataContext } from "../../../Profile/States/stateContext"
 import { ChatSocketContext } from "../../../Chat/contexts/chatContext"
+import { useProfilecontext } from "../../../../ProfileContext"
 
 
 
@@ -28,20 +29,27 @@ interface friendsList{
 export function  MBburger (  ) {
 
 	const data = useContext(MyContext);
-	const state = useDataContext();
-	const chatContext = useContext(ChatSocketContext);
-	useEffect(()=>
-	{
-		if (chatContext?.connected)
-		console.log('connected >>>>>>>>>>>>>>>>>>	')
-	chatContext?.on('State', (friendState : friendsList)=>
-	{
-	console.log('on state --------------------------------------<>')
-	state?.setData((old) =>
-	old.map((item : friendsList) => (item.id === friendState.id ? { ...item, ...friendState } : item))
-	)})
+	// const state = useDataContext();
+	// const chatContext = useContext(ChatSocketContext);
+	// const profile = useProfilecontext()
 
-	}, [chatContext])
+	// const chatContext = useContext(ChatSocketContext);
+	const state = useDataContext();
+	const profile = useProfilecontext();
+	// useEffect(() => 
+	// {
+	//   if (chatContext?.connected)
+	//   console.log('connected >>>>>>>>>>>>>>>>>>	')
+	// 	chatContext?.on('State', (friendState : friendsList)=>
+	// 	{
+	// 	console.log('on state --------------------------------------<>')
+	// 	state?.setData((old) =>
+	// 	old.map((item : friendsList) => (item.id === friendState.id ? { ...item, ...friendState } : item))
+	// 	)})
+	// 	//   return () =>{
+	// 		// chatContext?.off('State');}
+	// }, [chatContext, profile?.data?.user_data.avatar, state, profile.setData])
+	const isIngame = 'ingame';
 	// const {param} = useParams();
 	// let isOnline = 'ingame'
 		// console.log('before comparison-----------------------')
@@ -138,7 +146,7 @@ export function  MBburger (  ) {
                 <div className="flex items-center justify-center text-[#808191] text-sm lg:text-md pt-16">Friends</div>
 				<div className="flex flex-col pl-1 pt-5 gap-3 scrollable-div-ver6">
 					<div>
-						{data?.MyuserData?.friends?.map((friend: { avatar: string; username: string }, index: number) => (
+						{profile?.data?.friends?.map((friend: { avatar: string; username: string }, index: number) => (
 							<div key={index}>
 								<Avatar avatar={friend.avatar} name={friend.username}/>
 							</div>
@@ -187,10 +195,10 @@ export function  MBburger (  ) {
 				<MbSettings hide={() => SetSettings(false)}/>
 			</div>
 		}
-		{game  && 
+		{game  && (state?.data[state?.data.length - 1].state && state?.data[state?.data.length - 1].state !== isIngame) &&
 					<div>
-						<GameMode hide={() => {}}/>
-						<MbGameMode  hide={() => {}}/>
+						<GameMode hide={() => Setgame(!game)}/>
+						<MbGameMode  hide={() => Setgame(!game)}/>
 					</div>
 
 				}

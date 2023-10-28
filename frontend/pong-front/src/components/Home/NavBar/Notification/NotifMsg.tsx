@@ -1,6 +1,7 @@
 import axios from "axios"
 import React, { useContext, useState } from "react"
 import { MyContext, UserContext } from "../../../../pages/Profile";
+import { useProfilecontext } from "../../../../ProfileContext";
 
 interface Props {
     profile: string,
@@ -11,21 +12,22 @@ interface Props {
 export function NotifMsg ( {profile, name, requestType}: Props ) {
 
 	const [hide, sethide] = useState(true);
-	const data = useContext(MyContext);
-
+	// const data = useContext(MyContext);
+	const Profile = useProfilecontext();
 	const handleAccept = async () => {
 		console.log(name);
 		try {
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/accept-friend/${name}`, null, {withCredentials: true})
 			.then((response) => {
-				data?.setMyUserData((prevUserData) => ({
+				Profile?.setData((prevUserData) => ({
 					...prevUserData,
-					user_data: {
-					  ...prevUserData.user_data,
-					  blocks: response.data,
-					},
-				  }));
-				  sethide(false);
+					// user_data: {
+						...prevUserData,
+						friends: [...prevUserData.friends, response.data],
+						// },
+					}));
+					console.log('data lli wslat', response.data);
+					sethide(false);
 			  })
 		}	
 		catch (error) {

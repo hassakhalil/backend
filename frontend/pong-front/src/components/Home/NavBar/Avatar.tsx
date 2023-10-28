@@ -1,12 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import {useEffect} from 'react'
+import { useProfilecontext } from "../../../ProfileContext";
 interface Props {
 	avatar: string,
 	name: string,
 }
 
 export function Avatar ( {avatar, name}: Props ) {
+
+	// const profile = useProfilecontext()
+	useEffect(()=>
+	{
+		console.log('tbdlat');
+	},[avatar]);
 
     return (
         <>

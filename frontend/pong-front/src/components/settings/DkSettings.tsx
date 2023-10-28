@@ -9,7 +9,8 @@ import { MbGameSettings } from "./MbGameSetting";
 import { json, unstable_Blocker, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 
-import { MyContext } from "../../pages/Profile";
+// import { MyContext } from "../../pages/Profile";
+import { useProfilecontext } from "../../ProfileContext";
 
 
 interface Props {
@@ -18,20 +19,20 @@ interface Props {
 
 export function DkSettings ( {hide}: Props ) {
 
-	const data = useContext(MyContext);
+	// const data = useContext(MyContext);
 	
-	  useEffect(() => {
+	//   useEffect(() => {
 		
-		  try {
-			const response =  axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true }).then ( function(response) {
-				console.log(response.data);
-			} )
-		  } catch (error) {
-			console.error("Error fetching user data:");
-		  }
+	// 	  try {
+	// 		const response =  axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true }).then ( function(response) {
+	// 			console.log(response.data);
+	// 		} )
+	// 	  } catch (error) {
+	// 		console.error("Error fetching user data:");
+	// 	  }
 
 
-	}, []);
+	// }, []);
 	
     const [remove, SetRemove] = React.useState(false);
 	const [twoFA, setTwoFa] = useState(false);
@@ -39,7 +40,8 @@ export function DkSettings ( {hide}: Props ) {
 	const [formData, setFormData] = useState<{username: string}>({
 		username: '',
 	});
-	let defualt : string | undefined = data?.MyuserData?.user_data?.avatar;
+	const profile = useProfilecontext()
+	let defualt : string | undefined = profile.data.user_data?.avatar;
 	const [BASE_URL, setBase] = useState(defualt);
 
 
@@ -59,7 +61,7 @@ export function DkSettings ( {hide}: Props ) {
 			}
 			)
 			.then((response) => {
-				data?.setMyUserData((prevUserData) => ({
+				profile?.setData((prevUserData) => ({
 					...prevUserData,
 					user_data: {
 					  ...prevUserData.user_data,
@@ -72,6 +74,7 @@ export function DkSettings ( {hide}: Props ) {
 				setBase(`http://${import.meta.env.VITE_API_URL}/avatars/${response.data}`);
 
 			  })
+			//   profile.data.user_data.avatar = BASE_URL; 
 			}
 			catch(error) {
 				console.log("Post profile faild", error);
@@ -84,7 +87,7 @@ export function DkSettings ( {hide}: Props ) {
 			console.log(formData.username);
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/set-username`, formData, {withCredentials: true}).then (function (response) {
 				console.log(response.data);
-				data?.setMyUserData((prevUserData) => ({
+				profile?.setData((prevUserData) => ({
 					...prevUserData,
 					user_data: {
 					  ...prevUserData.user_data,
@@ -122,7 +125,7 @@ export function DkSettings ( {hide}: Props ) {
 							<button  className={`flex items-center justify-center border  border-[2px] w-[120px] h-[35px] rounded-xl bg-[#6C5DD3] border-[#6C5DD3]`} >
 								<div className={`text-white font-semibold`}>Your Profile</div>
 							</button> 
-							<button className={`flex bg-[#6C5DD3] border-[#6C5DD3] items-center justify-center border border-[2px] bg-white border-[#FF754C] w-[100px] h-[35px] rounded-xl`} onClick={() => {setTwoFa(!twoFA); SetRemove(!remove)}}>
+							<button className={`flex items-center justify-center border border-[2px] bg-white border-[#FF754C] w-[100px] h-[35px] rounded-xl`} onClick={() => {setTwoFa(!twoFA); SetRemove(!remove)}}>
 								<div className={`font-semibold text-balck`}>2FA</div>
 							</button>
 							<button className={`flex items-center justify-center border  border-[2px] w-[120px] h-[35px] rounded-xl bg-white border-[#FF754C]`} onClick={() => {setgameSetting(!gameSetting), SetRemove(!remove)}}>

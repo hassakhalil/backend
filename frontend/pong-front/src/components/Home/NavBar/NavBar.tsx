@@ -1,21 +1,42 @@
-import React from "react";
+// import React from "react";
 import { Burger } from "./Burger/burger";
 import { Notification } from "./Notification/Notification";
 import { Avatar } from "./Avatar";
 import { Notif } from "./Notification/notif";
 import { Brb } from "./Burger/Brb";
 import { MBburger } from "./Burger/MBburger";
-
+import React, { useContext, useEffect, useState } from "react";
+import { useProfilecontext } from "../../../ProfileContext";
+import { ChatSocketContext } from "../../Chat/contexts/chatContext";
+import { StateProvider } from "../../Profile/States/stateContext";
+import { useDataContext } from "../../Profile/States/stateContext";
 interface Props {
 	avatar: string,
 	username: string,
 	// update: () => void;
 }
 
-export function NavBar( { avatar, username }: Props ) {
+export function NavBar( ) {
   const [showNotif, setShowNotif] = React.useState(false);
   const [showBurger, setShowBurger] = React.useState(false);
-  
+  // const profile = useProfilecontext()
+	// const chatContext = useContext(ChatSocketContext);
+  // const state = useDataContext();
+  const profile = useProfilecontext();
+  // useEffect(() => 
+  // {
+  //   if (chatContext?.connected)
+  //   console.log('connected >>>>>>>>>>>>>>>>>>	')
+  //     chatContext?.on('State', (friendState : friendsList)=>
+  //     {
+  //     console.log('on state --------------------------------------<>')
+  //     state?.setData((old) =>
+  //     old.map((item : friendsList) => (item.id === friendState.id ? { ...item, ...friendState } : item))
+  //     )})
+  //       return () =>{
+  //         chatContext?.off('State');}
+  // }, [profile, profile.setData])
+  // console.log('user_data li f navbar', profile?.data?.user_data.avatar);
   return (
     <>
       <div className="nav-container zz">
@@ -36,7 +57,7 @@ export function NavBar( { avatar, username }: Props ) {
                   />
                 </div>
                 <div className="lg:pr-16">
-                  <Avatar avatar={avatar} name={username} />
+                  <Avatar avatar={profile?.data?.user_data.avatar} name={profile?.data?.user_data.username} />
                 </div>
               </div>
             </div>

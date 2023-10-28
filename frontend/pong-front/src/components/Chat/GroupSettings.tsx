@@ -1,23 +1,94 @@
+import axios from "axios";
 import { AddMember } from "./AddMember";
 import { GroupRestriction } from "./GroupRestriction";
 import rmv from "/src/assets/remove.svg"
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 
-export function GroupSettings() {
+interface Props {
+	hide: () => void,
+}
+
+const initialUsers = {
+	id: 0,
+	username: '',
+	avatar: '',
+	role: '',
+	is_banned: '',
+	is_muted: '',
+}
+
+const allUsers = {
+	id: 0,
+	username: '',
+	avatar: '',
+}
+
+export function GroupSettings( {hide}: Props ) {
+
+	const [member, setMember] = useState<typeof initialUsers[]>([]);
+	const { id } = useParams();
+	useEffect(() => {
+		try {
+			const response =  axios.get(`http://localhost:3000/get-room-members/${id}`,
+			{ withCredentials: true }
+			).then ((response) => {
+				setMember(response.data);
+				console.log("l7waaaaaaaaaaaaaaa")
+
+			})
+			
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	}, []);
+
+	const [users, setUsers] = useState<typeof allUsers[]>([]);
+	useEffect(() => {
+		try {
+			const response =  axios.get(`http://localhost:3000/get-all-users/`,
+			{ withCredentials: true }
+			).then ((response) => {
+				setUsers(response.data);
+
+			})
+			
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	}, []);
+	const [Isprivate, setIsPrivate] = useState(false);
+	const [type, setType] = useState('');
+	const [name, setname] = useState('')
+	useEffect(() => {
+		try {
+			const response =  axios.get(`http://localhost:3000/get-room/${id}`,
+			{ withCredentials: true }
+			).then ((response) => {
+				if (response.data.type === "private")
+					setIsPrivate(true);
+				setType(response.data.type);
+				setname(response.data.name);
+			})
+			
+		} catch (error) {
+			console.error("Error fetching data:", error);
+		}
+	}, []);
+
+
 	const [remove, setRemove] = React.useState(false);
-  
 	return (
 	  <>
 		{remove ? null : (
 			
 			<div className="blur-background lg:centred-component">
-
-			<div className="bg-gray-100 px-8 shadow rounded-custom lg:w-[50%] w-full xl:w-[40%] lg:h-[80%] h-full pt-32  lg:pt-10 overflow-hidden centered-component">
+			<div className="bg-white px-8 shadow-xl rounded-custom lg:w-[50%] w-full xl:w-[40%] lg:h-[70%] h-full pt-32  lg:pt-10 overflow-hidden centered-component">
 					<div className="flex items-center justify-between">
 						<div className="text-[#1B1D21] font-semibold text-xl">Room Setting</div>
 						<button
-						onClick={() => setRemove(!remove)}
+						onClick={() => {setRemove(!remove), hide}}
 						className="flex items-center justify-center border bg-white rounded-full w-12 h-12 shadow-xl"
 						>
 						<img src={rmv} alt="Remove" />
@@ -27,34 +98,28 @@ export function GroupSettings() {
 
 					<div className="h-full">
 							<div className="w-full h-2/6 overflow-y-auto">
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-								<GroupRestriction/>
-
+								{member.map((mem, index: number) => (
+									<div key={index}>
+										<GroupRestriction avatar={mem.avatar} username={mem.username} RoomName={name} type={type}/>
+									</div>
+								))
+								}
 							</div>
-								<div className="flex items-center justify-center text-2xl font-semibold font-sans text-[#11142D] pt-5">Add Friends to room</div>
-								<div className="px-8 py-4">
-									<input type="search" className="shadow-md h-[50px] w-full rounded-xl focus:outline-none px-4 pr-10" placeholder="Search..."/>
-								</div>
+							{
+								Isprivate ?
+								<div className="flex items-center justify-center text-2xl font-semibold font-sans text-[#11142D] pt-5">Add Players to Your room</div>
+								: null
+							}
 							<div className="w-full pt-3 h-3/6 overflow-y-auto pb-10">
-								<AddMember/>
-								<AddMember/>
-								<AddMember/>
-								<AddMember/>
-								<AddMember/>
-								<AddMember/>
-								<AddMember/>
-								<AddMember/>
-								<AddMember/>
+							{
+								Isprivate ? (
+									users.map((user, index: number) => (
+									<div key={index}>
+										<AddMember avatar={user.avatar} name={user.username} roomName={name}/>
+									</div>
+									))
+								) : null
+								}
 							</div>
 
 					</div>

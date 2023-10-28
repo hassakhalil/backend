@@ -61,17 +61,19 @@ export function ChatConv({ room, profile }: ChatConvProps) {
 
 	console.log('room members', msg);
 
-	// Only render DkChatConv if both RoomMembers and msg are available
 	return (
 		<>
 			{roomMembers && (
+				<div className="">
+
 				<DkChatConv
 					prop_room={room}
 					members={roomMembers}
 					profile={profile}
 					messages={msg}
 					setMessages={setMsg}
-				/>
+					/>
+				</div>
 			)}
 		</>
 	);
