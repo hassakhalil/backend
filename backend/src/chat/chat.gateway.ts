@@ -219,7 +219,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @OnEvent('gameState')
-    async handleGameStartEvent(uId: number, state: string) {
+    async handleGameStartEvent(state: string, uId: number) {
             //get friend socket
         try{
             const user = await this.usersService.findById(uId);

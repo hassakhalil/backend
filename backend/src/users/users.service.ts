@@ -1234,7 +1234,7 @@ export class UsersService {
         let otherRooms = [];
         for( let i = 0; i < allrooms.length; i++){
             const isMember = await this.IsUsermemberOfRoom(userId, allrooms[i].id);
-            if (!isMember && allrooms[i].type !== 'private'){
+            if (!isMember && allrooms[i].type !== 'private' && allrooms[i].type !== 'direct'){
               otherRooms.push({
                 id: allrooms[i].id,
                 name: allrooms[i].name,
