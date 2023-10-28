@@ -281,11 +281,13 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
   @Get('/check-user/:username')
   @UseGuards(Jwt2faAuthGuard)
   async loadUser(@Param('username') username: string) {
-      const user = await this.usersService.findByUsername(username);
-      if (!user){
-        return false;
-      }
-      return true;
+    if (username === 'me')
+    return {boolean:true};
+    const user = await this.usersService.findByUsername(username);
+    if (!user){
+      return {boolean:false};
+    }
+    return {boolean:true};
   }
 
   @Get('/logout')
@@ -333,7 +335,13 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     }
     //create rooms for private chat here
     const isCreated = await this.usersService.createDirectRoom(us.id, username);
-    return 'Friend accepted seccussfully';
+    // return 'Friend accepted seccussfully';
+    const friend= await this.usersService.findByUsername(username);
+    return {
+       id: friend.id,
+       username: friend.username,
+       avatar:   friend.avatar
+     };
   }
 
   @Post('/block-friend/:username')
