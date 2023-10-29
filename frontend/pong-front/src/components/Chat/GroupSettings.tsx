@@ -38,7 +38,6 @@ export function GroupSettings( {hide}: Props ) {
 			{ withCredentials: true }
 			).then ((response) => {
 				setMember(response.data);
-				console.log("l7waaaaaaaaaaaaaaa")
 
 			})
 			
@@ -154,3 +153,6 @@ export function GroupSettings( {hide}: Props ) {
 	  </>
 	);
   }
+
+
+//   HassanCharef#?3

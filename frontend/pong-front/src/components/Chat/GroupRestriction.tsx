@@ -18,11 +18,31 @@ const handleban = async (name: string, RoomName: string, type: string) => {
 		name: RoomName,
 		type: type,
 	};
+
+	
 	try {
 		const response = await axios.post(`http://localhost:3000/ban-member/${name}`, jsonData,
 		{ withCredentials: true }
 		).then (() => {
-			// console.log("Bann me");
+			console.log(jsonData.name + " " + jsonData.type + " " + name + "ban btw") ;
+		})
+		
+	} catch (error) {
+		console.error("Error fetching data:", error);
+	}
+}
+
+const handleallow = async (name: string, RoomName: string, type: string) => {
+	const jsonData = {
+		name: RoomName,
+		type: type,
+	};
+	
+	try {
+		const response = await axios.post(`http://localhost:3000/allow-member/${name}`, jsonData,
+		{ withCredentials: true }
+		).then (() => {
+			console.log(jsonData.name + " " + jsonData.type + " " + name + " rak 3aref") ;
 		})
 		
 	} catch (error) {
@@ -37,7 +57,6 @@ const handlemute = async (name: string, RoomName: string, type: string, time: nu
 		duration: time
 	};
 
-	console.log(jsonData.name + " " + " " + jsonData.type + " " + jsonData.duration + " " + name) ;
 	try {
 		const response = await axios.post(`http://localhost:3000/mute-member/${name}`, jsonData,
 		{ withCredentials: true }
@@ -56,11 +75,15 @@ const handlekick = async (name: string, RoomName: string, type: string) => {
 		type: type,
 	};
 
+	console.log("9awed");
 	try {
 		const response = await axios.delete(`http://localhost:3000/kick-member/${name}`, {
 		  data: jsonData,
 		  withCredentials: true
-		});
+		})
+		.then ((response) => {
+			console.log("am kicked")
+		})
 	  
 		console.log("Mute me");
 	  } catch (error) {
@@ -110,6 +133,18 @@ export function GroupRestriction ({avatar, username, RoomName, type}: Props) {
 		}
 		
 	}, []);
+
+	// useEffect(() => {
+	// 	try {
+	// 		const response =  axios.post(`http://localhost:3000/get-room-members/${username}`, jsonData, { withCredentials: true })
+	// 		.then ((response) => {
+	// 			setaccType(response.data);
+	// 		})
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 	}
+		
+	// }, []);	
 	
 	const [banuser, setbanuser] = useState(false);
 	const [muteuser, setmuteuser] = useState(false);
@@ -129,8 +164,7 @@ export function GroupRestriction ({avatar, username, RoomName, type}: Props) {
 					<div className="text-xs text-[#353E6C]">Ban</div>
 					</button>
 					:
-					<button className="flex items-center" onClick={() => {handleban(conf.username, RoomName, type), setbanuser(!banuser)}}>
-					<img src={ban} className="pt-2"></img>
+					<button className="flex items-center" onClick={() => {handleallow(conf.username, RoomName, type), setbanuser(!banuser)}}>
 						<div className="text-xs text-[#353E6C]">Unban</div>
 					</button>
 				}
