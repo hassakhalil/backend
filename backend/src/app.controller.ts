@@ -329,6 +329,8 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
   async acceptFriend(@Req() req: Request, @Param('username') username: string){
     //check if the friendship exists and the user is the acceptor
     let us = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+    if (username === us.username)
+      throw new HttpException('You are trying to accept yourself as a friend', HttpStatus.BAD_REQUEST);
     const isAccepted = await this.usersService.acceptFriend(us.id, username);
     if (!isAccepted){
       throw new HttpException('Failed to accept friend', HttpStatus.BAD_REQUEST);
