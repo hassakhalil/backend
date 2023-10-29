@@ -105,9 +105,9 @@ export function CreateRoom( {hide}: Props ) {
 					</div>
 
 					<div className="flex items-center gap-1 justify-around">
-						<button onClick={() => {handleClick('button1'), setData((prevData) => ({ ...prevData, RoomType: 'public' }))}} style={{backgroundColor: buttoms.button1}} className={`h-[40px] w-[70px] lg:w-[100px] shadow-md rounded-xl text-sm lg:text-lg text-[${textColor.button1}]`}> Public</button>
-						<button  onClick={() => {handleClick('button2'), setData((prevData) => ({ ...prevData, RoomType: 'protected' }))}} style={{backgroundColor: buttoms.button2}}  className={`h-[40px] w-[70px] lg:w-[100px] rounded-xl shadow-md text-sm lg:text-lg text-[${textColor.button2}]  `}>Protected</button>
-						<button  onClick={() => {handleClick('button3'), setData((prevData) => ({ ...prevData, RoomType: 'private' }))}}  style={{backgroundColor: buttoms.button3}} className={` h-[40px] w-[70px] lg:w-[100px] rounded-xl text-sm shadow-md lg:text-lg text-[${textColor.button3}] `}>Private</button>
+						<button onClick={() => {handleClick('button1'), setData((prevData) => ({ ...prevData, RoomType: 'public' }))}} style={{backgroundColor: buttoms.button1}} className={`h-[40px] w-[70px] lg:w-[100px] shadow-md rounded-xl  text-[${textColor.button1}]`}> Public</button>
+						<button  onClick={() => {handleClick('button2'), setData((prevData) => ({ ...prevData, RoomType: 'protected' }))}} style={{backgroundColor: buttoms.button2}}  className={`h-[40px] w-[70px] lg:w-[100px] rounded-xl shadow-md text-[${textColor.button2}]  `}>Protected</button>
+						<button  onClick={() => {handleClick('button3'), setData((prevData) => ({ ...prevData, RoomType: 'private' }))}}  style={{backgroundColor: buttoms.button3}} className={` h-[40px] w-[70px] lg:w-[100px] rounded-xl  shadow-md text-[${textColor.button3}] `}>Private</button>
 					</div>
 					<button className="flex items-center justify-center" onClick={() => handleCreateRoom(data)}>
 						<div className="flex items-center justify-center w-full lg:w-6/12 h-[50px] bg-[#6C5DD3] rounded-xl text-white font-bold tracking-wider shadow-md">Create Room</div>
