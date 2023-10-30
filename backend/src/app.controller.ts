@@ -17,6 +17,7 @@ import { NotificationsService } from './chat/event.notifications';
 import { CustomExceptionsFilter } from './CustomExceptionsFilter';
 import { ProfileStringToDtoPipe } from './string-to-dto.pipe';
 import { UsernameStringToDtoPipe } from './username-validation.pipe';
+import { RoomIdStringToDtoPipe } from './room-id-validation-pipe';
 
 export const multerConfig = {
   storage: diskStorage({
@@ -407,7 +408,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     
   @Delete('/leave-room/:roomId')
   @UseGuards(Jwt2faAuthGuard)
-  async leaveRoom(@Req() req: Request, @Param('roomId') roomId: string){
+  async leaveRoom(@Req() req: Request, @Param('roomId', RoomIdStringToDtoPipe) roomId: string){
       const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
       const isLeft = await this.usersService.leaveRoom(user.id, +roomId);
       if (!isLeft)
@@ -552,7 +553,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
 
   @Get('get-room-members/:roomId')
   @UseGuards(Jwt2faAuthGuard)
-  async getRoomMembers(@Req() req: Request, @Param('roomId') roomId: string){
+  async getRoomMembers(@Req() req: Request, @Param('roomId', RoomIdStringToDtoPipe) roomId: string){
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     const isMember = await this.usersService.checkIfUserExistsInRoomV2(user.id, +roomId);
     if (!isMember)
@@ -565,7 +566,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
 
   @Get('get-room-messages/:roomId')
   @UseGuards(Jwt2faAuthGuard)
-  async getRoomMessages(@Req() req: Request, @Param('roomId') roomId: string){
+  async getRoomMessages(@Req() req: Request, @Param('roomId', RoomIdStringToDtoPipe) roomId: string){
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     const isMember = await this.usersService.checkIfUserExistsInRoomV2(user.id, +roomId);
     if (!isMember)
@@ -609,7 +610,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
 
   @Delete('delete-room/:roomId')
   @UseGuards(Jwt2faAuthGuard) 
-  async deleteRoom(@Req() req: Request, @Param('roomId') roomId: string){
+  async deleteRoom(@Req() req: Request, @Param('roomId', RoomIdStringToDtoPipe) roomId: string){
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     //check if the user is owner of the room
     const isDeleted = await this.usersService.deleteRoom(user.id, +roomId);
@@ -654,7 +655,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
 
   @Get('get-my-role/:roomId')
   @UseGuards(Jwt2faAuthGuard)
-  async getMyRole(@Req() req: Request, @Param('roomId') roomId: string){
+  async getMyRole(@Req() req: Request, @Param('roomId', RoomIdStringToDtoPipe) roomId: string){
     const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
     const role = await this.usersService.getMyRole(user.id, +roomId);
     if (!role)
@@ -673,7 +674,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
 
   @Get('get-room/:roomId')
   @UseGuards(Jwt2faAuthGuard)
-  async getRoom(@Req() req: Request, @Param('roomId') roomId: string){
+  async getRoom(@Req() req: Request, @Param('roomId', RoomIdStringToDtoPipe) roomId: string){
     const room = await this.usersService.getRoomById(+roomId);
     // console.log(room)
     if (!room)
