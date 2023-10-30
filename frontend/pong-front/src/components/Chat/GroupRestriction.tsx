@@ -11,6 +11,7 @@ interface Props {
 	username: string,
 	RoomName: string,
 	type: string,
+	is_banned: string,
 }
 
 const handleban = async (name: string, RoomName: string, type: string) => {
@@ -107,7 +108,7 @@ const handleadmin =  async (name: string, RoomName: string, type: string) => {
 	  }
 }
 
-export function GroupRestriction ({avatar, username, RoomName, type}: Props) {
+export function GroupRestriction ({avatar, is_banned, username, RoomName, type}: Props) {
 
 	const Id = useParams();
 	const conf = {
@@ -134,21 +135,11 @@ export function GroupRestriction ({avatar, username, RoomName, type}: Props) {
 		
 	}, []);
 
-	// useEffect(() => {
-	// 	try {
-	// 		const response =  axios.post(`http://localhost:3000/get-room-members/${username}`, jsonData, { withCredentials: true })
-	// 		.then ((response) => {
-	// 			setaccType(response.data);
-	// 		})
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-		
-	// }, []);	
 	
-	const [banuser, setbanuser] = useState(false);
+	const [banuser, setbanuser] = useState(is_banned);
 	const [muteuser, setmuteuser] = useState(false);
 	const [access, setaccess] = useState(false);
+
 	return (
 		<>
 		<div className="pb-5">
@@ -158,13 +149,13 @@ export function GroupRestriction ({avatar, username, RoomName, type}: Props) {
 					<div className="text-sm text-[#353E6C]">{conf.username}</div>
 				</button>
 				{
-					banuser ?
-					<button className="flex items-center" onClick={() => {handleban(conf.username, RoomName, type), setbanuser(!banuser)}}>
+					(banuser.toString() === "false") ?
+					<button className="flex items-center" onClick={() => {handleban(conf.username, RoomName, type), setbanuser("true")}}>
 					<img src={ban} className="pt-2"></img>
 					<div className="text-xs text-[#353E6C]">Ban</div>
 					</button>
-					:
-					<button className="flex items-center" onClick={() => {handleallow(conf.username, RoomName, type), setbanuser(!banuser)}}>
+					: 
+					<button className="flex items-center" onClick={() => {handleallow(conf.username, RoomName, type), setbanuser("false")}}>
 						<div className="text-xs text-[#353E6C]">Unban</div>
 					</button>
 				}
@@ -186,16 +177,15 @@ export function GroupRestriction ({avatar, username, RoomName, type}: Props) {
 					}
 					</div>
 				</button>
-				<button className="flex items-center">
-					<img src={kick} onClick={() => handlekick(username, RoomName, type)}></img>
+				<button className="flex items-center" onClick={() => handlekick(username, RoomName, type)}>
+					<img src={kick}></img>
 					<div className="text-xs text-[#353E6C]">Kick out</div>
 				</button>
 				<button className="flex flex-col items-center" onClick={() => {setaccess(!access)}}>
-				<div className="flex gap-[6px]">
-					<img src={kick} className=""></img>
+				<div className="flex">
 					<div className="text-xs text-[#353E6C]">Change access</div>
 				</div>
-				<div className="absolute w-[100px]">
+				<div className="absolute w-[100px] pt-5">
 				{
 					access && acctype === "member" ? (
 						<div className="bg-gray-100 rounded-lg">

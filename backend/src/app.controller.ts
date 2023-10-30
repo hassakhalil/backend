@@ -462,7 +462,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
         return 'Password set seccussfully';        
   }
 
-  @Post('/remove-room-password')
+  @Delete('/remove-room-password')
   @UseGuards(Jwt2faAuthGuard)
   async removeRoomPassword(@Req() req: Request, @Body() body: RoomSettingsDto){
         // check if the user is the owner of the room

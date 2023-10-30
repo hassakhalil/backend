@@ -38,7 +38,6 @@ export function GroupSettings( {hide}: Props ) {
 			{ withCredentials: true }
 			).then ((response) => {
 				setMember(response.data);
-
 			})
 			
 		} catch (error) {
@@ -106,7 +105,7 @@ export function GroupSettings( {hide}: Props ) {
 							<div className="w-full h-2/6 overflow-y-auto">
 								{member.map((mem, index: number) => (
 									<div key={index}>
-										<GroupRestriction avatar={mem.avatar} username={mem.username} RoomName={name} type={type}/>
+										<GroupRestriction avatar={mem.avatar} is_banned={mem.is_banned} username={mem.username} RoomName={name} type={type}/>
 									</div>
 								))
 								}
