@@ -139,7 +139,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
                     //broadcast the user state change to all connected the users
                      this.server.emit('State', {id: user.id, username: user.username, avatar: user.avatar, state: "online"});
                 }                
-                else (test.state !== "ingame")
+                else if (test.state !== "ingame")
                 {
                     const isSaved = await this.notifications.saveUserState(user.id, "online");
                     //broadcast the user state change to all connected the users

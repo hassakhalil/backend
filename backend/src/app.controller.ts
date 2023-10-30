@@ -76,7 +76,7 @@ export class AppController {
           //   method: 'POST',
           //   body:  '{"username": "string"}'
           // };
-          return res.redirect(`http://${process.env.REACT_APP_HOST}/set-username`);
+          return res.redirect(`http://${process.env.REACT_APP_HOST}/set_username`);
       }
       else {
         if (user.is_two_factor_auth_enabled){
