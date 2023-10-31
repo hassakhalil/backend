@@ -273,7 +273,37 @@ export class UsersService {
               },
             }
           );
-          return match_history;
+          let filter  = [];
+          //your score 
+          //friend score
+          //friend username
+          //friend avatar
+          //date
+          for (let i=0; i < match_history.length; i++){
+            let friendId;
+            let friendScore;
+            let myScore;
+            if (match_history[i].player_one_id === userId){
+              friendId = match_history[i].player_two_id;
+              friendScore = match_history[i].player_two_score;
+              myScore = match_history[i].player_one_score;
+            }
+            else{
+              friendId = match_history[i].player_one_id;
+              friendScore = match_history[i].player_one_score;
+              myScore = match_history[i].player_two_score;
+            }
+            const friend = await this.findById(friendId);
+              filter.push({
+                friend_id: friendId,
+                friend_username: friend.username,
+                friend_avatar: friend.avatar,
+                friend_score: friendScore,
+                my_score: myScore,
+                date: match_history[i].date,
+              });
+          }
+          return filter;
       }
       catch(error){
         return null;
