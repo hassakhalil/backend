@@ -672,6 +672,20 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
     return users;
   }
 
+  @Get('get-user/:id')
+  @UseGuards(Jwt2faAuthGuard)
+  async getUser(@Req() req: Request, @Param('id', RoomIdStringToDtoPipe) id: string){
+    const user = await this.usersService.findById(+id);
+    if (!user)
+      throw new HttpException('Failed to get user', HttpStatus.BAD_REQUEST);
+    return {
+      username: user.username,
+      avatar:   user.avatar,
+      state:    user.state,
+      rating:   user.rating,
+    };
+  }
+
   @Get('get-room/:roomId')
   @UseGuards(Jwt2faAuthGuard)
   async getRoom(@Req() req: Request, @Param('roomId', RoomIdStringToDtoPipe) roomId: string){

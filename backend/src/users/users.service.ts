@@ -99,6 +99,7 @@ export class UsersService {
         username:                   user.username,
         avatar:                     user.avatar,
         state:                      user.state,
+        rating:                     user.rating,
       };
     }
     catch(erro){
