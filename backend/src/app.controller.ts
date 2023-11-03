@@ -630,22 +630,22 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
       return 'Request deleted seccussfully';
   }
 
-  @Post('invite-to-game/:username')
-  @UseGuards(Jwt2faAuthGuard)
-  async inviteToGame(@Req() req: Request, @Param('username', UsernameStringToDtoPipe) username: string){
-    const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
-    const friend = await this.usersService.findByUsername(username);
-    if (!friend)
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    if (user.username === friend.username)
-      throw new HttpException('You are trying to invite yourself', HttpStatus.BAD_REQUEST);
-    //check if they are friends
-    const areFriends = await this.usersService.checkIfFriends(user.id, friend.id);
-    if (!areFriends)
-      throw new HttpException('Failed to invite friend to game', HttpStatus.BAD_REQUEST);
-    this.notifications.sendGameRequestNotification(user.id, friend.id);
-      return 'Friend invited seccussfully';
-  }
+  // @Post('invite-to-game/:username')
+  // @UseGuards(Jwt2faAuthGuard)
+  // async inviteToGame(@Req() req: Request, @Param('username', UsernameStringToDtoPipe) username: string){
+  //   const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
+  //   const friend = await this.usersService.findByUsername(username);
+  //   if (!friend)
+  //     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  //   if (user.username === friend.username)
+  //     throw new HttpException('You are trying to invite yourself', HttpStatus.BAD_REQUEST);
+  //   //check if they are friends
+  //   const areFriends = await this.usersService.checkIfFriends(user.id, friend.id);
+  //   if (!areFriends)
+  //     throw new HttpException('Failed to invite friend to game', HttpStatus.BAD_REQUEST);
+  //   this.notifications.sendGameRequestNotification(user.id, friend.id);
+  //     return 'Friend invited seccussfully';
+  // }
 
   @Get('is-loggedin')
   @UseGuards(Jwt2faAuthGuard)

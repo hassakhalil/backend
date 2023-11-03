@@ -202,7 +202,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     @OnEvent('gameRequest')
-    async handleGameRequestEvent(userId: number, friendId: number) {
+    async handleGameRequestEvent(userId: number, friendId: number, gameId: number) {
         //get friend socket
         let friendSocketId = null;
         for (let [key, value] of this.clients.entries()) {
@@ -213,7 +213,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         console.log("senderObject = ",senderObject);
         const sender = {id: userId, username: senderObject.username, avatar: senderObject.avatar};
         if (friendSocketId){
-            this.server.to(friendSocketId).emit('gameRequest', sender); //broadcast messages
+            this.server.to(friendSocketId).emit('gameRequest', sender, gameId); //broadcast messages
         }
 
     }
