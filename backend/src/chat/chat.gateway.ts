@@ -195,7 +195,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
         const senderObject = await this.usersService.findById(userId);
         console.log("senderObject = ",senderObject);
-        const sender = {id: userId, username: senderObject.username, avatar: senderObject.avatar};
+        const sender = {id: userId, username: senderObject.username, avatar: senderObject.avatar, type: 'friendship'};
         if (friendSocketId){
             this.server.to(friendSocketId).emit('friendRequest', sender); //broadcast messages
         }
@@ -211,7 +211,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }
         const senderObject = await this.usersService.findById(userId);
         console.log("senderObject = ",senderObject);
-        const sender = {id: userId, username: senderObject.username, avatar: senderObject.avatar};
+        const sender = {id: userId, username: senderObject.username, avatar: senderObject.avatar, type: 'game'};
         if (friendSocketId){
             this.server.to(friendSocketId).emit('gameRequest', sender); //broadcast messages
         }

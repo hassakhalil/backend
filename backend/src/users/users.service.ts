@@ -372,6 +372,7 @@ export class UsersService {
               id:         requests[i].sender_id,
               username:   sender.username,
               avatar:     sender.avatar,
+              type:       'friendship',
             });
           }
 
