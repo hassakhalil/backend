@@ -23,7 +23,7 @@ export class NotificationsService {
         this.eventEmitter.emit('gameRequest', userId, friendId);
     }
 
-    sendGameStartNotification(gameState: string, userId: number) {
+    sendGameStartNotification(userId: number) {
         //debug
         console.log("sendGameStartNotification triggered");
         //end debug
@@ -31,7 +31,7 @@ export class NotificationsService {
 
     }
 
-    sendGameEndNotification(gameState: string, userId: number) {
+    sendGameEndNotification(userId: number) {
         //debug
         console.log("sendGameEndNotification triggered");
         //end debug
