@@ -4,6 +4,7 @@ import React from "react";
 interface customParam
 {
   user_id : number;
+  OpponnentId: number,
   gameDuration: string;
 }
 

@@ -1,4 +1,5 @@
 import React from "react"
+import { NavLink } from "react-router-dom"
 
 interface Props {
 	profile: string,
@@ -7,10 +8,16 @@ interface Props {
 }
 
 export function Msg ( {profile, name, msg} : Props ) {
+
+	console.log(name);
 	return (
 		<>
 			<div className="flex gap-[10px] pb-5">
-				<img src={profile} className="w-[32px] h-[32px] rounded-full"></img>
+				<NavLink to={`/profile/${name}`}>
+				<button >
+					<img src={profile} className="w-[32px] h-[32px] rounded-full"></img>
+				</button>
+				</NavLink>
 				<div className="flex flex-col">
 				<div className="flex gap-[10px] pb-3 items-center">
 					<div className="text-sm">{name}</div>

@@ -18,11 +18,12 @@ import { BrStart } from "./BrStart";
 import { useState } from "react";
 import { BrLogout } from "./BrLogout";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { Avatar } from "../Avatar";
 import { Friends } from "../../Friends/friends";
 import { UserContext } from "../../../../pages/Profile";
 import { useProfilecontext } from "../../../../ProfileContext";
+import { BrSearch } from "./BrSearch";
 
 export function Brb() {
   const initialColors: { [key: string]: string } = {
@@ -55,17 +56,16 @@ export function Brb() {
   };
 
     const profile = useProfilecontext();
-	// const data = useContext(UserContext);
 
   return (
     <>
       <div className="pt-[60px] w-full h-screen notif-container lg:hidden">
         <div className="flex flex-col pt-20">
-          {/* <BrHome
-            buttonColors={buttonColors}
+			<BrSearch
+			buttonColors={buttonColors}
             strokeColor={strokeColor}
             handleClick={handleClick}
-          /> */}
+			/>
           <BrProfile
             buttonColors={buttonColors}
             strokeColor={strokeColor}
@@ -75,7 +75,7 @@ export function Brb() {
             buttonColors={buttonColors}
             strokeColor={strokeColor}
             handleClick={handleClick}
-            msgnum="5"
+            msgnum={profile?.data?.pending_requests?.length}
           />
           <BrGame
             buttonColors={buttonColors}
@@ -88,20 +88,20 @@ export function Brb() {
           <div className="text-[#808191] text-sm pb-8">Friends</div>
 
           <div className="scrollable-div-ver6">
-            <div>
-				{profile.data?.userData?.friends?.map((friend: {avatar: string; username: string} , index: number) => (
+		  <div>
+				{profile?.data?.friends?.map((friend: { avatar: string; username: string }, index: number) => (
 					<div key={index}>
-						<BrFriends profile={friend.avatar} name={friend.username} status="/src/assets/live.svg"/>
+						<a href={`/profile/${friend.username}`}>
+
+						<div className="flex items-center gap-[15px] rounded-full h-[60px]">
+							<img src={friend.avatar} className="rounded-full w-[50px] h-[50px]" />
+							<div className="text-[#808191]">{friend.username}</div>
+						</div>
+						</a>
 					</div>
 				))
 				}
 			</div>
-          </div>
-          <div className="flex pt-8 items-center">
-            <div>
-              <img src={arrow}></img>
-            </div>
-            <div className="pl-3 text-[#808191]">Lead more</div>
           </div>
         </div>
 

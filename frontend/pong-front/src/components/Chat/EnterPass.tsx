@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import rmv from "/src/assets/remove.svg"
 import axios from "axios";
+import rec from "/src/assets/rectangle.svg"
 
 interface Props {
 	roomName: string,
@@ -8,34 +9,43 @@ interface Props {
 	hide: () => void;
 }
 
-const ProtectedRooms = async ( {roomName, RoomType}: Props, Mypassword: string )  => {
-	const jsonData = {
-		name: roomName,
-		password: Mypassword,
-		type: RoomType,
-	};
-
-	try {
-		const response = await axios.post("http://localhost:3000/join-room", jsonData, {withCredentials: true})
-		.then((response) => {
-			console.log(response.data);
-		})
-	}
-	catch (error) {
-		console.log(error);
-	}
-}
-
 export function EnterPass ( {hide, roomName, RoomType}: Props ) {
 	const [pass, setpass] = useState('');
+	const [error, SetError] = React.useState(false);
+	const [sent, Setsent] = React.useState(false);
+	const [remove, setRemove] = React.useState(false);
 	const data = {
 		roomName: roomName,
 		RoomType: RoomType,
 		hide: hide
 	}
 
+	const ProtectedRooms = async ( {roomName, RoomType}: Props, Mypassword: string )  => {
+		const jsonData = {
+			name: roomName,
+			password: Mypassword,
+			type: RoomType,
+		};
+	
+		try {
+			const response = await axios.post("http://localhost:3000/join-room", jsonData, {withCredentials: true})
+			.then((response) => {
+				console.log(response.data);
+				Setsent(true);
+				SetError(false);
+				hide();
+			})
+		}
+		catch (error) {
+			console.log(error);
+			SetError(true);
+			Setsent(false);
+		}
+	}
+
 	return (
 		<>
+
 		<div className="blur-background">
 
 			<div className="absolute left-[20%] top-[30%] z">
@@ -60,8 +70,40 @@ export function EnterPass ( {hide, roomName, RoomType}: Props ) {
 						}}
 						/>
 					</div>
+					{
+								error ? 
+								<div className="absolute pt-[10px] lg:pt-[20px]">
+									<div className="border bg-[#E9DCE5] rounded-lg w-[170px] h-[25px]  flex gap-1 items-center justify-center">
+										<div className="text-xs font-semibold text-[#6C5DD3]">Invitation Not Valid</div>
+										<div>
+											<div  style={{ backgroundImage: `url(${rec})`}} className="w-[14px] h-[14px] bg-center bg-no-repeat bg-cover">
+												<div className="text-white flex items-center justify-center text-xs font-semibold">
+													!
+												</div>
+											</div>
+										</div>
+									</div>
+								</div> : null
 
-					<button className="flex items-center justify-center" onClick={() => ProtectedRooms(data, pass)}>
+							}
+							{
+								sent ? 
+								<div className="absolute pt-[10px] lg:pt-[20px]">
+									<div className="border bg-[#E9DCE5] rounded-lg w-[170px] h-[25px]  flex gap-1 items-center justify-center">
+										<div className="text-xs font-semibold text-[#6C5DD3]">Done</div>
+										<div>
+											<div  style={{ backgroundImage: `url(${rec})`}} className="w-[14px] h-[14px] bg-center bg-no-repeat bg-cover">
+												<div className="text-white flex items-center justify-center text-xs font-semibold">
+													!
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								
+								: null
+							}
+					<button className="flex items-center justify-center" onClick={() => {ProtectedRooms(data, pass)}}>
 						<div className="flex items-center justify-center w-full lg:w-6/12 h-[50px] bg-[#6C5DD3] rounded-xl text-white font-bold tracking-wider shadow-md">Join Room</div>
 					</button>
 				</div>

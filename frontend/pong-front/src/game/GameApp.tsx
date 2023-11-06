@@ -18,7 +18,7 @@ interface DataContextProps {
   
 
 function GameApp() {
-  console.log("error-game");
+  // console.log("error-game");
   // let state : DataContextProps | undefined;
 
 	// const chatContext = useContext(ChatSocketContext);
@@ -29,10 +29,10 @@ function GameApp() {
   let custom_msg: string;
   const [RenderCanvas, setRenderCanvas] = useState(true);
   const [gameState, setGameState] = useState('pending')
-  console.log("Gameapp");
+  // console.log("Gameapp");GameRoute
   // const gameMode = 'simple';
   // socket.emit('game Mode', gameMode);
-  console.log('GameApp loaded');
+  // console.log('GameApp loaded');
   useEffect(() => {
 
     // leaveGame = 'ingame'

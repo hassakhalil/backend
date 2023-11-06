@@ -7,12 +7,15 @@ import { Game } from "../../../pages/Game";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
+import { GameSetup } from "../../Game/GameSetup";
 
 interface Props {
     TableType: string,
-    GameType: string,
+    OpponnetId: number,
     imgPath: string,
     user_id: number,
+	hide: () => void,
+	remove: boolean
 }
 
 
@@ -29,30 +32,41 @@ const  Param : customParam =
 
 
 
-export function GameCard({ TableType, GameType, imgPath, user_id }: Props) {
+export function GameCard({ TableType , imgPath, OpponnetId ,user_id, hide, remove }: Props) {
   const navigate = useNavigate();
   const [showFriends, setShowFriends] = React.useState(false);
   const [chooseFr, setChooseFr] = React.useState(false);
+  let Type : string | null;
+  // let Color : string | null;
+  console.log('table tyepe', TableType)
+  if (TableType == "AI Table")
+    Type = '5';
+  else if (TableType === 'world Table')
+    Type = sessionStorage.getItem('Timer');
+  else 
+    Type = '6'
 
-  if (GameType == "Bot Game")
-	sessionStorage.setItem("Timer", "5");
+console.log('Type ==================== ', Type);
   const handleClick = () => {
     
-    console.log(GameType);
-    if (GameType === "0") {
-      // If GameType is 1, set the state to show Friends component
+    console.log(TableType);
+    if (TableType === 'friend Table') {
       setShowFriends(true);
     } else {
-      // If GameType is not 1, navigate to '/game'
-      navigate('/game', { state: { gameDuration: GameType, user_id: user_id } });
-    }
+		hide();
+       navigate('/game', { state: { gameDuration: Type, user_id: user_id, OpponnetId : OpponnetId} });
+      //  return (<GameSetup gameDuration={Type}  user_id={user_id} OpponnentId={OpponnetId}/>)
+x    }
   };
 
   const handleFriendsClose = () => {
     
     console.log("me = " + user_id);
-    navigate('/game', { state: { gameDuration: GameType, user_id: user_id} });
+    // return (<GameSetup gameDuration={Type}  user_id={user_id} OpponnentId={OpponnetId}/>)
+    navigate('/game', { state: { gameDuration: Type, user_id: user_id, OpponnetId : OpponnetId} });
   };
+
+  console.log("remove is " + remove)
 
   return (
     <>
@@ -68,7 +82,7 @@ export function GameCard({ TableType, GameType, imgPath, user_id }: Props) {
               </div>
             </div>
             <div className="pt-2 flex items-center justify-center">
-              <button className="border border-gray-100 rounded-xl w-[90px] lg:w-[100px] lg:h-[30px] bg-gray-100 drop-shadow-md" onClick={handleClick}>
+              <button className="border border-gray-100 rounded-xl w-[90px] lg:w-[100px] lg:h-[30px] bg-gray-100 drop-shadow-md" onClick={() => {handleClick()}}>
                 <h1 className="text-[#5961F9] text-sm lg:text-md font-extrabold">Start Play</h1>
               </button>
             </div>

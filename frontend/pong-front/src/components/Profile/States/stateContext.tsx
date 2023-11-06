@@ -2,8 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import axios from 'axios';
 import { ChatSocketContext } from '../../Chat/contexts/chatContext';
 // import { Avatar } from '../../Home/NavBar/Avatar';
-
-
+import { useProfilecontext } from '../../../ProfileContext';
 interface friendsList{
   id:  '',
   username: '',
@@ -52,6 +51,7 @@ export const StateProvider: React.FC<StateProviderProps> = ({ children }: StateP
         Mydata = {id: response.data.user_data.id, username: response.data.user_data.username, avatar: response.data.user_data.avatar, state : response.data.user_data.state}
         response.data.friends = [...response.data.friends, Mydata];
         setData(response.data.friends);
+        console.log(data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -60,6 +60,42 @@ export const StateProvider: React.FC<StateProviderProps> = ({ children }: StateP
     // chatContext?.emit('join-room', {roomId});
     fetchData();
   }, []);
+
+  // const profile = useProfilecontext()
+	// const chatContext = useContext(ChatSocketContext);
+	// // let state : DataContextProps | undefined;
+	// 	// state = useDataContext();
+  //   useEffect(() =>{
+	//     chatContext?.on('State', (friendState : friendsList)=>
+  //     {
+  //     console.log('on state -------', friendState);
+
+
+  //     // start
+  //     // profile.setData((prevData) => {
+  //     //   if (prevData) {
+  //     //     return {
+  //     //       ...prevData,
+  //     //       user_data: {
+  //     //         ...prevData.user_data,
+  //     //         state: friendState.state,
+  //     //       },
+  //     //     };
+  //         ///end 
+  //         console.log("state changed", data)
+  //         if (data)
+  //     setData((old) =>
+  //     old.map((item : friendsList) => (item.id === friendState.id ? { ...item, ...friendState } : item)))
+  //     console.log('data mn bead', data);
+  //       // }})
+  //       // return null;
+  //     });
+  //     // return (chatContext?.off('State'))
+  //     }, [chatContext])
+        // return () =>{
+          // chatContext?.off('State');}
+  // }, [])
+  // console.log('user_data li f navbar', profile?.data?.user_data.avatar);
 
     console.log('----------------------------------------------------------------new data arived', data);
   return (

@@ -1,6 +1,7 @@
 import check from "/src/assets/check.svg"
 import plusFriend from "/src/assets/PersonPlusFill.svg"
 import { Enline } from "../Home/Friends/status/Enline"
+import { Playing } from "../Home/Friends/status/Playing"
 
 
 interface Props {
@@ -17,7 +18,7 @@ export function Enemy ( {profile, name, friendNum}: Props ) {
 					<div className="flex items-center justify-center border border-[3px] border-[#0049C6] rounded-full w-[75px]  h-[75px] sm:w-[85px] sm:h-[85px]">
 							<img src={profile} className="absolute bbc rounded-full w-[57px] h-[57px] sm:w-[67px] sm:h-[67px]"></img>
 							<div className="absolute pb-12 pl-14 lg:pb-14 lg:pl-16">
-								<Enline/>
+								<Playing/>
 							</div>
 					</div>
 					<div className="flex flex-col justify-center gap-4">
@@ -27,7 +28,7 @@ export function Enemy ( {profile, name, friendNum}: Props ) {
 								<img src={check} className="w-[25px] h-[25px]"></img>
 							</div>
 						</div>
-						<div className="text-sm text-[#808191]">{friendNum} Friends</div>
+						<div className="text-sm text-[#808191]">{friendNum} Elo</div>
 					</div>
 					</div>
 					{/* <div className="flex gap-1">

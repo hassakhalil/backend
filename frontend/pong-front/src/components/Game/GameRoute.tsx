@@ -12,6 +12,7 @@ import { useContext } from 'react';
 import { useDataContext } from "../Profile/States/stateContext";
 import { ChatSocketContext } from "../Chat/contexts/chatContext";
 import { GameSetup } from "./GameSetup";
+import GameApp from "../../game/GameApp";
 
 // import { SocketContext } from "../../game/contexts/SocketContext";
 
@@ -28,28 +29,16 @@ interface friendsList{
   
    export  const  GameRoute = ()=>
     {
-        const chatSocket = useContext(ChatSocketContext);
+        // const chatSocket = useContext(ChatSocketContext);
         const Socket = useContext(SocketContext);
         // const Socket = useContext();
 
         useEffect(()=>
         {
-          let state = 'ingame';
-          // console.log('khdama')
-          if (chatSocket?.connected)
-            chatSocket?.emit('State', {state});
-        // else
-            // console.log('madar walo00000000')
-
-            // return () => {
-            //   let state = 'endgame';
-            //   if (chatSocket?.connected) {
-            //     chatSocket?.emit('State', { state });
-            //   }}
-    }, [chatSocket])        
+    }, [])        
         return (
             <>
-              {/* <GameSetup /> */}
+              <GameApp />
             </>
         )
     }

@@ -9,6 +9,7 @@ import { JoinRoom } from "./JoinRoom";
 import { GroupSettings } from "./GroupSettings";
 import Leave from "/src/assets/Leave.svg"
 import { LastMatch } from "../Profile/LastMatch/LastMatch";
+import msg from "/src/assets/message.svg"
 
 interface Friend {
   id: number;
@@ -33,16 +34,20 @@ interface MyUserData {
 }
 
 interface MbChatProps {
-  profile: MyUserData | undefined;
+	profile: MyUserData | undefined;
 }
 
 interface room {
-  id: string,
-  name: string,
-  type: string,
+	id: string,
+	name: string,
+	type: string,
 }
 
 export function DirectMsg({ profile }: MbChatProps) {
+	const [remove, setremove] = useState(false);
+	const [rooms, setrooms] = React.useState(false);
+	const [setting, setSettings] = useState(false);
+	// const [role, Setrole] = useState(false);
   // const {RoomId} = useParams();
 
   // const Data = useContext(UserContext);
@@ -103,9 +108,27 @@ export function DirectMsg({ profile }: MbChatProps) {
 fetchData();
 }, []);
 
-  const [remove, setremove] = useState(false);
-  const [rooms, setrooms] = React.useState(false);
-  const [setting, setSettings] = useState(false);
+// useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         let response = await axios.get(
+//           `http://${import.meta.env.VITE_API_URL}/get-my-role/${id}`,
+//           { withCredentials: true }
+//         )
+// 		.then ((response) => {
+// 			if (response.data === "owner")
+// 				Setrole(true);
+// 		})
+// 	} catch (error) {
+// 		console.error("Error fetching data:", error);
+// 	}
+// };
+
+// fetchData();
+// }, []);
+
+// 	console.log("waaa nta = " + role)
+
 
   return (
     <>
@@ -143,7 +166,7 @@ fetchData();
 			</button>
 			{
 
-				rooms ? <button className="text-sm text-[#6C5DD3]" onClick={() => setrooms(!rooms)}>Back To Direct Msg</button> :
+				rooms ? <button className="text-sm text-[#6C5DD3]" onClick={() => setrooms(!rooms)}>Back To Your Rooms</button> :
 				<button onClick={() => setrooms(!rooms)}>
 					<div className="text-sm text-[#6C5DD3]">Join New rooms</div>
 				</button>
@@ -151,7 +174,13 @@ fetchData();
 		</div>
 		  </div>
       <div className="w-[70%] sm:w-[80%] md:w-[70%] lg:w-[66%] xl:w-[60%] fixed left-[30%] sm:left-[30%] md:left-[40%] lg:left-[48%] h-[85vh]">
-        {(id && Rooms.find((room: room) => room.id.toString() === id?.toString())) && <ChatConv room={Rooms.find((room: room) => room.id.toString() === id?.toString())} profile={profile} />}
+        {
+			(id && Rooms.find((room: room) => room.id.toString() === id?.toString())) ? <ChatConv room={Rooms.find((room: room) => room.id.toString() === id?.toString())} profile={profile} />
+			: <div className="flex flex-col h-[85vh] items-center justify-center pb-28">
+				<img src={msg} className="w-[150px] h-[150px]"></img>
+				<div className="text-gray-500">Send private messages to a friend or group</div>
+			</div>
+		}
       </div>
 	  <div>
 		{
@@ -163,7 +192,7 @@ fetchData();
 		{
 			setting ?
 			<div className="w-screen h-screen">
-			 	<GroupSettings hide={() => setSettings(!setting)}/>	
+			 	<GroupSettings hide={() => setSettings(!setting)}/>
 			</div> : null
 		}
 

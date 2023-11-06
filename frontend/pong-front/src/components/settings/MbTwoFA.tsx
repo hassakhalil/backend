@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useEffect } from "react";
 import { UserContext } from "../../pages/Profile";
+import { useProfilecontext } from "../../ProfileContext";
 
 
 interface Props {
@@ -31,7 +32,7 @@ export function MbTwoFA ( {hide}: Props) {
 	});
 	const [error, Seterror] = useState(false);
 	const [sent, Setsent] = useState(false);
-	const Data = useContext(UserContext);
+	const Mydata = useProfilecontext();
 
 	const handle2faOn = async () => {
 		try {
@@ -79,10 +80,11 @@ export function MbTwoFA ( {hide}: Props) {
 	
 	const handleqr = () => {
 		setGenerate(!generate);
+		fetchData();
 	}
 	
 	const handleOn = () => {
-		Data?.setUserData((prevUserData) => ({
+		Mydata?.setData((prevUserData) => ({
 			...prevUserData,
 			user_data: {
 			  ...prevUserData.user_data,
@@ -94,7 +96,7 @@ export function MbTwoFA ( {hide}: Props) {
 	}
 
 	const handleOff = () => {
-		Data?.setUserData((prevUserData) => ({
+		Mydata?.setData((prevUserData) => ({
 			...prevUserData,
 			user_data: {
 			  ...prevUserData.user_data,
@@ -228,14 +230,14 @@ export function MbTwoFA ( {hide}: Props) {
 											<div className="pt-5">
 											
 											{
-												Data?.userData?.user_data?.is_two_factor_auth_enabled ?
+												Mydata?.data?.user_data?.is_two_factor_auth_enabled ?
 													<button className={`flex justify-center items-center border rounded-xl bg-gray-100 border-gray-100 h-[45px] w-[130px]`} onClick={handleOff}>
 														<div className="text-[#11142D]  font-semibold lg:text-sm">Disable 2FA</div>
 													</button>
 												: null
 											}
 											{
-												Data?.userData?.user_data?.is_two_factor_auth_enabled ? null :
+												Mydata?.data?.user_data?.is_two_factor_auth_enabled ? null :
 													<button className="flex justify-center items-center border rounded-xl bg-[#6C5DD3] border-[#6C5DD3] h-[45px] w-[130px]" onClick={handleOn}>
 															<div className="text-white font-semibold lg:text-sm">Enable 2FA</div>
 													</button>

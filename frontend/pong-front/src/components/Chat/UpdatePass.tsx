@@ -32,6 +32,7 @@ export function UpdatePass ( {hide, roomName, RoomType}: Props ) {
 			.then (function (response) {
 				SetError(false);
 				Setsent(true);
+				hide();
 			});
         } catch (error) {
           console.error('POST Update Pass failed:', error);
@@ -93,6 +94,7 @@ export function UpdatePass ( {hide, roomName, RoomType}: Props ) {
 										</div>
 									</div>
 								</div>
+
 								: null
 							}
                         </div>

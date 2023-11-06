@@ -1,5 +1,5 @@
 import { Avatar } from "../Avatar"
-import down from "/src/assets/small-down.svg"
+import search from "/src/assets/search.svg"
 import logo from "/src/assets/mainLogo.svg"
 import { useState } from "react"
 import React from "react"
@@ -16,44 +16,67 @@ import { MbSettings } from "../../../settings/MbSettings"
 import { useDataContext } from "../../../Profile/States/stateContext"
 import { ChatSocketContext } from "../../../Chat/contexts/chatContext"
 import { useProfilecontext } from "../../../../ProfileContext"
+import { DkSearch } from "../../../Search/DkSearch"
 
-interface friendsList{
-	id:  '',
-	username: '',
-	avatar:    '',
-	state:    '',
+
+interface MBburgerProps {
+	state: friendsList[];
   }
+  
+  interface friendsList{
+	  id:  '',
+	  username: '',
+	  avatar:    '',
+	  state:    '',
+	}
+	
+	export function MBburger() {
 
-export function  MBburger (  ) {
+	const [state, setState] = useState<any>(null);
+    const chatContext = useContext(ChatSocketContext);
 
-	const data = useContext(MyContext);
-	// const state = useDataContext();
-	// const chatContext = useContext(ChatSocketContext);
-	// const profile = useProfilecontext()
+    useEffect(() => {
 
-	// const chatContext = useContext(ChatSocketContext);
-	const state = useDataContext();
+      const fetchData = async () => {
+        try {
+
+          const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true });
+
+          console.log('data = ', response.data.friends);
+          let Mydata : friendsList;
+          Mydata = {id: response.data.user_data.id, username: response.data.user_data.username, avatar: response.data.user_data.avatar, state : response.data.user_data.state}
+          response.data.friends = [...response.data.friends, Mydata];
+          setState(response.data.friends);
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+
+        console.log('initial data', state);
+      };
+
+      fetchData();
+    }, []);
+
+    useEffect(() => {
+    chatContext?.on('State', (friendState : friendsList)=>
+        {
+        console.log('on state ----------------------------------------------------------------------------------------------------------', friendState);
+
+            console.log('value', friendState)
+            console.log('id', friendState);
+            if (state)
+        setState((old) => (old.map((item : friendsList) => (item.id === friendState.id ? { ...item, ...friendState } : item))))
+      });
+      return (() =>
+      {
+          (chatContext?.off('State'))
+        })
+        }, [])
+	let name = 'achraf';
+
 	const profile = useProfilecontext();
-	// useEffect(() => 
-	// {
-	//   if (chatContext?.connected)
-	//   console.log('connected >>>>>>>>>>>>>>>>>>	')
-	// 	chatContext?.on('State', (friendState : friendsList)=>
-	// 	{
-	// 	console.log('on state --------------------------------------<>')
-	// 	state?.setData((old) =>
-	// 	old.map((item : friendsList) => (item.id === friendState.id ? { ...item, ...friendState } : item))
-	// 	)})
-	// 	//   return () =>{
-	// 		// chatContext?.off('State');}
-	// }, [chatContext, profile?.data?.user_data.avatar, state, profile.setData])
-	const isIngame = 'ingame';
-	// const {param} = useParams();
-	// let isOnline = 'ingame'
-		// console.log('before comparison-----------------------')
-		// console.log('comparison = ---------------',  (state?.data[state?.data.length - 1].state && state?.data[state?.data.length - 1].state === isOnline));
-	// console.log(param + " this is you param");
 
+	const isIngame = 'ingame';
 
 	const initialColors: { [key: string]: string } = {
 		button1: 'initial',
@@ -63,7 +86,7 @@ export function  MBburger (  ) {
 		button5: 'initial',
 		button6: 'initial',
 	};
-	
+
 	const strokeColors: { [key: string]: string } = {
 		img1: '#808191',
 		img2: '#808191',
@@ -78,10 +101,12 @@ export function  MBburger (  ) {
 	const [strokeColor, setstrokeColor] = useState(strokeColors);
     const [settings, SetSettings] = React.useState(false);
 	const [game, Setgame] = useState(false);
+	const [search, setsearch] = useState(false);
 	const [logout, Setlogout] = useState(false);
 	
 
 		const handleClick = (buttonName: string, imgNum: string) => {
+			console.log(buttonName + " button name");
 			SetClick(!click)
 			const newColors = { ...initialColors };
 			const newImgs = { ...strokeColors };
@@ -91,9 +116,7 @@ export function  MBburger (  ) {
 			setButtonColors(newColors);
 			setstrokeColor(newImgs);
 		};
-	
 
-	
 	return (
 		<>
 		<div className="h-screen border w-[112px] flex justify-center">
@@ -101,18 +124,27 @@ export function  MBburger (  ) {
 			<a href="/profile/me">
 				<img src={logo} className="w-[90px] h-[90px] pb-8"></img>
 			</a>
+			<button onClick={() => {handleClick('button2', 'img2'); setsearch(!search)}} style={{ backgroundColor: buttonColors.button2 }} className={`p-3 border shadow-md border-white w-[50px] h-[50px] flex items-center justify-center rounded-2xl`}>
+			<svg width="800px" height="800px" viewBox="-0.5 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M22 11.8201C22 9.84228 21.4135 7.90885 20.3147 6.26436C19.2159 4.61987 17.6542 3.33813 15.8269 2.58126C13.9996 1.82438 11.9889 1.62637 10.0491 2.01223C8.10927 2.39808 6.32748 3.35052 4.92896 4.74904C3.53043 6.14757 2.578 7.92935 2.19214 9.86916C1.80629 11.809 2.00436 13.8197 2.76123 15.6469C3.51811 17.4742 4.79985 19.036 6.44434 20.1348C8.08883 21.2336 10.0222 21.8201 12 21.8201" stroke={strokeColor.img2} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M2 11.8201H22" stroke={strokeColor.img2} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M12 21.8201C10.07 21.8201 8.5 17.3401 8.5 11.8201C8.5 6.30007 10.07 1.82007 12 1.82007C13.93 1.82007 15.5 6.30007 15.5 11.8201" stroke={strokeColor.img2} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M18.3691 21.6901C20.3021 21.6901 21.8691 20.1231 21.8691 18.1901C21.8691 16.2571 20.3021 14.6901 18.3691 14.6901C16.4361 14.6901 14.8691 16.2571 14.8691 18.1901C14.8691 20.1231 16.4361 21.6901 18.3691 21.6901Z" stroke={strokeColor.img2} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M22.9998 22.8202L20.8398 20.6702" stroke={strokeColor.img2} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+				</button>
 			<NavLink to="/profile/me">
-				<button onClick={() => {handleClick('button2', 'img2')}} style={{ backgroundColor: buttonColors.button2 }} className={`p-3 border shadow-md border-white w-[50px] h-[50px]  flex items-center justify-center rounded-2xl `}>
+				<button onClick={() => {handleClick('button1', 'img1'); console.log("ana fl")}} style={{ backgroundColor: buttonColors.button1 }} className={`p-3 border shadow-md border-white w-[50px] h-[50px]  flex items-center justify-center rounded-2xl `}>
 				<svg width="20" height="20" viewBox="0 0 18 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-				
 					<g id="Profile">
-					<circle id="Ellipse_736" cx="9.07881" cy="5.77803" r="4.77803" stroke={strokeColor.img2} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-					<path id="Path_33945" fill-rule="evenodd" clip-rule="evenodd" d="M1.50002 17.2013C1.49873 16.8654 1.57385 16.5336 1.7197 16.2311C2.17736 15.3157 3.46798 14.8306 4.53892 14.6109C5.31128 14.4461 6.09431 14.336 6.88217 14.2814C8.34084 14.1533 9.80793 14.1533 11.2666 14.2814C12.0544 14.3366 12.8374 14.4467 13.6099 14.6109C14.6808 14.8306 15.9714 15.27 16.4291 16.2311C16.7224 16.8479 16.7224 17.5639 16.4291 18.1807C15.9714 19.1418 14.6808 19.5812 13.6099 19.7917C12.8384 19.9633 12.0551 20.0766 11.2666 20.1304C10.0794 20.231 8.88659 20.2494 7.69681 20.1853C7.42221 20.1853 7.15677 20.1853 6.88217 20.1304C6.09663 20.0772 5.31632 19.964 4.54807 19.7917C3.46798 19.5812 2.18652 19.1418 1.7197 18.1807C1.5746 17.8746 1.49955 17.54 1.50002 17.2013Z" stroke={strokeColor.img2} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<circle id="Ellipse_736" cx="9.07881" cy="5.77803" r="4.77803" stroke={strokeColor.img1} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path id="Path_33945" fill-rule="evenodd" clip-rule="evenodd" d="M1.50002 17.2013C1.49873 16.8654 1.57385 16.5336 1.7197 16.2311C2.17736 15.3157 3.46798 14.8306 4.53892 14.6109C5.31128 14.4461 6.09431 14.336 6.88217 14.2814C8.34084 14.1533 9.80793 14.1533 11.2666 14.2814C12.0544 14.3366 12.8374 14.4467 13.6099 14.6109C14.6808 14.8306 15.9714 15.27 16.4291 16.2311C16.7224 16.8479 16.7224 17.5639 16.4291 18.1807C15.9714 19.1418 14.6808 19.5812 13.6099 19.7917C12.8384 19.9633 12.0551 20.0766 11.2666 20.1304C10.0794 20.231 8.88659 20.2494 7.69681 20.1853C7.42221 20.1853 7.15677 20.1853 6.88217 20.1304C6.09663 20.0772 5.31632 19.964 4.54807 19.7917C3.46798 19.5812 2.18652 19.1418 1.7197 18.1807C1.5746 17.8746 1.49955 17.54 1.50002 17.2013Z" stroke={strokeColor.img1} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 					</g>
 				</svg>
                 </button>
 			</NavLink>
-		
+
+
 			<NavLink to="/Chat">
 				<button onClick={() => handleClick('button3', 'img3')} style={{ backgroundColor: buttonColors.button3 }} className={`p-3 border shadow-md border-white w-[50px] h-[50px] flex items-center justify-center rounded-2xl `}>
 				<svg width="20" height="20" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -146,16 +178,12 @@ export function  MBburger (  ) {
 					<div>
 						{profile?.data?.friends?.map((friend: { avatar: string; username: string }, index: number) => (
 							<div key={index}>
-								<Avatar avatar={friend.avatar} name={friend.username}/>
+								<Avatar avatar={friend.avatar} name={friend.username} state={state?.find((item) => friend.username === item.username)?.state }/>
 							</div>
 						))
 						}
 					</div>
 				</div>
-				<div className="flex items-center justify-center pb-16 pt-5">
-					<img src={down} className="w-[12px] h-[12px]"></img>
-				</div>
-
 
 				<button onClick={() => {handleClick('button6', 'img6'); SetSettings(!settings)}} style={{ backgroundColor: buttonColors.button6 }} className={`p-3 border shadow-md border-white w-[50px] h-[50px] flex items-center justify-center rounded-2xl `}>
 				<svg width="20" height="20" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -193,13 +221,18 @@ export function  MBburger (  ) {
 				<MbSettings hide={() => SetSettings(false)}/>
 			</div>
 		}
-		{game  && (state?.data[state?.data.length - 1].state && state?.data[state?.data.length - 1].state !== isIngame) &&
+		{game &&
 					<div>
 						<GameMode hide={() => Setgame(!game)}/>
 						<MbGameMode  hide={() => Setgame(!game)}/>
 					</div>
 
 				}
+		{search &&
+			<div>
+				<DkSearch hide={() => setsearch(!search)}/>
+			</div>
+		}
 		</>
 	)
 }

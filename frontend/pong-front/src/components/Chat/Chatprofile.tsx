@@ -45,7 +45,7 @@ export function Chatprofile({ room, hide }: Props) {
                 <div className={`pl-3 lg:text-lg mobile-nav-bar sm:hidden md:block ${isActive ? 'text-white' : 'text-[#11142D]'}`}>
                   {room.name}
 				  </div>
-                <div className={`pl-3 Inter mobile-nav-bar sm:hidden md:block text-sm lg:text-sm font-meduim ${isActive ? 'text-white' : 'text-[#808191CC]'}`}>online</div>
+                <div className={`pl-3 Inter mobile-nav-bar sm:hidden md:block text-sm lg:text-sm font-meduim ${isActive ? 'text-white' : 'text-[#808191CC]'}`}>Room type</div>
               </div>
 			</div>
 			{

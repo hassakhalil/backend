@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { MyContext } from "../../pages/Profile";
+import { useProfilecontext } from "../../ProfileContext";
 
 interface Props {
 	hide: () => void;
@@ -67,84 +68,17 @@ export function GameSetting  ( {hide}:Props ) {
 
 		const color = Buttonnum.charAt(Buttonnum.length - 1);
 		if (color == '1')
-			sessionStorage.setItem("Table", "#000000");
+			sessionStorage.setItem("Color", "#000000");
 		else if (color == '2')
-			sessionStorage.setItem("Table", "#6C5DD3");
+			sessionStorage.setItem("Color", "#6C5DD3");
 		else
-			sessionStorage.setItem("Table", "#7EC3DD");
+			sessionStorage.setItem("Color", "#7EC3DD");
 	}
 	
 	const [twoFA, setTwoFa] = useState(false);
 	const [profile, setProfile] = useState(false);
 
-	// interface UserData {
-	// 	id: number;
-	// 	username: string;
-	// 	avatar: string;
-	// 	rating: number;
-	// 	me: boolean;
-	// 	is_two_factor_auth_enabled: boolean;
-	//   }
-	  
-	//   interface Friend {
-	// 	id: number;
-	// 	username: string;
-	// 	avatar: string;
-	//   }
-
-	//   interface Blocks {
-	// 	id: number;
-	// 	username: string;
-	// 	avatar: string;
-	//   }
-	  
-	//   interface UserState {
-	// 	user_data: UserData;
-	// 	friends: Friend[];
-	// 	blocks: Blocks[];
-	// 	match_history: any[];
-	// 	achievements: any[];
-	// 	wins: number;
-	// 	loses: number;
-	// 	draws: number;
-	//   }
-	  
-	//   const [userData, setUserData] = useState<UserState>({
-	// 	user_data: {
-	// 	  id: 0,
-	// 	  username: "",
-	// 	  avatar: "",
-	// 	  rating: 0,
-	// 	  me: false,
-	// 	  is_two_factor_auth_enabled: false,
-	// 	},
-	// 	friends: [],
-	// 	blocks: [],
-	// 	match_history: [],
-	// 	achievements: [],
-	// 	wins: 0,
-	// 	loses: 0,
-	// 	draws: 0,
-	//   });
-
-	//   useEffect(() => {
-	// 		const fetchData = async () => {
-	// 		try {
-	// 			const response = await axios.get(`http://localhost:3000/profile/me`, { withCredentials: true });
-	// 			setUserData(response.data);
-	// 			console.log("h2");
-
-				
-	// 		} catch (error) {
-	// 			console.error("Error fetching user data:");
-	// 			// navigate("/error");
-	// 		}
-	// 	};
-		
-	// 	fetchData();
-	// }, []);
-
-	const data = useContext(MyContext);
+	const data = useProfilecontext();
 	
 	return (
 		<>
@@ -215,20 +149,14 @@ export function GameSetting  ( {hide}:Props ) {
 							<div className="flex flex-col items-center justify-center gap-[10px] px-5">
 							<div className="text-sm text-[#808191]">Blocked user</div>
 								<div className="flex overflow-y-auto gap-[10px] flex-wrap w-full h-[120px] px-3 py-3 border-[2px] border-[#6C5DD3] rounded-xl">
-									<div>
-									{data?.MyuserData?.blocks.map((block : {username: string}, index: number) => (
+									{data?.data.blocks.map((block : {username: string}, index: number) => (
 										<div key={index}>
 											<Deblock name={block.username}/>
 										</div>
 									))
 									}
 								</div>
-								</div>
 								<div></div>
-								<button className="flex justify-center items-center border rounded-xl bg-[#6C5DD3] border-[#6C5DD3] h-[45px] w-[100px]">
-									<div className="text-white font-semibold text-sm">Save</div>
-								</button>
-
 							</div>
 
 						</div>

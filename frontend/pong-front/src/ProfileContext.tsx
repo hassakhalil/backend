@@ -3,7 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import axios from 'axios';
-// import { ChatSocketContext } from '../../Chat/contexts/chatContext';
+import { ChatSocketContext } from './components/Chat/contexts/chatContext';
 // import { Avatar } from '../../Home/NavBar/Avatar';
 // const [MyuserData, setMyUserData] = useState<MyUserData>({
 //     user_data: {
@@ -71,7 +71,7 @@ interface MyUserData {
   
   export const ProfileProvider: React.FC<StateProviderProps> = ({ children }: StateProviderProps) => {
     const [data, setData] = useState<any>(null);
-    // const chatContext = useContext(ChatSocketContext);
+    const chatContext = useContext(ChatSocketContext);
   
     useEffect(() => {
       // Fetch data when the component mounts
@@ -81,7 +81,7 @@ interface MyUserData {
           const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true });
   
           // const result = await response.json();
-          console.log('data = ', response.data);
+          // // console.log('data = ', response.data);
           let Mydata : MyUserData;
           Mydata = response.data;
           setData(Mydata);
@@ -92,8 +92,11 @@ interface MyUserData {
       };
       fetchData();
     }, []);
+
+
+    // useEffect(() =>{
   
-      console.log('----------------------------------------------------------------new data arived', data);
+      // // console.log('----------------------------------------------------------------new data arived', data);
     return (
       <ProfileContext.Provider value={{ data, setData }}>
         {children}

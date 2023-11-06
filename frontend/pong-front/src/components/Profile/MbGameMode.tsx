@@ -75,9 +75,9 @@ export function MbGameMode ( {hide}: Props ) {
 									</button>
 								</div>
 							<div className="flex flex-col overflow-y-auto pt-3">
-								<GameCard TableType="AI Table" GameType="5" imgPath="/src/assets/Bot_Img.png" user_id={userData.user_data.id}/>
-								<GameCard TableType="world Table" GameType="2" imgPath="/src/assets/3_win_game.png" user_id={userData.user_data.id}/>
-								<GameCard TableType="friend Table" GameType="1" imgPath="/src/assets/7_win_game.png" user_id={userData.user_data.id}/>
+							<GameCard TableType="AI Table"  imgPath="/src/assets/Bot_Img.png" OpponnentId={userData.user_data.id} user_id={userData.user_data.id}/>
+								<GameCard TableType="world Table" imgPath="/src/assets/3_win_game.png" OpponnentId={userData.user_data.id} user_id={userData.user_data.id}/>
+								<GameCard TableType="friend Table" imgPath="/src/assets/7_win_game.png" OpponnentId={-1} user_id={userData.user_data.id}/>
 							</div>
 							</div>
 						</div>

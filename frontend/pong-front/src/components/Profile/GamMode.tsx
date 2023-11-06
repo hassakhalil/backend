@@ -45,6 +45,7 @@ export function GameMode ( {hide}: Props ) {
 		// const state = useDataContext();
 		// let isCurrent : string  = 'ingame';
 		// if 
+		console.log("remove malo" + remove);
 	return (
 		<>
 			{
@@ -62,9 +63,9 @@ export function GameMode ( {hide}: Props ) {
 									</button>
 								</div>
 							<div className="flex lg:flex-row overflow-x-auto pt-3">
-								<GameCard TableType="AI Table" GameType="5" imgPath="/src/assets/Bot_Img.png" user_id={userData.user_data.id}/>
-								<GameCard TableType="world Table" GameType="2" imgPath="/src/assets/3_win_game.png" user_id={userData.user_data.id}/>
-								<GameCard TableType="friend Table" GameType="1" imgPath="/src/assets/7_win_game.png" user_id={userData.user_data.id}/>
+								<GameCard TableType="AI Table"  imgPath="/src/assets/Bot_Img.png" OpponnetId={userData.user_data.id} user_id={userData.user_data.id} hide={() => Setremove(!remove)} remove={remove}/>
+								<GameCard TableType="world Table" imgPath="/src/assets/3_win_game.png" OpponnetId={userData.user_data.id} user_id={userData.user_data.id} hide={hide} remove={remove}/>
+								<GameCard TableType="friend Table" imgPath="/src/assets/7_win_game.png" OpponnetId	={-1} user_id={userData.user_data.id} hide={hide} remove={remove}/>
 							</div>
 							</div>
 						</div>

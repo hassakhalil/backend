@@ -11,26 +11,27 @@ interface Props {
 	avatar: string,
 }
 
-const publicRooms = async ( {roomName, RoomType, avatar}: Props )  => {
-	const jsonData = {
-		avatar: avatar,
-		name: roomName,
-		type: RoomType,
-	  };
-
-	try {
-		const response = await axios.post("http://localhost:3000/join-room", jsonData, {withCredentials: true})
-		.then((response) => {
-			console.log(response.data);
-		})
-	}
-	catch (error) {
-		console.log(error);
-	}
-}
-
 export function JoinRoom ( {avatar, roomName, RoomType}: Props ) {
 	const [pass, setpass] = useState(false);
+	const [joined, setJoined] = useState(false);
+	const publicRooms = async ( {roomName, RoomType, avatar}: Props )  => {
+		const jsonData = {
+			avatar: avatar,
+			name: roomName,
+			type: RoomType,
+		  };
+	
+		try {
+			const response = await axios.post("http://localhost:3000/join-room", jsonData, {withCredentials: true})
+			.then((response) => {
+				console.log(response.data);
+				setJoined(true);
+			})
+		}
+		catch (error) {
+			console.log(error);
+		}
+	}
 
 	return (
 		<>

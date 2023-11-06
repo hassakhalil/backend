@@ -5,7 +5,7 @@ import {NavLink, useNavigate, useParams } from "react-router-dom"
 
 
 interface Props {
-    msgnum: string
+    msgnum: number | undefined
 	buttonColors: { [key: string]: string }
 	strokeColor: { [key: string]: string }
 	handleClick: (buttonName: string, imgNum: string) => void;

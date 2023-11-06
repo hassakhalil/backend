@@ -16,6 +16,7 @@
 	import { StateProvider, useDataContext, } from "./components/Profile/States/stateContext"
 import { ChatSocketContext, ChatSocketProvider } from "./components/Chat/contexts/chatContext"
 import { NavBar } from "./components/Home/NavBar/NavBar"
+import { GameRoute } from "./components/Game/GameRoute"
 // import { ProfileProvider } from "./ProfileContext"
 
 
@@ -38,6 +39,10 @@ interface friendsList{
 		const [islogin, setIslogin] = useState(false);
 		const [isLoading, setIsLoading] = useState(true);
 		let state : DataContextProps | undefined;
+		// const MemoizedGameRoute = React.memo(GameRoute);
+
+// ...
+
 		state = useDataContext();
 		// const chatContext = useContext(ChatSocketContext);
 		const Profile_data = useProfilecontext();
@@ -66,38 +71,32 @@ interface friendsList{
 	
 			
 		if (isLoading) {
-		return <div>Loading...</div>;
+		return <div>Loading....</div>;
 		}
-		console.log(islogin);
+		// console.log(islogin);
 		
 
 		return (
 			<>
 			  {(islogin && Profile_data) ? (
-				<ChatSocketProvider>
-				<ProfileProvider>
-				<StateProvider>
+				<>
+				{/* <BrowserRouter> */}
+				{/* </BrowserRouter> */}
 
-				  <BrowserRouter>
-						<NavBar/>
+				<BrowserRouter>
+				  <NavBar/>
 					<Routes>
-					  {/* Your logged-in routes go here */}
 					  <Route path={`/Profile/:username`} element={<CheckProfile />} />
-					  {/* <Route path={`/set_username`} element={<CheckProfile/>} /> */}
-					  <Route path="/Game" element={<GameSetup />} />
+				  <Route path="/game" element={<GameSetup />} />
 					  <Route path="/2fa" element={<TwofaAuth />} />
 					  <Route path="/Chat" element={<Chat />} />
 					  <Route path="/Chat/:id" element={<Chat />} />
 					  <Route path="/error" element={<ForOFor />} />
 					  <Route path="/" element={<Profile />} />
 					  <Route path="*" element={<ForOFor />} />
-				{/* </NavBar> */}
-					  {/* <Route path="chat/*" element={<ForOFor/>}/> */}
 					</Routes>
 				  </BrowserRouter>
-				</StateProvider>
-				</ProfileProvider>
-				</ChatSocketProvider>
+				  </>
 			  ) : (
 				// Your not-logged-in routes go here
 				<BrowserRouter>
