@@ -419,12 +419,10 @@ export class UsersService {
           let loses = 0;
           let draws = 0;
           MatchHistory.map(item => {
-            if (item.player_one_score === item.player_two_score){
+            if (item.my_score === item.friend_score){
               draws++;
             }
-            else if  ((item.player_one_id === PersonalData.id && item.player_one_score > item.player_two_score)
-            || (item.player_two_id === PersonalData.id && item.player_one_score < item.player_two_score)){
-              
+            else if  (item.my_score > item.friend_score){              
               wins++;
             }
             else{
