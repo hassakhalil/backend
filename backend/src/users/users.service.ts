@@ -375,7 +375,6 @@ export class UsersService {
               type:       'friendship',
             });
           }
-
           return pending_requests;
       }
       catch(error){
