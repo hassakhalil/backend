@@ -20,6 +20,33 @@ interface Props {
 	hide: () => void;
 }
 
+interface MyUserData {
+	user_data: {
+		id: 0,
+		username: '',
+		avatar: ''
+		me: false,
+		is_two_factor_auth_enabled: false,
+		state: ''
+	  },
+	  friends: friendsList[],
+	  blocks: [],
+	  match_history: [],
+	pending_requests: [],
+	  achievements: [],
+	  wins: 0,
+	  loses: 0,
+	  draws: 0,
+}
+
+  
+  interface friendsList{
+    id:  '',
+    username: '',
+    avatar:    '',
+    state:    '',
+  }
+
 export function TwoFa ( {hide}:Props ) {
     const [remove, SetRemove] = React.useState(false);
 	const [profile, setProfile] = useState(false);
@@ -32,16 +59,20 @@ export function TwoFa ( {hide}:Props ) {
 	const [error, Seterror] = useState(false);
 	const [sent, Setsent] = useState(false);
 	const Mydata = useProfilecontext();
+	// const [profileupdate, setUpdate] = useState<any>(null)
 	const navigate = useNavigate();
- 
+	// const Mydata = useProfilecontext()
 
 
 
 	const handle2faOn = async () => {
+		console.log('start')
 		try {
+			console.log('handle2faON');
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/2fa/turn-on`, code, { withCredentials: true })
-			.then (function (response) {
+				console.log('response')
 				Setsent(true);
+				console.log('prev on', Mydata?.data?.user_data.is_two_factor_auth_enabled);
 				Mydata?.setData((prevUserData) => ({
 					...prevUserData,
 					user_data: {
@@ -49,19 +80,19 @@ export function TwoFa ( {hide}:Props ) {
 					  is_two_factor_auth_enabled: true as any,
 					},
 				  }));
-				//   navigate("/profile/me");
-			});
-		} catch (error) {
-			Seterror(true);
-			Setsent(false);
+			} catch (error) {
+				console.log('error')
+				Seterror(true);
+				Setsent(false);
 			}
+			console.log('handle on end')
 		};
 
 		const handle2faOff = async () => {
 			try {
 				const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/2fa/turn-off`, code, { withCredentials: true })
-				.then (function (response) {
 					Setsent(true);
+					console.log('prev Off', Mydata?.data?.user_data.is_two_factor_auth_enabled);
 					Mydata?.setData((prevUserData) => ({
 						...prevUserData,
 						user_data: {
@@ -69,10 +100,9 @@ export function TwoFa ( {hide}:Props ) {
 						  is_two_factor_auth_enabled: false as any,
 						},
 					  }));
-				});
-			} catch (error) {
-				Seterror(true);
-				Setsent(false);
+				} catch (error) {
+					Seterror(true);
+					Setsent(false);
 				}
 			};
 
@@ -92,27 +122,11 @@ export function TwoFa ( {hide}:Props ) {
 		};
 
 	
-	const handleqr = () => {
+	const handleqr = () => { 
 		setGenerate(!generate);
 		fetchData();
 	}
-	
-	const handleOn = () => {	  
-		handle2faOn();
-	  };
-
-	const handleOff = () => {
-		handle2faOff();
-	}
-
-	  useEffect(() => {
-		  try {
-			const response = axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true })
-			.then (() => {
-			})
-		  } catch (error) {
-		  }
-	  }, []);
+	console.log('state', Mydata?.data.user_data.is_two_factor_auth_enabled)
 
 	return (
 		<>
@@ -231,18 +245,17 @@ export function TwoFa ( {hide}:Props ) {
 											<div className="pt-5">
 											
 											{
-												Mydata?.data?.user_data?.is_two_factor_auth_enabled ?
-													<button className={`flex justify-center items-center border rounded-xl bg-gray-100 border-gray-100 h-[45px] w-[130px]`} onClick={handleOff}>
+												Mydata?.data?.user_data?.is_two_factor_auth_enabled  && Mydata?.data?.user_data?.is_two_factor_auth_enabled === true &&
+													<button className={`flex justify-center items-center border rounded-xl bg-gray-100 border-gray-100 h-[45px] w-[130px]`} onClick={handle2faOff}>
 														<div className="text-[#11142D]  font-semibold lg:text-sm">Disable 2FA</div>
 													</button>
-												: null
 											}
-											{
-												Mydata?.data?.user_data?.is_two_factor_auth_enabled ? null :
-													<button className="flex justify-center items-center border rounded-xl bg-[#6C5DD3] border-[#6C5DD3] h-[45px] w-[130px]" onClick={handleOn}>
-															<div className="text-white font-semibold lg:text-sm">Enable 2FA</div>
-													</button>
-
+											{	
+												Mydata?.data?.user_data?.is_two_factor_auth_enabled === false &&  
+												<button className="flex justify-center items-center border rounded-xl bg-[#6C5DD3] border-[#6C5DD3] h-[45px] w-[130px]" onClick={handle2faOn}>
+													<div className="text-white font-semibold lg:text-sm">Enable 2FA</div>
+												</button>
+												
 											}
 											</div>
 										</div>

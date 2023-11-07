@@ -124,7 +124,7 @@ export class AppController {
       }
       const token = await this.authService.loginWith2fa(req.user, us.is_two_factor_auth_enabled);
       res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
-    //   return res.redirect(`http://${process.env.REACT_APP_HOST}/profile/me`);
+      // return res.redirect(`http://${process.env.REACT_APP_HOST}/profile/me`);
 	  
       return us.username;
 }
@@ -166,7 +166,7 @@ async generateQrCode(@Res() res: Response, @Req() req:Request){
 
 @Post('2fa/turn-on')
 @UseGuards(Jwt2faAuthGuard)
-async activateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto, @Res() res:Response) {
+async activateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
   const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
   const isCodeValid = this.authService.isTwoFactorAuthCodeValid(
     body.code,
@@ -179,8 +179,9 @@ async activateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto, @Res(
   if (!isActivated){
     throw new HttpException('Failed to activate 2fa', HttpStatus.BAD_REQUEST);
   }
-//   return 'You successfully activated 2fa';
-	return res.redirect(`http://localhost:5173/profile/${user.username}`)
+  console.log('return 2fa')
+  return 'You successfully activated 2fa';
+	// return res.x (`http://localhost:5173/profile/${user.username}`)
 
 }
 

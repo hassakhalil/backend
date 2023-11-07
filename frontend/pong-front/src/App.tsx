@@ -33,37 +33,9 @@ interface friendsList{
 	}
 
 	const App: React.FC = ()=> {
-		const [islogin, setIslogin] = useState(false);
-		const [isLoading, setIsLoading] = useState(true);
-		const Profile_data = useProfilecontext();
-		
-
-		useEffect(() => {
-			
-		const checkAuthentication = async () => {
-			try {
-			const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/is-loggedin`, { withCredentials: true });
-			setIslogin(response.data === true);
-			} catch (error) {	
-				(error);
-				setIslogin(false)
-				setIsLoading(false);
-			} finally {
-			setIsLoading(false);
-			}
-		}
-	
-		checkAuthentication();
-}, []);
-	
-			
-		if (isLoading) {
-		return <div>Loading....</div>;
-		}
 
 		return (
 			<>
-			  {(islogin && Profile_data) ? (
 				<>
 
 				<BrowserRouter>
@@ -81,16 +53,6 @@ interface friendsList{
 					  </ProfileProvider>
 				  </BrowserRouter>
 				  </>
-			  ) : (
-				// Your not-logged-in routes go here
-				<BrowserRouter>
-				  <Routes>
-					<Route path="/2fa" element={<TwofaAuth setLogin={() => setIslogin(true)}/>} />
-					<Route path="/set_username" element={<SetUsername setLogin={() => setIslogin(true)}/>} />
-					<Route path="*" element={<SignIn />} />
-				  </Routes>
-				</BrowserRouter>
-			  )}
 			</>
 		  );
 		  

@@ -37,7 +37,6 @@
 html {
   line-height: 1.5;
   /* 1 */
-  -webkit-text-size-adjust: 100%;
   /* 2 */
   -moz-tab-size: 4;
   /* 3 */
@@ -800,10 +799,10 @@ video {
 	  word-wrap: break-word;
   }
   
-  .friend {
+  /* .friend {
 	overflow-block: 99;
   }
-  
+   */
   .original-stroke {
 	  stroke: #808191; /* Original stroke color */
 	}

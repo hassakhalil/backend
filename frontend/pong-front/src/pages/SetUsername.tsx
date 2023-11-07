@@ -5,15 +5,52 @@ import React, { useContext } from "react";
 import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useProfilecontext } from "../ProfileContext";
 // import { UserError } from "./Error/UserError";
 
 interface Props {
 	setLogin: () => void
 }
 
+// interface friendsList{
+//     id:  '',
+//     username: '',
+//     avatar:    '',
+//     state:    '',
+//   }
+  
+// interface MyUserData {
+// 	user_data: {
+// 		id: 0,
+// 		username: '',
+// 		avatar: ''
+// 		me: false,
+// 		is_two_factor_auth_enabled: false,
+// 		state: ''
+// 	  },
+// 	  friends: friendsList[],
+// 	  blocks: [],
+// 	  match_history: [],
+// 	pending_requests: [],
+// 	  achievements: [],
+// 	  wins: 0,
+// 	  loses: 0,
+// 	  draws: 0,
+// }
+
+
+// const fetchData = async () => {
+// 	try {
+// 		const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true });
+  
+// 		let Mydata : MyUserData;
+// 		Mydata = response.data;
+// 		console.log(Mydata)
+// 		return (Mydata);
+// 	} catch (error) {
+// 		}
+// 	};
 export const SetUsername = ( {setLogin}: Props ) => {
-	
-	// const data = useContext
 
     const [formData, setFormData] = useState<{username: string}>({
         username: '',
@@ -25,6 +62,7 @@ export const SetUsername = ( {setLogin}: Props ) => {
           try {
          	const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/set-username`, formData, { withCredentials: true })
 			.then ((response) => {
+
 				setLogin();
 				navigate("/profile/me");
 			} )

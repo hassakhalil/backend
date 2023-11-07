@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useProfilecontext } from "../ProfileContext";
 
 interface Props {
 	setLogin: () => void
 } 
+
+
 
 export function TwofaAuth ( {setLogin}: Props ) {
 	const [code, setCode] = React.useState(
@@ -13,8 +16,7 @@ export function TwofaAuth ( {setLogin}: Props ) {
 		}
 	);
 	const navigate = useNavigate();
-
-
+  
 	const verifyYourCode = async () => {
 		try {
 			(code.code);
@@ -24,13 +26,10 @@ export function TwofaAuth ( {setLogin}: Props ) {
 					'Content-Type': 'application/json',
 				  },
 			}).then( ((response) => {
-				navigate(`/profile/${response.data}`);
 				setLogin();
+				navigate(`/profile/${response.data}`);
 			})
 			)
-			// if (responce) {
-			// 	navigate("/profile/me");
-			// }
 		}
 		catch (error) {
 			(error);

@@ -21,8 +21,8 @@ services:
     depends_on:
       - postgres
     volumes:
-      - /home/houssamhamdy/Desktop/final/backend/src:/backend/src
-      - /home/houssamhamdy/Desktop/final/backend/public:/backend/public
+      - /home/adnane/2fa_version/backend/src:/backend/src
+      - /home/adnane/2fa_version/backend/public:/backend/public
   frontend:
     build: ./frontend/
     container_name: frontend
@@ -31,8 +31,8 @@ services:
     depends_on:
       - backend
     volumes:
-      - /home/houssamhamdy/Desktop/final/frontend/pong-front/src:/frontend/pong-front/src
-      - /home/houssamhamdy/Desktop/final/frontend/pong-front/public:/frontend/pong-front/public
+      - /home/adnane/2fa_version/frontend/pong-front/src:/frontend/pong-front/src
+      - /home/adnane/2fa_version/frontend/pong-front/public:/frontend/pong-front/public
 
 volumes:
   postgres:
