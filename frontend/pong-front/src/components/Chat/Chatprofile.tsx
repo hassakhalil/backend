@@ -23,11 +23,11 @@ export function Chatprofile({ room, hide }: Props) {
 				})
 			}
 			catch (error) {
-				console.log(error);
+        (error);
 			}
 	  }, []);
-
-
+    
+  
   return (
     <>
       < NavLink to={`/Chat/${room.id}`} className={({ isActive }) => isActive ? "flex items-center justify-between w-full  border border-white rounded-2xl h-[80px] pl-5 bg-[#6C5DD3]" : " w-full  flex items-center justify-between border border-white rounded-2xl h-[80px] pl-5"}>
@@ -45,7 +45,7 @@ export function Chatprofile({ room, hide }: Props) {
                 <div className={`pl-3 lg:text-lg mobile-nav-bar sm:hidden md:block ${isActive ? 'text-white' : 'text-[#11142D]'}`}>
                   {room.name}
 				  </div>
-                <div className={`pl-3 Inter mobile-nav-bar sm:hidden md:block text-sm lg:text-sm font-meduim ${isActive ? 'text-white' : 'text-[#808191CC]'}`}>Room type</div>
+                <div className={`pl-3 Inter mobile-nav-bar sm:hidden md:block text-sm lg:text-sm font-meduim ${isActive ? 'text-white' : 'text-[#808191CC]'}`}>{room.type}</div>
               </div>
 			</div>
 			{

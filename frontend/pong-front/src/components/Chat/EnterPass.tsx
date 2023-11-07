@@ -13,7 +13,7 @@ export function EnterPass ( {hide, roomName, RoomType}: Props ) {
 	const [pass, setpass] = useState('');
 	const [error, SetError] = React.useState(false);
 	const [sent, Setsent] = React.useState(false);
-	const [remove, setRemove] = React.useState(false);
+	// const [remove, setRemove] = React.useState(false);
 	const data = {
 		roomName: roomName,
 		RoomType: RoomType,
@@ -30,14 +30,14 @@ export function EnterPass ( {hide, roomName, RoomType}: Props ) {
 		try {
 			const response = await axios.post("http://localhost:3000/join-room", jsonData, {withCredentials: true})
 			.then((response) => {
-				console.log(response.data);
+				(response.data);
 				Setsent(true);
 				SetError(false);
 				hide();
 			})
 		}
 		catch (error) {
-			console.log(error);
+			(error);
 			SetError(true);
 			Setsent(false);
 		}
@@ -74,7 +74,7 @@ export function EnterPass ( {hide, roomName, RoomType}: Props ) {
 								error ? 
 								<div className="absolute pt-[10px] lg:pt-[20px]">
 									<div className="border bg-[#E9DCE5] rounded-lg w-[170px] h-[25px]  flex gap-1 items-center justify-center">
-										<div className="text-xs font-semibold text-[#6C5DD3]">Invitation Not Valid</div>
+										<div className="text-xs font-semibold text-[#6C5DD3]">Password Not Valid</div>
 										<div>
 											<div  style={{ backgroundImage: `url(${rec})`}} className="w-[14px] h-[14px] bg-center bg-no-repeat bg-cover">
 												<div className="text-white flex items-center justify-center text-xs font-semibold">

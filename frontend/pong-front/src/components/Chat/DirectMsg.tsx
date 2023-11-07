@@ -47,33 +47,14 @@ export function DirectMsg({ profile }: MbChatProps) {
 	const [remove, setremove] = useState(false);
 	const [rooms, setrooms] = React.useState(false);
 	const [setting, setSettings] = useState(false);
-	// const [role, Setrole] = useState(false);
-  // const {RoomId} = useParams();
 
-  // const Data = useContext(UserContext);
-  // console.log('context data-------------------------------------->',Data.user_data);
   const [Rooms, setRooms] = useState([]);
   const [OtherRooms, setOtherRooms] = useState([]);
-  const [Myid, setMyId] = useState('');
-  // console.log('in DirectMsg', profile.user_data);
+
+
   const { id } = useParams();
-  // let Id;
-  // if (id)
-  //   Id = parseInt(id.toString());
-  // else
-  //   Id = undefined;
-  console.log(id);
+  (id);
 
-
-  const updateIsClicked = (index: number) => {
-    setRooms((prevRooms: any) => {
-      const updatedRooms = prevRooms.map((room: any, i: number) => {
-        return { ...room, isClicked: false };
-      });
-      updatedRooms[index].isClicked = true;
-      return updatedRooms;
-    });
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +65,6 @@ export function DirectMsg({ profile }: MbChatProps) {
         );
         setRooms(response.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
       }
     };
 
@@ -99,36 +79,12 @@ export function DirectMsg({ profile }: MbChatProps) {
           { withCredentials: true }
         );
         setOtherRooms(response.data);
-		// console.log(OtherRooms.)
 	} catch (error) {
-		console.error("Error fetching data:", error);
 	}
 };
 
 fetchData();
 }, []);
-
-// useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         let response = await axios.get(
-//           `http://${import.meta.env.VITE_API_URL}/get-my-role/${id}`,
-//           { withCredentials: true }
-//         )
-// 		.then ((response) => {
-// 			if (response.data === "owner")
-// 				Setrole(true);
-// 		})
-// 	} catch (error) {
-// 		console.error("Error fetching data:", error);
-// 	}
-// };
-
-// fetchData();
-// }, []);
-
-// 	console.log("waaa nta = " + role)
-
 
   return (
     <>

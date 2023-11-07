@@ -25,11 +25,9 @@ const handleban = async (name: string, RoomName: string, type: string) => {
 		const response = await axios.post(`http://localhost:3000/ban-member/${name}`, jsonData,
 		{ withCredentials: true }
 		).then (() => {
-			console.log(jsonData.name + " " + jsonData.type + " " + name + "ban btw") ;
 		})
 		
 	} catch (error) {
-		console.error("Error fetching data:", error);
 	}
 }
 
@@ -43,11 +41,9 @@ const handleallow = async (name: string, RoomName: string, type: string) => {
 		const response = await axios.post(`http://localhost:3000/allow-member/${name}`, jsonData,
 		{ withCredentials: true }
 		).then (() => {
-			console.log(jsonData.name + " " + jsonData.type + " " + name + " rak 3aref") ;
 		})
 		
 	} catch (error) {
-		console.error("Error fetching data:", error);
 	}
 }
 
@@ -62,11 +58,9 @@ const handlemute = async (name: string, RoomName: string, type: string, time: nu
 		const response = await axios.post(`http://localhost:3000/mute-member/${name}`, jsonData,
 		{ withCredentials: true }
 		).then (() => {
-			console.log("Mute me");
 		})
 		
 	} catch (error) {
-		console.error("Error fetching data:", error);
 	}
 }
 
@@ -76,19 +70,14 @@ const handlekick = async (name: string, RoomName: string, type: string) => {
 		type: type,
 	};
 
-	console.log("9awed");
 	try {
 		const response = await axios.delete(`http://localhost:3000/kick-member/${name}`, {
 		  data: jsonData,
 		  withCredentials: true
 		})
 		.then ((response) => {
-			console.log("am kicked")
 		})
-	  
-		console.log("Mute me");
 	  } catch (error) {
-		console.error("Error fetching data:", error);
 	  }
 }
 
@@ -101,10 +90,8 @@ const handleadmin =  async (name: string, RoomName: string, type: string) => {
 	try {
 		const response = await axios.post(`http://localhost:3000/set-admin/${name}`, jsonData , { withCredentials: true })
 		.then (() => {
-			console.log("make me admin");
 		})
 	  } catch (error) {
-		console.error("Error fetching data:", error);
 	  }
 }
 
@@ -130,7 +117,7 @@ export function GroupRestriction ({avatar, is_banned, username, RoomName, type}:
 				setaccType(response.data);
 			})
 		} catch (error) {
-			console.log(error);
+			(error);
 		}
 		
 	}, []);

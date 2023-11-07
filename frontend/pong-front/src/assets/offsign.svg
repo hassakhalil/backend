@@ -1,7 +1,7 @@
 <svg width="16" height="11" viewBox="0 0 16 11" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Frame container">
-<path id="Path" d="M3.82715 6.04976C5.97467 3.90399 9.45463 3.90399 11.6021 6.04976" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<circle id="Frame" cx="7.7168" cy="9" r="1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="Path_2" d="M0.999023 3.90452C4.70877 0.19589 10.7223 0.19589 14.432 3.90452" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Path" d="M3.82715 6.04976C5.97467 3.90399 9.45463 3.90399 11.6021 6.04976" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+<circle id="Frame" cx="7.7168" cy="9" r="1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+<path id="Path_2" d="M0.999023 3.90452C4.70877 0.19589 10.7223 0.19589 14.432 3.90452" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
 </g>
 </svg>

@@ -23,7 +23,6 @@ export function Add ( {hide}: Props ) {
 				Setsent(true);
 			});
         } catch (error) {
-          console.error('POST Add friend failed:', error);
 		  SetError(true);
 		  Setsent(false);
         }

@@ -22,7 +22,6 @@ interface Props {
 export function GameSetting  ( {hide}:Props ) {
 
 	const [remove, SetRemove] = React.useState(false);
-	const navigate = useNavigate();
 
 	const timeButton: { [key: string]: string } = {
 		button1: "white",
@@ -79,6 +78,7 @@ export function GameSetting  ( {hide}:Props ) {
 	const [profile, setProfile] = useState(false);
 
 	const data = useProfilecontext();
+
 	
 	return (
 		<>

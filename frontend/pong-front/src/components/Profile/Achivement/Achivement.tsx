@@ -9,7 +9,6 @@ interface Props {
 
 export function Achivement ( {Achi} : Props ) {
 
-	// console.log(Achi.some((obj : any) => obj.name === "Played Your First Game"));
 
 	return (
 		<>
@@ -32,10 +31,10 @@ export function Achivement ( {Achi} : Props ) {
 				<div className="flex justify-between gap-[10px] items-center p-5">
 					<div className="flex gap-[8px] items-center">
 						<img src={achivement} className="w-[45px] h-[45px] rounded-full"></img>
-						<div className="text-sm text-[#808191]">Win Game Over a Friend</div>
+						<div className="text-sm text-[#808191]">Played a Game With Friend</div>
 					</div>
 					{
-						(Achi.some((obj : any) => obj.name === "Win Game Over a Friend") === true ) ? null :
+						(Achi.some((obj : any) => obj.name === "Played a Game With Friend") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
 							<div className="text-xs text-[#808191]">unlocked</div>	
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
@@ -45,10 +44,10 @@ export function Achivement ( {Achi} : Props ) {
 				<div className="flex justify-between gap-[10px] items-center p-5">
 					<div className="flex gap-[8px] items-center">
 						<img src={achivement} className="w-[45px] h-[45px] rounded-full"></img>
-						<div className="text-sm text-[#808191]">800 Rating</div>
+						<div className="text-sm text-[#808191]">Get 800 Elo Points</div>
 					</div>
 					{
-						(Achi.some((obj : any) => obj.name === "800 Rating") === true ) ? null :
+						(Achi.some((obj : any) => obj.name === "Get 800 Elo Point") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
 							<div className="text-xs text-[#808191]">unlocked</div>	
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
@@ -90,7 +89,7 @@ export function Achivement ( {Achi} : Props ) {
 						<div className="text-sm text-[#808191]">Played 3 Matches In Total</div>
 					</div>
 					{
-						(Achi.some((obj : any) => obj.name === "Played 3 Matches In Total") === true ) ? null :
+						(Achi.some((obj : any) => obj.name === "Played 3 Games") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
 							<div className="text-xs text-[#808191]">unlocked</div>	
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
@@ -104,7 +103,7 @@ export function Achivement ( {Achi} : Props ) {
 						<div className="text-sm text-[#808191]">Play 7 Matches In Total</div>
 					</div>
 					{
-						(Achi.some((obj : any) => obj.name === "Play 7 Matches In Total") === true ) ? null :
+						(Achi.some((obj : any) => obj.name === "Played 3 Games") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
 							<div className="text-xs text-[#808191]">unlocked</div>	
 							<img className="w-[20px] h-[20px]" src={unlock}></img>

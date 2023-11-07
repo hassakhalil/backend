@@ -36,6 +36,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @WebSocketServer() server: Server = new Server();
     private clients: Map<string, number> = new Map();
+    private clientActiveRoom: Map<number,string> = new Map();
 
     @SubscribeMessage('chat')
     async handleChatEvent(@MessageBody() payload: ChatDto, @ConnectedSocket() client: Socket){
@@ -96,22 +97,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         if (hasAccess){
             //let the client join the room to recieve reel time updates
             console.log("joined room");
-            // await this.server.in(payload.socketId).socketsJoin(payload.roomId);
+            if (this.clientActiveRoom.has(this.clients.get(client.id))){
+                await client.leave(this.clientActiveRoom.get(this.clients.get(client.id)));
+                this.clientActiveRoom.delete(this.clients.get(client.id));
+            }
             await client.join(payload.roomId);
+            this.clientActiveRoom.set(this.clients.get(client.id), payload.roomId);
+            console.log("clientActiveRoom = ",this.clientActiveRoom);
         }
         else{
             console.log("not joined room client does not have access to the room");
-        }
-    }
-
-    @SubscribeMessage('leave-room')
-    async handleLeaveRoomEvent(@MessageBody() payload: joinRoomDto, @ConnectedSocket() client: Socket) {
-        try{
-            await client.leave(payload.roomId);
-        }
-        catch(error){
-            console.log(error);
-            throw new WsException('Error occured while leaving the room');
         }
     }
 

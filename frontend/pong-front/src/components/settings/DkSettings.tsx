@@ -53,19 +53,17 @@ export function DkSettings ( {hide}: Props ) {
 					},
 				}));
 				setBase(`${response.data}`);
-				// console.log(BASE_URL);
 			  })
 			}
 			catch(error) {
-				console.log("Post profile faild", error);
 			}
 		}
 
 	const handleName = async () => {
 		try {
-			console.log(formData.username);
+			(formData.username);
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/set-username`, formData, {withCredentials: true}).then (function (response) {
-				console.log(response.data);
+				(response.data);
 				profile?.setData((prevUserData) => ({
 					...prevUserData,
 					user_data: {
@@ -76,7 +74,6 @@ export function DkSettings ( {hide}: Props ) {
 			});
 		}
 		catch(error) {
-			console.log("Post profile faild", error);
 		}
 	}
 

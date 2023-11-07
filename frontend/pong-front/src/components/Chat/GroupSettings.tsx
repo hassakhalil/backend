@@ -46,14 +46,11 @@ export function GroupSettings( {hide}: Props ) {
 					Setrole(true);
 			})
 		} catch (error) {
-			console.error("Error fetching data:", error);
 		}
 	};
 	
 	fetchData();
 	}, []);
-
-	console.log("inside role = " + role);
 	useEffect(() => {
 		try {
 			const response =  axios.get(`http://localhost:3000/get-room-members/${id}`,
@@ -63,7 +60,6 @@ export function GroupSettings( {hide}: Props ) {
 			})
 			
 		} catch (error) {
-			console.error("Error fetching data:", error);
 		}
 	}, []);
 
@@ -77,7 +73,6 @@ export function GroupSettings( {hide}: Props ) {
 			})
 			
 		} catch (error) {
-			console.error("Error fetching data:", error);
 		}
 	}, []);
 	const [Isprivate, setIsPrivate] = useState(false);
@@ -98,7 +93,6 @@ export function GroupSettings( {hide}: Props ) {
 			})
 			
 		} catch (error) {
-			console.error("Error fetching data:", error);
 		}
 	}, []);
 
@@ -107,23 +101,20 @@ export function GroupSettings( {hide}: Props ) {
             name: name,
             type: type,
         };
-		console.log(jsonData);
+		(jsonData);
 		try {
 			const response = await axios.delete(`http://${import.meta.env.VITE_API_URL}/remove-room-password`, { 
 				withCredentials: true,
 				data: jsonData,
 			})
 			.then (function (response) {
-				console.log("Password removed and the room become public")
 				
 			});
 		}
 		catch (error) {
-			console.log(error);
+			(error);
 		}
 	}
-
-	console.log("role " + role);
 	const [remove, setRemove] = React.useState(false);
 	return (
 	  <>

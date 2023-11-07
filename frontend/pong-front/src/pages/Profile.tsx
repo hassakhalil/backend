@@ -45,7 +45,7 @@ export const UserContext = createContext<{
   } | undefined>(undefined);
   
   export function Profile() {
-    // console.log('mchit l profile')
+    // ('mchit l profile')
   const profile = useProfilecontext()
 	let { username } = useParams();
 
@@ -93,17 +93,14 @@ export const UserContext = createContext<{
         const response =  axios.get(`http://${import.meta.env.VITE_API_URL}/profile/${username}`, { withCredentials: true })
         .then ((response) => {
 			const newData = response.data;
-      // console.log('in Profile component', username);
+      // ('in Profile component', username);
 			if (!isEqual(newData, userData)) {
-				// console.log("here");
+				// ("here");
 				setUserData(newData);
 			}
-			// console.log(response.data);
 		})
       } catch (error) {
-        console.error("Error fetching user data:");
       }
-    // }, [username, userData]);
 
   }, [userData, username, profile?.data]);
 
@@ -115,7 +112,6 @@ export const UserContext = createContext<{
     {/* <MyContext.Provider value={{ MyuserData,setMyUserData}}> */}
 
       <div>
-        {/* <NavBar avatar={MyuserData?.user_data?.avatar} username={MyuserData?.user_data?.username}/> */}
        {userData?.user_data?.state &&  <HeadProfile
         state={userData?.user_data?.state}
           profile={userData?.user_data?.avatar}
@@ -126,7 +122,6 @@ export const UserContext = createContext<{
         <div className="md:flex md:flex-row md:justify-center md:justify-around  md:w-full lg:pl-28">
           <div>
 				<LastMatch
-				//   date={userData?.user_data?.match_history ? userData?.user_data?.match_history.slice(-1).date : '01-10-2070'}
 				name={lastMatch?.friend_username}
 				profile={lastMatch?.friend_avatar}
 				score={lastMatch?.friend_score}

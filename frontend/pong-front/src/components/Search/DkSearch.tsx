@@ -45,7 +45,6 @@ export function DkSearch ( {hide}: Props ) {
 			
 		})
 		} catch (error) {
-			console.error("Error fetching user users:");
 		}
 	}, []);
 
@@ -57,7 +56,6 @@ export function DkSearch ( {hide}: Props ) {
 				setMyProfile(response1.data)
 		})
 		} catch (error) {
-			console.error("Error fetching user users:");
 		}
 	}, []);
 
@@ -70,7 +68,6 @@ export function DkSearch ( {hide}: Props ) {
 				Setsent(true);
 			});
         } catch (error) {
-          console.error('POST Add friend failed:', error);
 		  SetError(true);
 		  Setsent(false);
         }
@@ -85,7 +82,6 @@ export function DkSearch ( {hide}: Props ) {
 				Setsent(true);
 			});
         } catch (error) {
-          console.error('POST Add friend failed:', error);
 		  SetError(true);
 		  Setsent(false);
         }

@@ -70,12 +70,12 @@ export function CreateRoom( {hide}: Props ) {
 		try {
 			const response = await axios.post("http://localhost:3000/create-room", jsonData, {withCredentials: true})
 			.then((response) => {
-				console.log(response.data);
+				(response.data);
 				hide();
 			})
 		}
 		catch (error) {
-			console.log(error);
+			(error);
 			SetError(true);
 		}
 	}

@@ -32,28 +32,6 @@ interface friendsList{
 	setData: React.Dispatch<React.SetStateAction<any>>;
   }
 
-const Start = () =>
-{
-//   const profile = useProfilecontext()
-// 	const chatContext = useContext(ChatSocketContext);
-// 	let state : DataContextProps | undefined;
-// 		state = useDataContext();
-// 	    chatContext?.on('State', (friendState : friendsList)=>
-//       {
-//       console.log('on state -------', friendState);
-//       state?.setData((old) =>
-//       old.map((item : friendsList) => (item.id === friendState.id ? { ...item, ...friendState } : item))
-// 	  )
-//         return () =>{
-//           chatContext?.off('State');}
-//   }, [])
-//   console.log('user_data li f navbar', profile?.data?.user_data.avatar);
-
-
-  return (<>
-  {/* <App/> */}
-  </>)
-}
 
 const Loading = () =>
 {
@@ -69,28 +47,22 @@ const Loading = () =>
     return (
 		<>
 	<StateProvider>
-	<Start/>
 	<App/>
 </StateProvider>
 	</>)
 }
 const Root: React.FC = () => {
 
-		// console.log(islogin);
+		// (islogin);
     return (
         <ChatSocketProvider>
       <ProfileProvider>
-
-          {/* <StateProvider> */}
             <Loading/>
-          {/* </StateProvider> */}
       </ProfileProvider>
         </ChatSocketProvider>
     );
   };
   
-//   ReactDOM.render(<Root />, document.getElementById('root'));
-
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
 

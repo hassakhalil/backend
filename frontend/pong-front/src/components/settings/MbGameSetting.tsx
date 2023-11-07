@@ -130,12 +130,10 @@ export function MbGameSettings ( {hide}:Props ) {
 			try {
 				const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true });
 				setUserData(response.data);
-				console.log("h2");
+				("h2");
 
 				
 			} catch (error) {
-				console.error("Error fetching user data:");
-				// navigate("/error");
 			}
 		};
 		

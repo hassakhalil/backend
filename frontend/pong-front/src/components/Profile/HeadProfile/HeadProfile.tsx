@@ -42,9 +42,7 @@ export function HeadProfile({ state, profile, name, friendNum, me }: Props) {
 			if (friendState.username == name && friendState.state)
 			{
 				setState(friendState.state);
-				console.log('state changed')
 			}
-			console.log('new state in profile', friendState.state);
 			return (() => {
 				(chatContext?.off('State'))
 			})
@@ -57,13 +55,12 @@ export function HeadProfile({ state, profile, name, friendNum, me }: Props) {
 
 	const handleFriend = async () => {
 		try {
-			console.log(name);
+			(name);
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/add-friend/${name}`, null, { withCredentials: true })
 				.then(function (response) {
-					// setClick(true);
+	
 				});
 		} catch (error) {
-			console.error('POST friend failed:', error);
 		}
 	};
 
@@ -73,36 +70,82 @@ export function HeadProfile({ state, profile, name, friendNum, me }: Props) {
 
 
 	const blockFriend = async () => {
+		let removedFriends : any;
 		try {
-			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/block-friend/${name}`, null, { withCredentials: true });
+			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/block-friend/${name}`, null, { withCredentials: true })
+			.then ((response) => {
+				data?.setData((prevUserData) => {
+					removedFriends = prevUserData.friends.filter(
+						(request) => request.username === name
+					  );
+					
+					const filteredRequests = prevUserData.friends.filter(
+					  (request) => request.username !== name
+					);
+				  
+					return {
+					  ...prevUserData,
+					  friends: [...filteredRequests],
+					};
+
+				});
+				data?.setData((prevUserData) => ({
+					...prevUserData,
+					// user_data: {
+						...prevUserData,
+						blocks: [...prevUserData.blocks, removedFriends[0]],
+						// },
+					}));
+				// data?.setData((prevUserData) => {
+				// 	const filteredRequests = prevUserData.blocks.filter(
+				// 	  (request) => request.username !== name
+				// 	);
+				  
+				// 	return {
+				// 	  ...prevUserData,
+				// 	  friends: [...filteredRequests],
+				// 	};
+
+				// });
+			})
 		}
 		catch (error) {
-			console.log(error);
+			(error);
 		}
 	}
 
 	const [isFriend, setFriend] = useState(false);
 
 	useEffect(() => {
-		data?.data.friends.some((friend: { username: string }) => {
+		data?.data?.friends?.some((friend: { username: string }) => {
 			friend.username === name && setFriend(true)
 		}
 		);
 	});
 
 	useEffect(() => {
-		data?.data?.user_data.username === name && setFriend(false)
+		data?.data?.user_data?.username === name && setFriend(false)
 	});
 
 	const handleUnFriend = async () => {
 		try {
-			// console.log(name);
+			// (name);
 			const response = await axios.delete(`http://${import.meta.env.VITE_API_URL}/delete-friend/${name}`, { withCredentials: true })
 			.then(function (response) {
+				data?.setData((prevUserData) => {
+				const filteredfriends = prevUserData.friends.filter(
+				  (friend) => friend.username !== name 
+				);
+			  
+				return {
+				  ...prevUserData,
+				  friends: [...filteredfriends],
+				};
+			  });
 				setFriend(false);
-				});
+				
+			});
 		} catch (error) {
-			console.error('POST friend failed:', error);
 		}
 	};
 
@@ -112,7 +155,6 @@ export function HeadProfile({ state, profile, name, friendNum, me }: Props) {
 				handleFriend()
 		}
 	}
-	console.log( "nadi " +  isFriend)
 
 	return (
 		<>

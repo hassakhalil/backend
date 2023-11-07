@@ -54,7 +54,6 @@ export const ChatProfileProvider = ({ children }: ChatProviderProps) => {
         const userDataResponse = await axios.get('your_user_data_api_endpoint');
         setUserData(userDataResponse.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }

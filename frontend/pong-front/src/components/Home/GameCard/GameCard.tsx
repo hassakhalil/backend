@@ -11,11 +11,10 @@ import { GameSetup } from "../../Game/GameSetup";
 
 interface Props {
     TableType: string,
-    OpponnetId: number,
     imgPath: string,
+    OpponentId: number,
     user_id: number,
-	hide: () => void,
-	remove: boolean
+    hide: () => void; 
 }
 
 
@@ -25,48 +24,42 @@ interface customParam
   gameDuration: string;
 }
 
-const  Param : customParam = 
-{
-  gameDuration: '1',
-}
+// const  Param : customParam = 
+// {
+//   gameDuration: '1',
+// }
 
 
 
-export function GameCard({ TableType , imgPath, OpponnetId ,user_id, hide, remove }: Props) {
+export function GameCard({ TableType , imgPath, OpponentId ,user_id, hide }: Props) {
   const navigate = useNavigate();
   const [showFriends, setShowFriends] = React.useState(false);
-  const [chooseFr, setChooseFr] = React.useState(false);
+  // const [chooseFr, setChooseFr] = React.useState(false);
   let Type : string | null;
   // let Color : string | null;
-  console.log('table tyepe', TableType)
   if (TableType == "AI Table")
     Type = '5';
   else if (TableType === 'world Table')
     Type = sessionStorage.getItem('Timer');
   else 
-    Type = '6'
+    Type = '1'
 
-console.log('Type ==================== ', Type);
   const handleClick = () => {
-    
-    console.log(TableType);
     if (TableType === 'friend Table') {
       setShowFriends(true);
     } else {
-		hide();
-       navigate('/game', { state: { gameDuration: Type, user_id: user_id, OpponnetId : OpponnetId} });
+      hide();
+       navigate('/game', { state: { gameDuration: Type, user_id: user_id, OpponentId : OpponentId} });
       //  return (<GameSetup gameDuration={Type}  user_id={user_id} OpponnentId={OpponnetId}/>)
-x    }
+    }
   };
 
   const handleFriendsClose = () => {
     
-    console.log("me = " + user_id);
-    // return (<GameSetup gameDuration={Type}  user_id={user_id} OpponnentId={OpponnetId}/>)
-    navigate('/game', { state: { gameDuration: Type, user_id: user_id, OpponnetId : OpponnetId} });
-  };
 
-  console.log("remove is " + remove)
+    // return (<GameSetup gameDuration={Type}  user_id={user_id} OpponnentId={OpponnetId}/>)
+    navigate('/game', { state: { gameDuration: Type, user_id: user_id, OpponentId : OpponentId} });
+  };
 
   return (
     <>
@@ -82,7 +75,7 @@ x    }
               </div>
             </div>
             <div className="pt-2 flex items-center justify-center">
-              <button className="border border-gray-100 rounded-xl w-[90px] lg:w-[100px] lg:h-[30px] bg-gray-100 drop-shadow-md" onClick={() => {handleClick()}}>
+              <button className="border border-gray-100 rounded-xl w-[90px] lg:w-[100px] lg:h-[30px] bg-gray-100 drop-shadow-md" onClick={handleClick}>
                 <h1 className="text-[#5961F9] text-sm lg:text-md font-extrabold">Start Play</h1>
               </button>
             </div>
@@ -91,7 +84,7 @@ x    }
       </div>
 
       {/* Conditional rendering of Friends component */}
-      {showFriends && <Friends onClose={handleFriendsClose} />}
+      {showFriends && <Friends hide={hide}  />}
     </>
   );
 }

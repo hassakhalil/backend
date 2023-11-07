@@ -9,7 +9,6 @@ interface Props {
 }
 
 export function Cards ( {gameType, TableType, Views, imgPath}: Props ) {
-    console.log(imgPath + " maroc");
     return (
         <>
         <div className="flex z-[9999]">

@@ -1,6 +1,6 @@
 <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="video">
-<path id="Path" d="M15.5 7.6L17.3314 6.2814C18.6544 5.32887 20.5 6.27427 20.5 7.90447V12.0955C20.5 13.7257 18.6544 14.6711 17.3314 13.7186L15.5 12.4" stroke="#808191" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-<rect id="Rectangle" x="1.5" y="1" width="14" height="18" rx="4" stroke="#808191" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Path" d="M15.5 7.6L17.3314 6.2814C18.6544 5.32887 20.5 6.27427 20.5 7.90447V12.0955C20.5 13.7257 18.6544 14.6711 17.3314 13.7186L15.5 12.4" stroke="#808191" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+<rect id="Rectangle" x="1.5" y="1" width="14" height="18" rx="4" stroke="#808191" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
 </g>
 </svg>

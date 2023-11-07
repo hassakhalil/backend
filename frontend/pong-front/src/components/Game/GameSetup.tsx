@@ -10,7 +10,7 @@ import { useHistory } from 'react-router-dom';
 interface customParam
 {
   user_id : number;
-  OpponnentId : number,
+  OpponentId : number,
   gameDuration: string;
 }
 
@@ -58,18 +58,17 @@ export const GameSetup  = ( ) =>
     navigate('/error');
     return null;
   }
-    console.log('userID = ', state);
         customParam =
         {
             gameDuration : state.gameDuration,
             user_id : state.user_id,
-            OpponnentId : state.OpponnentId
+        OpponentId : state.OpponentId
         };
   // }
   return (
     <>
     <SocketProvider customParam={customParam}>
-      <Game />
+      <Game user_id={customParam.user_id}/>
     <GameRoute/>
     </SocketProvider>
     </>

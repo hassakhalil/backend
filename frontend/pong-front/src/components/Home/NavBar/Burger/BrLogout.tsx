@@ -6,19 +6,6 @@ import React from "react";
 export function BrLogout ( ) {
 	const [click, SetClick] = React.useState(false);
 
-	// const navigate = useNavigate();
-// 	const handleLogout = async () => {
-// 		try {
-// 		const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/logout`, { withCredentials: true });
-// 		if (response) {
-// 			navigate('/');
-// 		  }
-// 		} catch (error) {
-// 			console.error("Error logout:");
-// 		}
-
-// }
-
     return (
         <>
 		<div className="pr-8">

@@ -19,14 +19,12 @@ export function UpdatePass ( {hide, roomName, RoomType}: Props ) {
 
 
 	const handleFormSubmit = async ( name: string, RoomType: string ) => {
-    //   console.log("this the the name before json")
         const jsonData = {
             name: roomName,
             password: friendName,
             type: RoomType,
         };
 
-        // console.log(jsonData)
 		try {
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/set-room-password`, jsonData, { withCredentials: true })
 			.then (function (response) {
@@ -35,7 +33,6 @@ export function UpdatePass ( {hide, roomName, RoomType}: Props ) {
 				hide();
 			});
         } catch (error) {
-          console.error('POST Update Pass failed:', error);
 		  SetError(true);
 		  Setsent(false);
         }
@@ -58,6 +55,7 @@ export function UpdatePass ( {hide, roomName, RoomType}: Props ) {
                         <div className="pr-8 pl-8 pb-2">
                             <form className="flex items-center border border-4 border-[#6C5DD3] rounded-xl w-full h-[56px] lg:w-full lg:h-[50px]" onSubmit={() => handleFormSubmit(roomName, RoomType)}>
                                 <input  className="rounded-xl w-full h-full pr-3 pl-3 lg:text-md lg:pl-5 focus:outline-none text-[#888EFF]" placeholder="Enter New Password"
+								type="password"
 								value={friendName}
 								onChange={(e) => {
 									SetfriendName(e.target.value );
@@ -68,7 +66,7 @@ export function UpdatePass ( {hide, roomName, RoomType}: Props ) {
 								error ? 
 								<div className="absolute pt-[10px] lg:pt-[20px]">
 									<div className="border bg-[#E9DCE5] rounded-lg w-[170px] h-[25px]  flex gap-1 items-center justify-center">
-										<div className="text-xs font-semibold text-[#6C5DD3]">Invitation Not Valid</div>
+										<div className="text-xs font-semibold text-[#6C5DD3]">Password Not Valid</div>
 										<div>
 											<div  style={{ backgroundImage: `url(${rec})`}} className="w-[14px] h-[14px] bg-center bg-no-repeat bg-cover">
 												<div className="text-white flex items-center justify-center text-xs font-semibold">

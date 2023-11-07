@@ -14,12 +14,9 @@ interface Props {
 export function Avatar ( {avatar, name, state}: Props ) {
 
 	const profile = useProfilecontext()
-	// console.log('friends state ');
-	console.log('state = ', state);
-	console.log('---------------------avatar changed', avatar);
 	useEffect(()=>
 	{
-		console.log('tbdlat');
+		
 	},[profile]);
 	useEffect(() =>
 	{

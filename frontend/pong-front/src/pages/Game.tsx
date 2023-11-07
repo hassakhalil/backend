@@ -23,46 +23,37 @@ interface player {
 	rating: string,
 }
 
-export function Game () {
+interface Props
+{
+	user_id : number,
+}
+export function Game ({user_id } : Props) {
 	const socket = useContext(SocketContext);
-	// const profile = useDataContext();
-	// let Mydata : player;
-	const [Mydata, setMydata] = useState({username : 'BotOne', avatar : bot, rating: '900'})
-	const [Oponnent, setOponnent] = useState({username : 'BotTwo', avatar : bot, rating: '900'})
-	// setMydata();
-	// let opponentData : player;
+
+	const [Mydata, setMydata] = useState({username : 'Bot', avatar : bot, rating: '900'})
+	const [Oponnent, setOponnent] = useState({username : 'Bot', avatar : bot, rating: '900'})
+	let [usersIds, setUsersIds] = useState([-1, -1])
 
 	useEffect(() => {
 		socket.on('GameInfo', (users_ids : number[]) =>
 		{
-			fetchData();
+			setUsersIds(users_ids);
+			fetchData(users_ids);
 		})
-			const fetchData = async () => {
+			const fetchData = async (user_id : number[]) => {
 				try {
-				  // Replace the URL with your API endpoint
-				  const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true });
-				//   Myata : ;
-				setMydata({username : response.data.user_data.username, avatar : response.data.user_data.avatar, rating: response.data.user_data.rating})
-				console.log('data li getit', Mydata)
-				// console.log('data', Mydata)
-				//   setData+(Mydata);
+					const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/get-user/${user_id[0]}`, { withCredentials: true });
+				setMydata({username : response.data.username, avatar : response.data.avatar, rating: response.data.rating})
+			} catch (error) {
+			}
+			try {
+					const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/get-user/${user_id[1]}`, { withCredentials: true });
+				  setOponnent({username : response.data.username, avatar : response.data.avatar, rating: response.data.rating})
 				} catch (error) {
-				  console.error('Error fetching data:', error);
 				}
-				// try {
-				// 	const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true });
-				// 	// Myata : ;
-				// 	opponentData = response.data;
-				//   //   setData+(Mydata);
-				//   } catch (error) {
-				// 	console.error('Error fetching data:', error);
-				//   }
-		  // 
+				
 			  };
-			// }, []);
-		
 			return () => {
-				console.log('khdaaaam');
 				if(socket)
 				{
 				  socket.disconnect();
@@ -76,10 +67,19 @@ export function Game () {
 			<div className="pl-8">
 			<div className="flex flex-col items-center lg:pl-28 pr-10 pl-10">
 			<div className="flex lg:flex-row flex-col justify-between w-full items-center pt-32">
+			{usersIds !== undefined &&
+				<>
+				<Me profile={Mydata.avatar} name={Mydata.username} friendNum={Mydata.rating}/>
+				<Enemy profile={Oponnent.avatar} name={Oponnent.username} friendNum={Oponnent.rating}/>
+				</>
+			}
+			{/* {usersIds !== undefined && user_id ===  usersIds[1] && 
+				<>
 				<Enemy profile={Oponnent.avatar} name={Oponnent.username} friendNum={Oponnent.rating}/>
 				<Me profile={Mydata.avatar} name={Mydata.username} friendNum={Mydata.rating}/>
+				</>
+			} */}
 			</div>
-				{/* <GameApp /> */}
 			</div>
 			</div>
 		</>

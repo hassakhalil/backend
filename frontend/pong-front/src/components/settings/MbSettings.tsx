@@ -9,6 +9,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { MyContext, UserContext } from "../../pages/Profile";
 import { useProfilecontext } from "../../ProfileContext";
+import { useDataContext } from "../Profile/States/stateContext";
 
 interface Props {
 	hide: () => void;
@@ -18,18 +19,6 @@ export function MbSettings ( {hide}: Props ) {
 
 	const profile = useProfilecontext()
 	
-	useEffect(() => {
-	  
-		try {
-		  const response =  axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true }).then ( function(response) {
-			  // console.log(response.data);
-		  } )
-		} catch (error) {
-		  console.error("Error fetching user data:");
-		}
-
-
-  }, []);
   
   const [remove, SetRemove] = React.useState(false);
   const [twoFA, setTwoFa] = useState(false);
@@ -37,10 +26,10 @@ export function MbSettings ( {hide}: Props ) {
   const [formData, setFormData] = useState<{username: string}>({
 	  username: '',
   });
-  let defualt : string | undefined = profile.data.user_data?.avatar;
+  let defualt : string | undefined = profile?.data?.user_data?.avatar;
 	const [BASE_URL, setBase] = useState(defualt);
 
-
+//   const profile = useProfilecontext()
 	
   const handleFileUpload = async (event: any) => {
 	  try {
@@ -65,21 +54,18 @@ export function MbSettings ( {hide}: Props ) {
 				},
 			}));
 			setBase(`${response.data}`);
-			// console.log(BASE_URL);
+
 		  })
 		  }
 		  catch(error) {
-			  // console.log("Post profile faild", error);
 		  }
 	  }
 
 
   const handleName = async () => {
 	  try {
-		  // console.log(formData.username);
 		  const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/set-username`, formData, {withCredentials: true}).then (function (response) {
-			  // console.log(response.data);
-			  data?.setMyUserData((prevUserData) => ({
+			  profile?.setData((prevUserData) => ({
 				  ...prevUserData,
 				  user_data: {
 					...prevUserData.user_data,
@@ -89,7 +75,6 @@ export function MbSettings ( {hide}: Props ) {
 		  });
 	  }
 	  catch(error) {
-		  // console.log("Post profile faild", error);
 	  }
   }
 	

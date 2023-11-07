@@ -31,34 +31,22 @@ interface friendsList{
 	  data: friendsList[];
 	  setData: React.Dispatch<React.SetStateAction<any>>;
 	}
-	// interface StateDto {
-	// 	state: string;
-	// }
-	// @IsIn(['online', 'offline', 'ingame'])
+
 	const App: React.FC = ()=> {
 		const [islogin, setIslogin] = useState(false);
 		const [isLoading, setIsLoading] = useState(true);
-		let state : DataContextProps | undefined;
-		// const MemoizedGameRoute = React.memo(GameRoute);
-
-// ...
-
-		state = useDataContext();
-		// const chatContext = useContext(ChatSocketContext);
 		const Profile_data = useProfilecontext();
 		
-		// state?.setData('new data');
-		useEffect(() => {
-			// chatContext?.emit('join-room', {})
-			
 
+		useEffect(() => {
+			
 		const checkAuthentication = async () => {
 			try {
 			const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/is-loggedin`, { withCredentials: true });
 			setIslogin(response.data === true);
 			} catch (error) {
 				
-				console.log(error);
+				(error);
 				setIslogin(false)
 				setIsLoading(false);
 			} finally {
@@ -73,15 +61,11 @@ interface friendsList{
 		if (isLoading) {
 		return <div>Loading....</div>;
 		}
-		// console.log(islogin);
-		
 
 		return (
 			<>
 			  {(islogin && Profile_data) ? (
 				<>
-				{/* <BrowserRouter> */}
-				{/* </BrowserRouter> */}
 
 				<BrowserRouter>
 				  <NavBar/>

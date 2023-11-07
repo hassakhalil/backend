@@ -36,102 +36,54 @@ const LeaveRoom = (id: number) => {
 		`http://${import.meta.env.VITE_API_URL}/leave-room/${id}`,
 		{ withCredentials: true }
 	  )
-	  .then ((response) => {console.log("leave room")})
+	  .then ((response) => {("leave room")})
   } catch (error) {
-	  console.error("Error Leaving room data:", error);
   }
 }
 
 export function DkChatConv({ prop_room, members, profile, messages, setMessages }: DkChatConvProps) {
-	// console.log('dd');
+	// ('dd');
 	const [remove, SetRemove] = React.useState(false);
 	const [message, setMessage] = React.useState('');
 	const room = prop_room;
 
-	// console.log("old msg "Old_Messages);
-	// const [messages, SetMessages] = useState(Old_Messages);
-	// const [rerender, setrerender] = useState(1);
-
-	// console.log("initial messages", Old_Messages);
 	const socket = useContext(ChatSocketContext);
-	// let _Room : joinRoomDto = {
-	// 	roomId: room.id,
-	// }
+
 	let joinRoom: joinRoomDto = {
 		roomId: room.id.toString()
 	};
-	console.log("--------------------------------", prop_room, members)
 	socket.emit('join-room', joinRoom);
 
 	useEffect(() => {
+		// console.log('new room')
 		socket.on('chat', (data: ChatDto) => {
 
-			// console.log(data.roomId === prop_room.id.toString())
-			// if (prop_room.id === data.roomId.toString())
-			// {
-				console.log('chatData', data.message);
-				console.log('chatfd', data.roomId);
 				const _data = {
 					user_id: data.userId,
 					message: data.message,
 					date: new Date(),
 				};
-				console.log('data dyalek', data);
-				// if (room.id === prop_room.id)
-				setMessages((old) => [...old, _data]) 	
-				// memoizedRef.current = [...memoizedRef.current, _data];
-				// console.log('  : ', memoizedRef.current);
-				// setrerender(Math.random());
-				console.log('prop_room');	
-			// }
-			// }
-		});
-		// console.log('wa7ed akhor');
-
-		return () => {
+				setMessages((old) => [...old, _data])
+			});
+			
+			return () => {
+			// socket.emit('leave-room',joinRoom)
 			socket.off('chat');
 		};
 	}, []);
-	// }, [rerender]);
-
-	// const new_messages = useRef(Old_Messages);
-	// const memoizedRef = useMemo(() => new_messages, [room, new_messages, Old_Messages]);
-
-
-	console.log('joined a socket');
-
-
-
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		// }
-		// let Data = {
-		// 	userId: profile.user_data.id,
-		// 	message: message,
-		// 	date: new Date(),
-		// };
+
 		let chat: ChatDto = {
 			roomId: room.id.toString(),
 			userId: profile.user_data.id,
 			message: message,
 		}
 		socket.emit('chat', chat);
-		// memoizedRef.current = [...memoizedRef.current, Data];
-		console.log('new msg update ref');
-		// const updatedMessages = [...messages, {
-		// 	user_id: profile.user_data.id,
-		// 	message: message,
-		// 	date: new Date(),
-		// }];	
-		// SetMessages(updatedMessages);
-		console.log("handleSubmit");
-		console.log('payload', chat);
-		// setrerender('');
-		setMessage('');
-		// setrerender(Math.random());
 
+		setMessage('');
 	}
-	console.log(profile);
+	(profile);
 
 	return (
 		<>
@@ -158,19 +110,17 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 								</div>
 							</div>
 							<div className="overflow-y-auto">
-								{messages.map((message) => {
+								{messages.map((message : any, index : number) => {
 									const friend = profile.friends.find(f => f.id === message.user_id);
 									if (friend) {
-										// console.log('Found friend:', friend);
-										return (<Msg
+										return (<Msg key={`friend-${index}`}
 											profile={friend.avatar}
 											name={friend.username}
 											msg={message.message}
 											/>);
 									} else if (message.message) {
-										// console.log("me");
-										// console.log('msg ra tle3', message);
-										return (<MsgMe
+
+										return (<MsgMe key={`me-${index}`}
 											profile={profile.user_data.avatar}
 											name={profile.user_data.username}
 											msg={message.message}

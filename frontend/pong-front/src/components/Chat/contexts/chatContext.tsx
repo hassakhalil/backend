@@ -31,7 +31,7 @@ export const ChatSocketProvider: React.FC<ChatSocketProviderProps> = ({ children
       path: '/chat'
     });
     
-    console.log('newSocket');
+    ('newSocket');
     setSocket(newSocket);
 
     return () => {

@@ -29,7 +29,6 @@ export const SetUsername = ( {setLogin}: Props ) => {
 				navigate("/profile/me");
 			} )
         } catch (error) {
-          console.error('POST request failed:', error);
 		  Seterror(true);
         }
       };
@@ -41,15 +40,23 @@ export const SetUsername = ( {setLogin}: Props ) => {
             <div className="border flex flex-col items-center justify-center bg-white w-[500px] h-[500px] shadow-xl rounded-custom">
                 <div className="flex items-center justify-center text-[#808191]">Enter Your Full Name</div>
                 <div className="flex flex-col items-center gap-5 pt-5">
-                <form className="flex justify-center items-center rounded-xl h-[70px] w-[300px]">
-                    <input className="rounded-xl w-full h-full border bg-gray-100 border-[3px]  pr-3 pl-3 focus:border-[#6C5DD3] focus:outline-none text-[#888EFF] text-center"
-					maxLength={8}
-                    value={formData.username}
-                    onChange={(e) => {
+                <form
+					className="flex justify-center items-center rounded-xl h-[70px] w-[300px]"
+					onSubmit={(e) => {
+						e.preventDefault();
+						handleFormSubmit();
+					}}
+					>
+					<input
+						className="rounded-xl w-full h-full border bg-gray-100 border-[3px] pr-3 pl-3 focus:border-[#6C5DD3] focus:outline-none text-[#888EFF] text-center"
+						maxLength={8}
+						value={formData.username}
+						onChange={(e) => {
+						e.preventDefault();
 						setFormData({ ...formData, username: e.target.value });
-					  }}
-                />
-                </form>
+						}}
+					/>
+					</form>
 				<button className="flex justify-center items-center border rounded-xl bg-[#6C5DD3] border-[#6C5DD3] h-[45px] w-[140px]" onClick={handleFormSubmit}>
 					<div className="text-white font-semibold lg:text-sm">Submit</div>
 				</button>

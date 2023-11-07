@@ -31,8 +31,6 @@ export function ChatConv({ room, profile }: ChatConvProps) {
 	const [msg, setMsg] = useState([]);
 	const { id } = useParams();
 
-	console.log('ChatConv', id, 'room', room, 'profile', profile);
-
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -42,7 +40,6 @@ export function ChatConv({ room, profile }: ChatConvProps) {
 				);
 				setRoomMembers(responseMembers.data);
 			} catch (error) {
-				console.error("Error fetching room members:", error);
 			}
 
 			try {
@@ -52,14 +49,12 @@ export function ChatConv({ room, profile }: ChatConvProps) {
 				);
 				setMsg(responseMsg.data);
 			} catch (error) {
-				console.error("Error fetching room messages:", error);
 			}
 		};
 
 		fetchData();
 	}, [id]);
 
-	console.log('room members', msg);
 
 	return (
 		<>

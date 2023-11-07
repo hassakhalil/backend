@@ -8,46 +8,17 @@ import { useProfilecontext } from "../../../../ProfileContext"
 // import useEffect from 'rea
 interface Props {
     clicked: () => void
-    msgnum: string,
 }
 
-export function Notification({ clicked, msgnum }: Props) {
+export function Notification({ clicked }: Props) {
 
     const chatContext = useContext(ChatSocketContext);
     const state = useDataContext();
     const profile = useProfilecontext();
     React.useEffect(() => {
-        // const profile = useProfilecontext()
-        // const chatContext = useContext(ChatSocketContext);
-        // let state : DataContextProps | undefined;
-            // state = useDataContext();
-        // // useEffect(() =>{
-        //     chatContext?.on('State', (friendState : friendsList)=>
-        //   {
-        //   console.log('on state -------', friendState);
-    
-    
-        //   // start
-        //   // profile.setData((prevData) => {
-        //   //   if (prevData) {
-        //   //     return {
-        //   //       ...prevData,
-        //   //       user_data: {
-        //   //         ...prevData.user_data,
-        //   //         state: friendState.state,
-        //   //       },
-        //   //     };
-        //       ///end 
-        //     //   console.log("state changed", data)
-        //     //   if (data)
-        //     state.setData((old) =>
-        //     old.map((item : friendsList) => (item.id === friendState.id ? { ...item, ...friendState } : item)))
-        // //   console.log('data mn bead', data);
-        //   });
-        // //   }, [chatContext])
 
-            chatContext?.on('gameRequest', (notif: {id: number, avatar: string; username: string}) => {
-                console.log('on gameRequest --------------------------------------<>')
+            chatContext?.on('gameRequest', (notif: {id: number, avatar: string; username: string, type : string}) => {
+
                 // if (!profile?.data.pending_requests.find(newRequest))
                 profile?.setData((prevUserData) => ({
                     ...prevUserData,
@@ -56,8 +27,8 @@ export function Notification({ clicked, msgnum }: Props) {
             })
 
 
-            chatContext?.on('friendRequest', (notif: {id: number, avatar: string; username: string}) => {
-                console.log('on friend request --------------------------------------<>')
+            chatContext?.on('friendRequest', (notif: {id: number, avatar: string; username: string, type : string}) => {
+
                 // if (!profile?.data.pending_requests.find(newRequest))
                 profile?.setData((prevUserData) => ({
                     ...prevUserData,
@@ -70,8 +41,6 @@ export function Notification({ clicked, msgnum }: Props) {
         chatContext?.off('gameRequest')}
           
     }, [chatContext, profile?.data?.user_data.avatar, state, profile?.setData])
-
-
 
     return (
         <>

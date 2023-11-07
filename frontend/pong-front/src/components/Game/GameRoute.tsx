@@ -29,9 +29,12 @@ interface friendsList{
   
    export  const  GameRoute = ()=>
     {
-        // const chatSocket = useContext(ChatSocketContext);
         const Socket = useContext(SocketContext);
-        // const Socket = useContext();
+        useEffect(() => {
+          return () => {
+            Socket.disconnect();
+          };
+        }, [Socket]);
 
         useEffect(()=>
         {

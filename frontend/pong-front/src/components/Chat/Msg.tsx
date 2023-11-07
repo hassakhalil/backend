@@ -9,7 +9,7 @@ interface Props {
 
 export function Msg ( {profile, name, msg} : Props ) {
 
-	console.log(name);
+	(name);
 	return (
 		<>
 			<div className="flex gap-[10px] pb-5">

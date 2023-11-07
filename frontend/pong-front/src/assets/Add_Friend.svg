@@ -2,8 +2,8 @@
 <g id="add button" clip-path="url(#clip0_989_6246)">
 <circle id="bg" cx="36" cy="36" r="36" fill="#6C5DD3"/>
 <g id="e-add">
-<path id="Path" d="M36 26V46" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<path id="Path_2" d="M46 36H26" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path id="Path" d="M36 26V46" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+<path id="Path_2" d="M46 36H26" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
 </g>
 </g>
 <defs>

@@ -2,6 +2,7 @@ import axios from "axios"
 import { useContext, useState } from "react"
 import React from "react"
 import { MyContext, UserContext } from "../../pages/Profile";
+import { useProfilecontext } from "../../ProfileContext";
 
 
 interface Props {
@@ -10,26 +11,43 @@ interface Props {
 
 export function Deblock ( { name }: Props ) {
 
-	const data = useContext(MyContext);
+	// const data = useContext(MyContext);
 	const [hide, sethide] = useState(true);
+	const data = useProfilecontext()
 
 
 	const UnblockFriend = async () => {
+		let deblockedFriend : any
 		try {
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/unblock-friend/${name}`, null, {withCredentials: true})
 			.then((response) => {
-				data?.setMyUserData((prevUserData) => ({
+		data?.setData((prevUserData) => {
+					deblockedFriend = prevUserData.blocks.filter(
+						(request) => request.username === name
+					  );
+					
+					const filteredRequests = prevUserData.blocks.filter(
+					  (request) => request.username !== name
+					);
+				  
+					return {
+					  ...prevUserData,
+					  blocks: [...filteredRequests],
+					};
+
+				});
+				data?.setData((prevUserData) => ({
 					...prevUserData,
-					user_data: {
-					  ...prevUserData.user_data,
-					  blocks: response.data,
-					},
-				  }));
+					// user_data: {
+						...prevUserData,
+						friends: [...prevUserData.friends, deblockedFriend[0]],
+						// },
+					}));
 				  sethide(false);
 			  })
 		}
 		catch (error) {
-			console.log(error);
+			(error);
 		}
 	}
 	return (

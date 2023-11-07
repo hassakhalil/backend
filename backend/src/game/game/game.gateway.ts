@@ -12,8 +12,10 @@ import { OnGatewayDisconnect } from '@nestjs/websockets';
 import { Jwt2faAuthGuard } from 'src/auth/jwt-2fa-auth.guard';
 import {Request} from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { NotificationsService } from 'src/chat/event.notifications';
+import { UsersService } from 'src/users/users.service';
 // import { JwtService } from "@nestjs/jwt";
-
+import { JwtService } from "@nestjs/jwt";
 @WebSocketGateway(
   {
     path: '/game',
@@ -29,11 +31,18 @@ export class GameGateway implements OnGatewayDisconnect {
   io: Server;
 
   private readonly logger = new Logger(GameGateway.name)
-  constructor(private readonly gameService: gameService)
+  constructor(private readonly gameService: gameService, private readonly notification: NotificationsService
+      , private users : UsersService, private jwt : JwtService)
   {}
-  
+
+  private clients: Map<string, number> = new Map();
   async handleDisconnect(Client: Socket) {
     this.logger.log(`Cliend id:${Client.id} disconnected`);
+    const userId = this.clients.get(Client.id);
+
+    if (userId){
+      this.clients.delete(Client.id);
+    this.notification.sendGameEndNotification(userId);}
     if (this.gameService.gameloaded(Client))
     {
       const ids = this.gameService.getPlayersId(Client);
@@ -42,18 +51,16 @@ export class GameGateway implements OnGatewayDisconnect {
       
       if (result[0] === 'default')
       {
-        // console.log("set game Score");
         this.gameService.setResult(Client);
         result[0] = 'false'
         result[1] = 'You Won';
-        console.log("winner = " + result[1]);
       }
-      else if (result[1] === 'false')
+      else if (result[0] === 'false')
       {
         if (result[1] === Client.id)
         result[1] = 'You Won'
-    }
-    // console.log("console.logitha" + ids[1]);
+      }
+    // ("itha" + ids[1]);
     if (ids && ids[1] !== undefined)
     {
       if (ids[1] !== 'AI player' )
@@ -73,53 +80,64 @@ export class GameGateway implements OnGatewayDisconnect {
   // @UseGuards(Jwt2faAuthGuard)
   async handleConnection(@ConnectedSocket() Client: Socket)
   {
-      // console.log(Client.handshake.headers);
+      // (Client.handshake.headers);
+    let user ;
+    try{
+      const Cookie = Client.handshake.headers.cookie.split("=")[1];
+
+
+      // ("Cookie = ",Cookie);
+      const payload = await this.jwt.verifyAsync(Cookie, { secret: process.env.JWT_CONST });
+
+      user = await this.users.findOne(payload.sub);
+      if (user)
+        this.clients.set(Client.id, user.id);
+        // this.clients.set(Client.id, user.id);
+    }
+    catch(error)
+    {
+      let res : string[] = []
+      res[0] = 'false';
+      res[1] = 'authentication failed';
+      Client.emit('delay', res);
+      this.handleDisconnect(Client);
+    // }
+    }
+    this.notification.sendGameStartNotification(user.id);
     let gameduration : string | string [];
     let id : string | string[];
     let user_id : number;
+    let Opponent : string| string[];
     gameduration = Client.handshake.query.gameDuration;
     id = Client.handshake.query.user_id;
-
-    
-    // console.log("connected");
-  //   try {
-  //     console.log(Client.handshake.headers.cookie);
-  //     const Cookie = Client.handshake.headers.cookie.split("=")[1];
-  //     // console.log("Cookie = ",Cookie);
-  //     const payload = await this.jwtService.verifyAsync(Cookie, { secret: process.env.JWT_CONST });
-  //     // Payload = payload;
-  //     // console.log("Payload = ",Payload);
-  //   }catch(error){
-  //     console.log(error)
-  //     // throw new WsException('unauthorized');
-  //     Client.disconnect();
-  //     //throw error
-  // }
-    // console.log("me = "÷+ id);
+    Opponent = Client.handshake.query.OpponentId;
+    let OpponentId : number;
     if (id)
       user_id = parseInt(id.toString(), 10);
+    if (Opponent)
+      OpponentId = parseInt(Opponent.toString(), 10);
     if (this.gameService.userInGame(user_id) !== -1)
     {
-      // console.log("user alrea     dy in game");
       let res : string[] = []
       res[0] = 'false';
       res[1] = 'Your Already In Game';
       Client.emit('delay', res);
-      this.handleDisconnect(Client);
-      // Client.disconnect();
-      // console.log('___DISCONNECT___DBG___');
-      // this.handleConnection(Client);
+      this.handleDisconnect(Client)
       return ;
-      // Client.disconnect();
     }
     let gameDuration = (parseInt(gameduration.toString(), 10));
     this.logger.log(`Client connected: ${Client.id}`)
-    // console.log("me = " + Client.handshake.query.userna me);
-    if (gameDuration < 1 || gameDuration > 5)
+
+    if (gameDuration < 1 || gameDuration > 6)
+    {
+      Client.disconnect();
       return ;
-    if (gameDuration !== 5 && this.gameService.isGameOpen(gameDuration - 1))
+    }
+    if (gameDuration !== 5 && gameDuration !== 6 && this.gameService.isGameOpen(gameDuration - 1))
     {
       const gameId = this.gameService.joinGame(Client, gameDuration - 1, user_id)
+      const users_ids = this.gameService.getUsersIds(Client);
+      this.io.to(gameId).emit('GameInfo', users_ids);
       this.io.to(gameId).emit("GameStarted")
       setTimeout(() => {
         let result : string[] = [];
@@ -130,12 +148,34 @@ export class GameGateway implements OnGatewayDisconnect {
       }, 1000)
       return ;
     }
-
-    this.gameService.createGame(Client, gameduration, user_id);
+    if ((gameDuration === 6 && user_id !== OpponentId) && this.gameService.isGameAvailble(OpponentId))
+    {
+        const gameId = this.gameService.joinFriendGame(Client , user_id, OpponentId)
+        const users_ids = this.gameService.getUsersIds(Client);
+        this.io.to(gameId).emit('GameInfo', users_ids);
+        this.io.to(gameId).emit("GameStarted")
+        setTimeout(() => {
+          let result : string[] = [];
+          result[0] = 'true';
+          result[1] = undefined;
+          this.io.to(gameId).emit('delay', result)
+          this.gameService.gameTimer(Client, new Date().getTime())
+        }, 1000)
+        return ;
+    }
+    // should check this one 
+    if (gameDuration === 6)
+    {
+      this.notification.sendGameRequestNotification(user_id , OpponentId)
+    }
+    this.gameService.createGame(Client, gameduration, user_id)
     if (parseInt(gameduration.toString(), 10) === 5)
     {
       this.gameService.botJoinGame(gameDuration - 1);
       const gameId = this.gameService.getGameId(Client)
+      const users_ids = this.gameService.getUsersIds(Client)
+      // console.log(users_ids);
+      this.io.to(gameId).emit('GameInfo', users_ids);
       this.io.to(gameId).emit("GameStarted")
       setTimeout(() => {
         let result : string[] = [];
@@ -150,6 +190,8 @@ export class GameGateway implements OnGatewayDisconnect {
   @SubscribeMessage('playerMovePaddle')
   playerMovePaddle(@MessageBody() newPosition :number, @ConnectedSocket() Client: Socket)
   {
+    if (newPosition !== -15 && newPosition !== 15)
+      return ;
     if (this.gameService.gameloaded(Client))
     this.gameService.playerMovePaddle(newPosition, Client)
   }
@@ -178,7 +220,6 @@ export class GameGateway implements OnGatewayDisconnect {
   @SubscribeMessage("getballposition")
   getballposition(@ConnectedSocket() Client: Socket)
   {
-    //console("------> lmashakil" + Client.id);
     if (this.gameService.gameloaded(Client))
     {
       const PlayersId = this.gameService.getPlayersId(Client)

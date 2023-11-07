@@ -24,7 +24,7 @@ class Paddles {
     }
     show = (x: number, y: number, w: number, h: number) => {
     this.p5.rectMode(this.p5.CENTER);
-    // console.log("draw rect");
+
     this.p5.rect(x, y, w, h, 10);
     }
 }

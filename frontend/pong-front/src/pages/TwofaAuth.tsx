@@ -13,7 +13,7 @@ export function TwofaAuth () {
 
 	const verifyYourCode = async () => {
 		try {
-			console.log(code.code);
+			(code.code);
 			const responce = await axios.post(`http://${import.meta.env.VITE_API_URL}/2fa/authenticate`, code, {
 				withCredentials: true,
 				headers: {
@@ -25,7 +25,7 @@ export function TwofaAuth () {
 			}
 		}
 		catch (error) {
-			console.log(error);
+			(error);
 		}
 	}
 
