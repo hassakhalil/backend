@@ -41,7 +41,7 @@ interface MBburgerProps {
 
           const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, { withCredentials: true });
          
-          Mydata = {id: response.data.user_data.id, username: response.data.user_data.username, avatar: response.data.user_data.avatar, state : response.data.user_data.state}
+          Mydata = {id: response.data?.user_data?.id, username: response.data?.user_data?.username, avatar: response.data?.user_data?.avatar, state : response.data?.user_data?.state}
           response.data.friends = [...response.data.friends, Mydata];
           setState(response.data.friends);
         } catch (error) {

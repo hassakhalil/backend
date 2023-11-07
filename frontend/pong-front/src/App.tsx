@@ -44,8 +44,7 @@ interface friendsList{
 			try {
 			const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/is-loggedin`, { withCredentials: true });
 			setIslogin(response.data === true);
-			} catch (error) {
-				
+			} catch (error) {	
 				(error);
 				setIslogin(false)
 				setIsLoading(false);
@@ -69,6 +68,7 @@ interface friendsList{
 
 				<BrowserRouter>
 				  <NavBar/>
+				  <ProfileProvider>
 					<Routes>
 					  <Route path={`/Profile/:username`} element={<CheckProfile />} />
 				  		<Route path="/game" element={<GameSetup />} />
@@ -78,13 +78,14 @@ interface friendsList{
 					  <Route path="/" element={<Profile />} />
 					  <Route path="*" element={<ForOFor />} />
 					</Routes>
+					  </ProfileProvider>
 				  </BrowserRouter>
 				  </>
 			  ) : (
 				// Your not-logged-in routes go here
 				<BrowserRouter>
 				  <Routes>
-					<Route path="/2fa" element={<TwofaAuth />} />
+					<Route path="/2fa" element={<TwofaAuth setLogin={() => setIslogin(true)}/>} />
 					<Route path="/set_username" element={<SetUsername setLogin={() => setIslogin(true)}/>} />
 					<Route path="*" element={<SignIn />} />
 				  </Routes>

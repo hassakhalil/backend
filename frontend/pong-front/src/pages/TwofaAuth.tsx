@@ -2,7 +2,11 @@ import React from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-export function TwofaAuth () {
+interface Props {
+	setLogin: () => void
+} 
+
+export function TwofaAuth ( {setLogin}: Props ) {
 	const [code, setCode] = React.useState(
 		{
 			code: ''
@@ -21,6 +25,7 @@ export function TwofaAuth () {
 				  },
 			}).then( ((response) => {
 				navigate(`/profile/${response.data}`);
+				setLogin();
 			})
 			)
 			// if (responce) {

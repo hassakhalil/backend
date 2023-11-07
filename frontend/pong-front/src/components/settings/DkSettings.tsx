@@ -21,11 +21,12 @@ export function DkSettings ( {hide}: Props ) {
     const [remove, SetRemove] = React.useState(false);
 	const [twoFA, setTwoFa] = useState(false);
     const [gameSetting, setgameSetting] = React.useState(false);
+	let defualt : string | undefined;
 	const [formData, setFormData] = useState<{username: string}>({
 		username: '',
 	});
 	const profile = useProfilecontext();
-	let defualt : string | undefined = profile.data.user_data?.avatar;
+	defualt = profile?.data?.user_data?.avatar;
 	const [BASE_URL, setBase] = useState(defualt);
 
 
@@ -39,7 +40,7 @@ export function DkSettings ( {hide}: Props ) {
 
 			axios.post(`http://${import.meta.env.VITE_API_URL}/upload-avatar`, formData,  {
 				withCredentials: true,
-				headers: {
+			headers: {
 					"Content-Type": "multipart/form-data",
 				} 
 			}
