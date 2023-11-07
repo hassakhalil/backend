@@ -3,6 +3,7 @@ import { IsStrongPassword, IsString, IsIn, IsOptional, IsNumber , Length} from "
 
 export class RoomSettingsDto {
     @IsString()
+    @Length(3, 8)
     name: string;
 
     @IsString()
