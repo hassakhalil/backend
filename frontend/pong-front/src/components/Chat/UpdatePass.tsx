@@ -20,7 +20,7 @@ export function UpdatePass ( {hide, roomName, RoomType}: Props ) {
 
 	const handleFormSubmit = async ( name: string, RoomType: string ) => {
         const jsonData = {
-            name: roomName,
+            name: name,
             password: friendName,
             type: RoomType,
         };
@@ -53,7 +53,12 @@ export function UpdatePass ( {hide, roomName, RoomType}: Props ) {
                             </button>
                         </div>
                         <div className="pr-8 pl-8 pb-2">
-                            <form className="flex items-center border border-4 border-[#6C5DD3] rounded-xl w-full h-[56px] lg:w-full lg:h-[50px]" onSubmit={() => handleFormSubmit(roomName, RoomType)}>
+                            <form className="flex items-center border border-4 border-[#6C5DD3] rounded-xl w-full h-[56px] lg:w-full lg:h-[50px]"
+								onSubmit={(e) => {
+									e.preventDefault();
+									handleFormSubmit(roomName, RoomType)
+								}}
+								>
                                 <input  className="rounded-xl w-full h-full pr-3 pl-3 lg:text-md lg:pl-5 focus:outline-none text-[#888EFF]" placeholder="Enter New Password"
 								type="password"
 								value={friendName}

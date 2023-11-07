@@ -135,7 +135,11 @@ export function DkSettings ( {hide}: Props ) {
 						<div className="flex flex-col gap-[8px] justify-center pt-10 pl-5">
 						<div className="text-[#808191]">Update Your Name</div>
 						<div className="flex flex-col gap-9">
-						<form className="flex  justify-center items-center rounded-xl h-[70px] w-[200px]">
+						<form className="flex  justify-center items-center rounded-xl h-[70px] w-[200px]"
+						onSubmit={(e) => {
+							e.preventDefault();
+						}}
+						>
 							<input className="rounded-xl w-full h-full border bg-gray-100 border-[3px]  pr-3 pl-3 focus:border-[#6C5DD3] focus:outline-none  text-[#888EFF] text-center" value={formData.username} maxLength={8}
 								onChange={(e) => {
 									setFormData({ ...formData, username: e.target.value });

@@ -71,8 +71,7 @@ interface friendsList{
 				  <NavBar/>
 					<Routes>
 					  <Route path={`/Profile/:username`} element={<CheckProfile />} />
-				  <Route path="/game" element={<GameSetup />} />
-					  <Route path="/2fa" element={<TwofaAuth />} />
+				  		<Route path="/game" element={<GameSetup />} />
 					  <Route path="/Chat" element={<Chat />} />
 					  <Route path="/Chat/:id" element={<Chat />} />
 					  <Route path="/error" element={<ForOFor />} />
@@ -85,6 +84,7 @@ interface friendsList{
 				// Your not-logged-in routes go here
 				<BrowserRouter>
 				  <Routes>
+					<Route path="/2fa" element={<TwofaAuth />} />
 					<Route path="/set_username" element={<SetUsername setLogin={() => setIslogin(true)}/>} />
 					<Route path="*" element={<SignIn />} />
 				  </Routes>

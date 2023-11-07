@@ -24,7 +24,7 @@ export function JoinRoom ( {avatar, roomName, RoomType}: Props ) {
 		try {
 			const response = await axios.post("http://localhost:3000/join-room", jsonData, {withCredentials: true})
 			.then((response) => {
-				(response.data);
+				// (response.data);
 				setJoined(true);
 			})
 		}

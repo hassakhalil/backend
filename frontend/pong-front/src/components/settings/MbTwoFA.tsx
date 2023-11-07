@@ -37,6 +37,13 @@ export function MbTwoFA ( {hide}: Props) {
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/2fa/turn-on`, code, { withCredentials: true })
 			.then (function (response) {
 				Setsent(true);
+				Mydata?.setData((prevUserData) => ({
+					...prevUserData,
+					user_data: {
+					  ...prevUserData.user_data,
+					  is_two_factor_auth_enabled: true as any,
+					},
+				  }));
 			});
 		} catch (error) {
 			Seterror(true);
@@ -49,7 +56,13 @@ export function MbTwoFA ( {hide}: Props) {
 				const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/2fa/turn-off`, code, { withCredentials: true })
 				.then (function (response) {
 					Setsent(true);
-
+					Mydata?.setData((prevUserData) => ({
+						...prevUserData,
+						user_data: {
+						  ...prevUserData.user_data,
+						  is_two_factor_auth_enabled: false as any,
+						},
+					  }));
 				});
 			} catch (error) {
 				Seterror(true);
@@ -79,26 +92,10 @@ export function MbTwoFA ( {hide}: Props) {
 	}
 	
 	const handleOn = () => {
-		Mydata?.setData((prevUserData) => ({
-			...prevUserData,
-			user_data: {
-			  ...prevUserData.user_data,
-			  is_two_factor_auth_enabled: true as any,
-			},
-		  }));
-
 		handle2faOn();
 	}
 
 	const handleOff = () => {
-		Mydata?.setData((prevUserData) => ({
-			...prevUserData,
-			user_data: {
-			  ...prevUserData.user_data,
-			  is_two_factor_auth_enabled: false as any,
-			},
-		  }));
-
 		handle2faOff();
 	}
 
@@ -181,7 +178,12 @@ export function MbTwoFA ( {hide}: Props) {
 										<div id="last" className="flex flex-col items-center border border-[3px] border-[#BACCFD] rounded-custom w-[240px] h-[257px] pt-5">
 											<div className="text-[#888EFF] font-bold pb-10">Verify your device</div>
 											<div className="text-[#888EFF] font-light pb-1">Enter your code</div>
-											<form className="flex  justify-center items-center rounded-xl h-[30px] w-[160px]">
+											<form className="flex  justify-center items-center rounded-xl h-[30px] w-[160px]"
+											onSubmit={(e) => {
+												e.preventDefault();
+											}}
+
+											>
 												<input className="flex rounded-xl text-[#888EFF] w-full h-full border bg-gray-100 border-[3px]  pr-3 pl-3 focus:border-[#6C5DD3] focus:outline-none text-center"
 												value={code.code}
 												onChange={(e) => {
@@ -193,7 +195,7 @@ export function MbTwoFA ( {hide}: Props) {
 												error ? 
 												<div className="pt-1">
 													<div className="border bg-[#E9DCE5] rounded-lg w-[170px] h-[25px]  flex gap-1 items-center justify-center">
-														<div className="text-xs font-semibold text-[#6C5DD3]">Invitation Code</div>
+														<div className="text-xs font-semibold text-[#6C5DD3]">Invalid code</div>
 														<div>
 															<div  style={{ backgroundImage: `url(${rec})`}} className="w-[14px] h-[14px] bg-center bg-no-repeat bg-cover">
 																<div className="text-white flex items-center justify-center text-xs font-semibold">

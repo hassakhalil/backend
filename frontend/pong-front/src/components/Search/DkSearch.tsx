@@ -108,7 +108,12 @@ export function DkSearch ( {hide}: Props ) {
 						<div className="pr-8 pl-8 pb-10 px-10">
 							<div className="flex gap-[20px]">
 
-                            <form className="flex items-center border border-4 border-[#6C5DD3] rounded-xl w-full h-[56px] lg:w-full lg:h-[45px]" onSubmit={handleFormSubmit}>
+                            <form className="flex items-center border border-4 border-[#6C5DD3] rounded-xl w-full h-[56px] lg:w-full lg:h-[45px]"
+							onSubmit={(e) => {
+								e.preventDefault();
+								handleFormSubmit();
+							}}
+							>
                                 <input  className="rounded-xl w-full h-full pr-3 pl-3 lg:text-md lg:pl-5 focus:outline-none text-[#888EFF]" placeholder="Username"
 								value={friendName}
 								onChange={(e) => {
@@ -117,6 +122,25 @@ export function DkSearch ( {hide}: Props ) {
 								}}>
 								  </input>
                             </form>
+
+							{/* <form
+					className="flex justify-center items-center rounded-xl h-[70px] w-[300px]"
+					onSubmit={(e) => {
+						e.preventDefault();
+						handleFormSubmit();
+					}}
+					>
+					<input
+						className="rounded-xl w-full h-full border bg-gray-100 border-[3px] pr-3 pl-3 focus:border-[#6C5DD3] focus:outline-none text-[#888EFF] text-center"
+						maxLength={8}
+						value={formData.username}
+						onChange={(e) => {
+						e.preventDefault();
+						setFormData({ ...formData, username: e.target.value });
+						}}
+					/>
+					</form> */}
+
 							<button className="flex justify-center items-center border rounded-xl bg-[#6C5DD3] border-[#6C5DD3] h-[45px] w-[100px]" onClick={handleFormSubmit}>
                                 <div className="text-white font-semibold ">Invite</div>
                             </button>
@@ -183,9 +207,7 @@ export function DkSearch ( {hide}: Props ) {
 					</div>
 				</div>
 			</div>
-
 				)
-
 			)
 		}
 		</>

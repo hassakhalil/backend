@@ -29,7 +29,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy, '42') {
             };
             return done(null, user);
           } catch (error) {
-            console.log("Error in 42 strategy == ");
+            // console.log("Error in 42 strategy == ");
             // return done(error, false);
             throw new HttpException('Error in 42 strategy', HttpStatus.BAD_REQUEST);
           }

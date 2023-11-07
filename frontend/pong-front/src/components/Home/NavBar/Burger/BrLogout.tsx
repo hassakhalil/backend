@@ -10,7 +10,7 @@ export function BrLogout ( ) {
         <>
 		<div className="pr-8">
 		<a href={`http://${import.meta.env.VITE_API_URL}/logout`}>
-            <button className={`flex gap-5 pl-8 items-center w-full h-[56px] rounded-2xl ${click ? "bg-[#6C5DD3]" : ""}`} onClick={() => {handleLogout(), SetClick(!click)}}>
+            <button className={`flex gap-5 pl-8 items-center w-full h-[56px] rounded-2xl ${click ? "bg-[#6C5DD3]" : ""}`} onClick={() => {SetClick(!click)}}>
                 <div>
 				<svg fill="#808191" height="20" width="20" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
 						viewBox="0 0 489.9 489.9">
