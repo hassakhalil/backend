@@ -94,54 +94,54 @@ const GameCanvas = ( ) => {
       paddles = new Paddles(p5);
     };
     
-    // useEffect(() =>
-    // {
-    //   socket.on('SketchData', (sketchData : SketchData) =>
-    //   {
-    //       ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, p5.windowWidth / 2);
-    //     ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, p5.windowHeight / 2);
-    //     ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
+    useEffect(() =>
+    {
+      socket.on('SketchData', (sketchData : SketchData) =>
+      {
+          ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, p5.windowWidth / 2);
+        ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, p5.windowHeight / 2);
+        ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
       
-    //     Score[0] =sketchData.Score[0];
-    //     Score[1] = sketchData.Score[1];
+        Score[0] =sketchData.Score[0];
+        Score[1] = sketchData.Score[1];
 
-    //       paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (p5.windowWidth / 2))
-    //       paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, p5.windowHeight / 2);
-    //       paddles.w = p5.map(sketchData.paddles.w, 0, 683, 0, p5.windowWidth / 2);
-    //       paddles.h = p5.map(sketchData.paddles.h, 0, 331, 0, p5.windowHeight / 2);
-    //       paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, p5.windowWidth / 2);
-    //       paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, p5.windowHeight / 2);
-    //       paddles.w_1 = p5.map(sketchData.paddles.w_1, 0, 683, 0, p5.windowWidth / 2);
-    //       paddles.h_1 = p5.map(sketchData.paddles.h_1, 0, 331, 0, p5.windowHeight / 2);
-    //   })
-    //   return () =>
-    //   {
-    //     socket.off('SketchData');
-    //   }
-    // })
+          paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (p5.windowWidth / 2))
+          paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, p5.windowHeight / 2);
+          paddles.w = p5.map(sketchData.paddles.w, 0, 683, 0, p5.windowWidth / 2);
+          paddles.h = p5.map(sketchData.paddles.h, 0, 331, 0, p5.windowHeight / 2);
+          paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, p5.windowWidth / 2);
+          paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, p5.windowHeight / 2);
+          paddles.w_1 = p5.map(sketchData.paddles.w_1, 0, 683, 0, p5.windowWidth / 2);
+          paddles.h_1 = p5.map(sketchData.paddles.h_1, 0, 331, 0, p5.windowHeight / 2);
+      })
+      return () =>
+      {
+        socket.off('SketchData');
+      }
+    })
     p5.draw = () => {
       p5.resizeCanvas(p5.windowWidth / 2, p5.windowHeight / 2);
       if  (canvasTime[0] === 'true')
       {
-        socket.emit('SketchData', (sketchData : SketchData) =>
-          {
-            // console.log(sketchData);
-              ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, p5.windowWidth / 2);
-            ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, p5.windowHeight / 2);
-            ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
+        // socket.emit('SketchData', (sketchData : SketchData) =>
+        //   {
+        //     // console.log(sketchData);
+        //       ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, p5.windowWidth / 2);
+        //     ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, p5.windowHeight / 2);
+        //     ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
           
-            Score[0] =sketchData.Score[0];
-            Score[1] = sketchData.Score[1];
+        //     Score[0] =sketchData.Score[0];
+        //     Score[1] = sketchData.Score[1];
     
-              paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (p5.windowWidth / 2))
-              paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, p5.windowHeight / 2);
-              paddles.w = p5.map(sketchData.paddles.w, 0, 683, 0, p5.windowWidth / 2);
-              paddles.h = p5.map(sketchData.paddles.h, 0, 331, 0, p5.windowHeight / 2);
-              paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, p5.windowWidth / 2);
-              paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, p5.windowHeight / 2);
-              paddles.w_1 = p5.map(sketchData.paddles.w_1, 0, 683, 0, p5.windowWidth / 2);
-              paddles.h_1 = p5.map(sketchData.paddles.h_1, 0, 331, 0, p5.windowHeight / 2);
-          })
+        //       paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (p5.windowWidth / 2))
+        //       paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, p5.windowHeight / 2);
+        //       paddles.w = p5.map(sketchData.paddles.w, 0, 683, 0, p5.windowWidth / 2);
+        //       paddles.h = p5.map(sketchData.paddles.h, 0, 331, 0, p5.windowHeight / 2);
+        //       paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, p5.windowWidth / 2);
+        //       paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, p5.windowHeight / 2);
+        //       paddles.w_1 = p5.map(sketchData.paddles.w_1, 0, 683, 0, p5.windowWidth / 2);
+        //       paddles.h_1 = p5.map(sketchData.paddles.h_1, 0, 331, 0, p5.windowHeight / 2);
+        //   })
         p5.stroke(color);
         p5.fill(color);
         p5.ellipse(ball_coordonation[0], ball_coordonation[1], ball_coordonation[2], ball_coordonation[2]);

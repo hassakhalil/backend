@@ -192,7 +192,7 @@ createGame(@ConnectedSocket() socket: Socket , gameDuration: string | string[], 
                 this.dashBoard.games[gameDuration].game[gp_index[0]].initialTime = new Date().getTime();
                 this.startInterval(socket);
             }
-            if (!this.dashBoard.games[gameDuration].game[gp_index[0]])
+            if (!this.dashBoard.games || !this.dashBoard.games[gameDuration].game[gp_index[0]])
                 return ;
             var currentTime = new Date().getTime(); 
             var timeDifference = currentTime - this.dashBoard.games[gameDuration].game[gp_index[0]].initialTime;
