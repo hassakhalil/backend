@@ -68,11 +68,11 @@ export function TwoFa ( {hide}:Props ) {
 	const handle2faOn = async () => {
 		console.log('start')
 		try {
-			console.log('handle2faON');
+			// console.log('handle2faON');
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/2fa/turn-on`, code, { withCredentials: true })
-				console.log('response')
+				// console.log('response')
 				Setsent(true);
-				console.log('prev on', Mydata?.data?.user_data.is_two_factor_auth_enabled);
+				// console.log('prev on', Mydata?.data?.user_data.is_two_factor_auth_enabled);
 				Mydata?.setData((prevUserData) => ({
 					...prevUserData,
 					user_data: {
@@ -81,18 +81,18 @@ export function TwoFa ( {hide}:Props ) {
 					},
 				  }));
 			} catch (error) {
-				console.log('error')
+				// console.log('error')
 				Seterror(true);
 				Setsent(false);
 			}
-			console.log('handle on end')
+			// console.log('handle on end')
 		};
 
 		const handle2faOff = async () => {
 			try {
 				const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/2fa/turn-off`, code, { withCredentials: true })
 					Setsent(true);
-					console.log('prev Off', Mydata?.data?.user_data.is_two_factor_auth_enabled);
+					// console.log('prev Off', Mydata?.data?.user_data.is_two_factor_auth_enabled);
 					Mydata?.setData((prevUserData) => ({
 						...prevUserData,
 						user_data: {
@@ -126,7 +126,7 @@ export function TwoFa ( {hide}:Props ) {
 		setGenerate(!generate);
 		fetchData();
 	}
-	console.log('state', Mydata?.data.user_data.is_two_factor_auth_enabled)
+	// console.log('state', Mydata?.data.user_data.is_two_factor_auth_enabled)
 
 	return (
 		<>

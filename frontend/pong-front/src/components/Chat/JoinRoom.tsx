@@ -22,7 +22,7 @@ export function JoinRoom ( {avatar, roomName, RoomType}: Props ) {
 		  };
 	
 		try {
-			const response = await axios.post("http://localhost:3000/join-room", jsonData, {withCredentials: true})
+			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/join-room`, jsonData, {withCredentials: true})
 			.then((response) => {
 				// (response.data);
 				setJoined(true);

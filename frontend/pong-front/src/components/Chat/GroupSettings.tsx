@@ -53,7 +53,7 @@ export function GroupSettings( {hide}: Props ) {
 	}, []);
 	useEffect(() => {
 		try {
-			const response =  axios.get(`http://localhost:3000/get-room-members/${id}`,
+			const response =  axios.get(`http://${import.meta.env.VITE_API_URL}/get-room-members/${id}`,
 			{ withCredentials: true }
 			).then ((response) => {
 				setMember(response.data);
@@ -66,7 +66,7 @@ export function GroupSettings( {hide}: Props ) {
 	const [users, setUsers] = useState<typeof allUsers[]>([]);
 	useEffect(() => {
 		try {
-			const response =  axios.get(`http://localhost:3000/get-all-users/`,
+			const response =  axios.get(`http://${import.meta.env.VITE_API_URL}/get-all-users/`,
 			{ withCredentials: true }
 			).then ((response) => {
 				setUsers(response.data);
@@ -81,7 +81,7 @@ export function GroupSettings( {hide}: Props ) {
 	const [name, setname] = useState('')
 	useEffect(() => {
 		try {
-			const response =  axios.get(`http://localhost:3000/get-room/${id}`,
+			const response =  axios.get(`http://${import.meta.env.VITE_API_URL}/get-room/${id}`,
 			{ withCredentials: true }
 			).then ((response) => {
 				if (response.data.type === "private")

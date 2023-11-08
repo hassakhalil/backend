@@ -17,7 +17,7 @@ export function Chatprofile({ room, hide }: Props) {
 	const [role, setRole] = useState('')
 	useEffect(() => {
 			try {
-				const response = axios.get(`http://localhost:3000/get-my-role/${room.id}`, {withCredentials: true})
+				const response = axios.get(`http://${import.meta.env.VITE_API_URL}/get-my-role/${room.id}`, {withCredentials: true})
 				.then ((response) => {
 					setRole(response.data);
 				})

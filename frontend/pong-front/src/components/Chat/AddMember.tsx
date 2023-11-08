@@ -16,7 +16,7 @@ const Addmember = async ( name: string, roomName: string ) => {
 	};
 	(jsonData.name + " " + jsonData.type);
 	try {
-		const response = await axios.post(`http://localhost:3000/add-member/${name}`, jsonData,
+		const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/add-member/${name}`, jsonData,
 		{ withCredentials: true }
 		).then (() => {
 		})

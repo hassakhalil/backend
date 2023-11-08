@@ -68,14 +68,14 @@ const Root: React.FC = () => {
   const checkAuthentication = async () => {
     try {
     const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/is-loggedin`, { withCredentials: true });
-    console.log('here')
+    // console.log('here')
     setIslogin(response.data === true);
     } catch (error) {	
       (error);
       setIslogin(false)
       setIsLoading(false);
     } finally {
-      console.log('soemthing')
+      // console.log('soemthing')
     setIsLoading(false);
     }
   }

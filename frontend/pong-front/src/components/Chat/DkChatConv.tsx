@@ -58,6 +58,7 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 		// console.log('new room')
 		socket.on('chat', (data: ChatDto) => {
 
+				// console.log('li sifet l msg', data);
 				const _data = {
 					user_id: data.userId,
 					message: data.message,
@@ -111,7 +112,7 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 							</div>
 							<div className="overflow-y-auto">
 								{messages.map((message : any, index : number) => {
-									const friend = profile.friends.find(f => f.id === message.user_id);
+									const friend = members.find(f => f.id === message.user_id);
 									if (friend) {
 										return (<Msg key={`friend-${index}`}
 											profile={friend.avatar}
@@ -119,7 +120,6 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 											msg={message.message}
 											/>);
 									} else if (message.message) {
-
 										return (<MsgMe key={`me-${index}`}
 											profile={profile.user_data.avatar}
 											name={profile.user_data.username}

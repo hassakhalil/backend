@@ -179,7 +179,7 @@ async activateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
   if (!isActivated){
     throw new HttpException('Failed to activate 2fa', HttpStatus.BAD_REQUEST);
   }
-  console.log('return 2fa')
+  // console.log('return 2fa')
   return 'You successfully activated 2fa';
 	// return res.x (`http://localhost:5173/profile/${user.username}`)
 
@@ -221,7 +221,7 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
           //ectract the filename from the path
           let newPath = path.split('/').pop();
           //debug
-          console.log(newPath);
+          // console.log(newPath);
           //end debug
           fs.unlinkSync(join('/backend/public','avatars', newPath));
       }

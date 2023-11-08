@@ -68,7 +68,7 @@ export function CreateRoom( {hide}: Props ) {
 
 		
 		try {
-			const response = await axios.post("http://localhost:3000/create-room", jsonData, {withCredentials: true})
+			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/create-room`, jsonData, {withCredentials: true})
 			.then((response) => {
 				(response.data);
 				hide();

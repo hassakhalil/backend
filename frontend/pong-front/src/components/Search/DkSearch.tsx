@@ -39,7 +39,7 @@ export function DkSearch ( {hide}: Props ) {
 	const [MyProfile, setMyProfile] = useState<MyUserData>();
 	useEffect(() => {
 		try {
-		const response =  axios.get(`http://localhost:3000/get-all-users`, { withCredentials: true })
+		const response =  axios.get(`http://${import.meta.env.VITE_API_URL}/get-all-users`, { withCredentials: true })
 		.then ((response) => {
 			setUserData(response.data);
 			
@@ -51,7 +51,7 @@ export function DkSearch ( {hide}: Props ) {
 
 	useEffect(() => {
 		try {
-			const response1 = axios.get(`http://localhost:3000/profile/me`, {withCredentials: true})
+			const response1 = axios.get(`http://${import.meta.env.VITE_API_URL}/profile/me`, {withCredentials: true})
 			.then ((response1) => {
 				setMyProfile(response1.data)
 		})

@@ -17,13 +17,13 @@ export class Jwt2faAuthGuard extends AuthGuard('jwt-2fa') {
 
     if (!token){
         //cookie not found .deny access
-        console.log('didnt find any jwt token');
+        // console.log('didnt find any jwt token');
         return false;
     }
     //check if the token is blacklisted
     if (this.authService.isTokenBlacklisted(token))
     {
-      console.log('jwt token is  blacklisted');
+      // console.log('jwt token is  blacklisted');
 
       return false;
     }

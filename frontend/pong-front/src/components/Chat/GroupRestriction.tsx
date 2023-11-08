@@ -22,7 +22,7 @@ const handleban = async (name: string, RoomName: string, type: string) => {
 
 	
 	try {
-		const response = await axios.post(`http://localhost:3000/ban-member/${name}`, jsonData,
+		const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/ban-member/${name}`, jsonData,
 		{ withCredentials: true }
 		).then (() => {
 		})
@@ -38,7 +38,7 @@ const handleallow = async (name: string, RoomName: string, type: string) => {
 	};
 	
 	try {
-		const response = await axios.post(`http://localhost:3000/allow-member/${name}`, jsonData,
+		const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/allow-member/${name}`, jsonData,
 		{ withCredentials: true }
 		).then (() => {
 		})
@@ -55,7 +55,7 @@ const handlemute = async (name: string, RoomName: string, type: string, time: nu
 	};
 
 	try {
-		const response = await axios.post(`http://localhost:3000/mute-member/${name}`, jsonData,
+		const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/mute-member/${name}`, jsonData,
 		{ withCredentials: true }
 		).then (() => {
 		})
@@ -71,7 +71,7 @@ const handlekick = async (name: string, RoomName: string, type: string) => {
 	};
 
 	try {
-		const response = await axios.delete(`http://localhost:3000/kick-member/${name}`, {
+		const response = await axios.delete(`http://${import.meta.env.VITE_API_URL}/kick-member/${name}`, {
 		  data: jsonData,
 		  withCredentials: true
 		})
@@ -88,7 +88,7 @@ const handleadmin =  async (name: string, RoomName: string, type: string) => {
 	};
 
 	try {
-		const response = await axios.post(`http://localhost:3000/set-admin/${name}`, jsonData , { withCredentials: true })
+		const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/set-admin/${name}`, jsonData , { withCredentials: true })
 		.then (() => {
 		})
 	  } catch (error) {
@@ -112,7 +112,7 @@ export function GroupRestriction ({avatar, is_banned, username, RoomName, type}:
 
 	useEffect(() => {
 		try {
-			const response =  axios.post(`http://localhost:3000/get-member-role/${username}`, jsonData, { withCredentials: true })
+			const response =  axios.post(`http://${import.meta.env.VITE_API_URL}/get-member-role/${username}`, jsonData, { withCredentials: true })
 			.then ((response) => {
 				setaccType(response.data);
 			})

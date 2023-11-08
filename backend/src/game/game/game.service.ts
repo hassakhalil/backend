@@ -368,8 +368,8 @@ async saveGame(socket : Socket)
     let username = await this.user.findById(id_0);
     let userData = await this.user.getProfileData(username.username);
     const friends = userData.friends;
-    if (userData.loses + userData.wins + userData.draws === 7)
-        await this.checkAchievements(socket, 'Played 7 Games', id_0);
+    // if (userData.loses + userData.wins + userData.draws === 7)
+    //     await this.checkAchievements(socket, 'Played 7 Games', id_0);
     for (let i = 0; i <= friends.length - 1; i++)
     {
         if (friends[i].id === id_1)
@@ -382,9 +382,9 @@ async saveGame(socket : Socket)
     username = await this.user.findById(id_1);
     userData = await this.user.getProfileData(username.username);
     if (userData.loses + userData.wins + userData.draws === 3)
-    await this.checkAchievements(socket, 'Played 3 Games', id_1);
+    await this.checkAchievements(socket, 'Played 3 Games', userData.user_data.id);
     if (userData.loses + userData.wins + userData.draws === 7)
-        await this.checkAchievements(socket, 'Played 7 Games', id_1);
+        await this.checkAchievements(socket, 'Played 7 Games', userData.user_data.id);
 }
 
     getGameResult(socket: Socket) {
@@ -420,7 +420,7 @@ this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(()
             if (this.dashBoard.games[gameDuration].game[gp_index[0]]) {
                 this.updateballposition(socket);
                 this.gameTimer(socket);
-            }
+            }       
         }
             , this.dashBoard.games[gameDuration].game[gp_index[0]].ball.RATE)
     }

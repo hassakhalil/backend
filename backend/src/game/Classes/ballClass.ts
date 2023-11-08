@@ -6,6 +6,9 @@ export class ballClass {
   width: number;
   score: number[] = [];
   xspeed = 5;
+   rad_255 = 255 * (Math.PI/180);
+   rad_135 = 135 * (Math.PI/180);
+   rad = 45 * (Math.PI/180);
   yspeed = 1 ;
   progress_speed = 0;
   bot_error_ratio = 0.20;
@@ -32,8 +35,7 @@ export class ballClass {
         if (this.x > paddle_x)
         {
           const diff = this.y - (paddle_y - paddle_h / 2);
-          const rad = 45 * (Math.PI/180);
-          const angel = -rad + (rad - (-1 * rad) * ((diff - 0) / (paddle_h - 0)));
+          const angel = -this.rad + (this.rad - (-1 * this.rad) * ((diff - 0) / (paddle_h - 0)));
           this.xspeed = 6 * Math.cos(angel);
           this.yspeed = 5 * Math.sin(angel);
           this.x = paddle_x + 5 + 12;
@@ -47,9 +49,8 @@ export class ballClass {
         if (this.x < paddle_x)    
         {
           const diff = this.y - (paddle_y - paddle_h / 2);
-          const rad_255 = 255 * (Math.PI/180);
-          const rad_135 = 135 * (Math.PI/180);
-          const angel = rad_255 + (rad_135 - rad_255) * ((diff - 0) / (paddle_h - 0));
+      
+          const angel = this.rad_255 + (this.rad_135 - this.rad_255) * ((diff - 0) / (paddle_h - 0));
           this.xspeed = 6 * Math.cos(angel);
           this.yspeed = 5 * Math.sin(angel);
           this.x = paddle_x - 5 - 12;
@@ -57,8 +58,8 @@ export class ballClass {
         }
       }
   reset = () => {
-    this.x = this.width / 2;  
-    this.y = this.height / 2;
+    this.x = this.width * 0.5;  
+    this.y = this.height * 0.5;
     const angel =  Math.floor(Math.random() * ((Math.PI / 4)  - (-1 * Math.PI /4) + 1)) + (-1 * Math.PI /4);
     this.xspeed = 5 * Math.cos(angel);
     this.yspeed = 5 * Math.sin(angel);
