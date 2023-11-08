@@ -38,7 +38,7 @@ export function DkSettings ( {hide}: Props ) {
 			const formData = new FormData();
 			formData.append("avatar", file);
 
-			axios.post(`http://${import.meta.env.VITE_API_URL}/upload-avatar`, formData,  {
+			await axios.post(`http://${import.meta.env.VITE_API_URL}/upload-avatar`, formData,  {
 				withCredentials: true,
 			headers: {
 					"Content-Type": "multipart/form-data",

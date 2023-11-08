@@ -40,7 +40,7 @@ interface friendsList{
 
 				<BrowserRouter>
 				  <NavBar/>
-				  <ProfileProvider>
+				  {/* <ProfileProvider> */}
 					<Routes>
 					  <Route path={`/Profile/:username`} element={<CheckProfile />} />
 				  		<Route path="/game" element={<GameSetup />} />
@@ -50,7 +50,7 @@ interface friendsList{
 					  <Route path="/" element={<Profile />} />
 					  <Route path="*" element={<ForOFor />} />
 					</Routes>
-					  </ProfileProvider>
+					  {/* </ProfileProvider> */}
 				  </BrowserRouter>
 				  </>
 			</>

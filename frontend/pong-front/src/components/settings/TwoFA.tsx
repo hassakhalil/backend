@@ -68,9 +68,7 @@ export function TwoFa ( {hide}:Props ) {
 	const handle2faOn = async () => {
 		console.log('start')
 		try {
-			// console.log('handle2faON');
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/2fa/turn-on`, code, { withCredentials: true })
-				// console.log('response')
 				Setsent(true);
 				// console.log('prev on', Mydata?.data?.user_data.is_two_factor_auth_enabled);
 				Mydata?.setData((prevUserData) => ({

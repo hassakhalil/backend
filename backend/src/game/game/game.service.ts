@@ -401,6 +401,7 @@ async saveGame(socket : Socket)
     }
     username = await this.user.findById(id_1);
     userData = await this.user.getProfileData(username.username);
+    console.log('total games', userData.loses + userData.wins + userData.draws)
     if (userData.loses + userData.wins + userData.draws === 3)
     await this.checkAchievements(socket, 'Played 3 Games', userData.user_data.id);
     if (userData.loses + userData.wins + userData.draws === 7)

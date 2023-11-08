@@ -103,7 +103,7 @@ export function Achivement ( {Achi} : Props ) {
 						<div className="text-sm text-[#808191]">Play 7 Matches In Total</div>
 					</div>
 					{
-						(Achi.some((obj : any) => obj.name === "Played 3 Games") === true ) ? null :
+						(Achi.some((obj : any) => obj.name === "Played 7 Games") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
 							<div className="text-xs text-[#808191]">unlocked</div>	
 							<img className="w-[20px] h-[20px]" src={unlock}></img>

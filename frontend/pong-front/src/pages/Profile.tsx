@@ -46,9 +46,8 @@ export const UserContext = createContext<{
   
   export function Profile() {
     // ('mchit l profile')
-  const profile = useProfilecontext()
-	let { username } = useParams();
-
+    let { username } = useParams();
+    
   if (!username)
   username = 'me';
 	React.useEffect(() => {
@@ -64,7 +63,8 @@ export const UserContext = createContext<{
 	  }, [username]);
     
     let name: string = username ? username : "";
-    const [userData, setUserData] = useState<MyUserData>({
+    // const [userData , setUserData]
+    let [userData, setUserData] = useState<MyUserData>({
       user_data: {
         id: 0,
         username: name,
@@ -87,22 +87,24 @@ export const UserContext = createContext<{
       return JSON.stringify(objA) === JSON.stringify(objB);
     }
     
-    
+    const profile = useProfilecontext()
     useEffect(() => {
       try {
+        // if (username !== profile?.data?.user_data?.username && username !== 'me')
+        // {
         const response =  axios.get(`http://${import.meta.env.VITE_API_URL}/profile/${username}`, { withCredentials: true })
         .then ((response) => {
-			const newData = response.data;
+			  const newData = response.data;
       // ('in Profile component', username);
-			if (!isEqual(newData, userData)) {
+			  if (!isEqual(newData, userData)) {
 				// ("here");
-				setUserData(newData);
-			}
+				  setUserData(newData);
+			  }
 		})
       } catch (error) {
       }
 
-  }, [userData, username, profile?.data]);
+  }, [userData, username, profile?.data?.user_data]);
 
   const lastMatch = userData.match_history.length > 0
   ? userData.match_history[userData.match_history.length - 1]

@@ -41,18 +41,7 @@ interface SketchData {
     Score : number[]
     paddles : coordonationDTO
 }
-export function customThrottle(callback, delay) {
-  let lastCall = 0;
 
-  return function (...args) {
-      const now = Date.now();
-
-      if (now - lastCall >= delay) {
-          lastCall = now;
-          callback(...args);
-      }
-  };
-}
 const GameCanvas = ( ) => {
   let client_id : string;
   let color =  sessionStorage.getItem('Color')
@@ -91,13 +80,11 @@ const GameCanvas = ( ) => {
       socket.off('delay');
       socket.off('gameTimer');
     }
-
   })
 
   const sketch = (p5 : P5CanvasInstance) => {
     let ball_coordonation: number[] = [];
     let paddles: Paddles;
-    let buffer : any;
     // let sketchData;
     let Score : number[] = []
     p5.setup = () => { 
@@ -105,129 +92,73 @@ const GameCanvas = ( ) => {
       const canvas = p5.createCanvas(p5.windowWidth / 2, p5.windowHeight / 2);
       canvas.id('myCanvas');
       p5.select('#myCanvas').style('border-color', color);
-      buffer = p5.createGraphics(p5.width, p5.height);
-      p5.frameRate(120); 
-      paddles = new Paddles(p5, buffer);
-    //   socket.on('SketchData', (sketchData : SketchData) =>
-    //   {
-    //       ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, buffer.windowWidth / 2);
-    //       ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, buffer.windowHeight / 2);
-    //     ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
-      
-    //     Score[0] =sketchData.Score[0];
-    //     Score[1] = sketchData.Score[1];
-
-    //       paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (buffer.windowWidth / 2))
-    //       paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, buffer.windowHeight / 2);
-    //       // paddles.w = p5.map(sketchData.paddles.w, 0, 683, 0, buffer.windowWidth / 2);
-    //       // paddles.h = p5.map(sketchData.paddles.h, 0, 331, 0, buffer.windowHeight / 2);
-    //       paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, buffer.windowWidth / 2);
-    //       paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, buffer.windowHeight / 2);
-    //       // paddles.w_1 = p5.map(sketchData.paddles.w_1, 0, 683, 0, buffer.windowWidth / 2);
-    //       // paddles.h_1 = p5.map(sketchData.paddles.h_1, 0, 331, 0, buffer.windowHeight / 2);
-    // })
+      paddles = new Paddles(p5);
     };
-    
-    
-    // const throttledEmit = customThrottle(() => {
-    //   socket.emit('SketchData', (sketchData : SketchData) =>
-    //   {
-    //       ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, buffer.windowWidth / 2);
-    //       ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, buffer.windowHeight / 2);
-    //       ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
-      
-    //     Score[0] =sketchData.Score[0];
-    //     Score[1] = sketchData.Score[1];
-    //     paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (buffer.windowWidth / 2))
-    //       paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, buffer.windowHeight / 2);
-    //       paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, buffer.windowWidth / 2);
-    //       paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, buffer.windowHeight / 2);
-    // })
-    // })
 
-    
     p5.draw = () => {
       p5.clear();
-      p5.background(255)
-      buffer.resizeCanvas(p5.windowWidth / 2, p5.windowHeight / 2);
+      // p5.background(255)
+      p5.resizeCanvas(p5.windowWidth / 2, p5.windowHeight / 2);
       if  (canvasTime[0] === 'true')
-      {
-        // throttledEmit();
-        // console.log(new Date())
-        // if (p5.frameCount % 2 === 0)
-        // {
-          
+      {   
           socket.emit('SketchData', (sketchData : SketchData) =>
           {
-              ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, buffer.windowWidth / 2);
-              ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, buffer.windowHeight / 2);
+              ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, p5.windowWidth / 2);
+              ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, p5.windowHeight / 2);
               ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
           
             Score[0] =sketchData.Score[0];
             Score[1] = sketchData.Score[1];
-            paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (buffer.windowWidth / 2))
-              paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, buffer.windowHeight / 2);
-              paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, buffer.windowWidth / 2);
-              paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, buffer.windowHeight / 2);
+            paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (p5.windowWidth / 2))
+              paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, p5.windowHeight / 2);
+              paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, p5.windowWidth / 2);
+              paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, p5.windowHeight / 2);
         })
       // }
-            buffer.stroke(color);
-            buffer.fill(color);
+            p5.stroke(color);
+            p5.fill(color);
+            p5.ellipse(ball_coordonation[0], ball_coordonation[1], ball_coordonation[2], ball_coordonation[2]);
             socket.emit("updatePaddlePosition");
     
-            paddles.show(paddles.x, paddles.y, paddles.w, paddles.h);
-            paddles.show(paddles.x_1, paddles.y_1, paddles.w_1, paddles.h_1);
-            
-          //   socket.emit('SketchData', (sketchData : SketchData) =>
-          //   {
-          //       ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, buffer.windowWidth / 2);
-          //       ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, buffer.windowHeight / 2);
-          //       ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
-            
-          //     Score[0] =sketchData.Score[0];
-          //     Score[1] = sketchData.Score[1];
-          //     paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (buffer.windowWidth / 2))
-          //       paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, buffer.windowHeight / 2);
-          //       paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, buffer.windowWidth / 2);
-          //       paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, buffer.windowHeight / 2);
-          // })
-        buffer.ellipse(ball_coordonation[0], ball_coordonation[1], ball_coordonation[2], ball_coordonation[2]);
-        buffer.textSize(70); // Set text size
-        buffer.text(Score[0] + " : " + Score[1], p5.windowWidth / 4 , (p5.windowHeight / 4) * 0.2);
-        // p5.fill(255);
-      
-        buffer.textSize(70);
-        buffer.textAlign(p5.CENTER, p5.CENTER);
+        paddles.show(paddles.x, paddles.y, paddles.w, paddles.h);
+        paddles.show(paddles.x_1, paddles.y_1, paddles.w_1, paddles.h_1);
+        // p5.ellipse(ball_coordonation[0], ball_coordonation[1], ball_coordonation[2], ball_coordonation[2]);
+        p5.textSize(70); // Set text size
+        p5.text(Score[0] + " : " + Score[1], p5.windowWidth / 4 , (p5.windowHeight / 4) * 0.2);
+        p5.fill(255);
+        p5.textSize(70);
+        p5.textAlign(p5.CENTER, p5.CENTER);
         if (time[1] !== undefined)
-        buffer.text(time[0] + "  :  " + time[1], p5.map(683 / 2, 0, 683, 0, (p5.windowWidth / 2)) ,
+        p5.text(time[0] + "  :  " + time[1], p5.map(683 / 2, 0, 683, 0, (p5.windowWidth / 2)) ,
         p5.map(331 / 2, 0, 331, 0, (p5.windowHeight / 2)));
+        // // // ("working");
         // // // ("working");
       }
       else
       {
-        buffer.fill(color);
-        buffer.textSize(32);
-        buffer.textAlign(p5.CENTER, p5.CENTER);
+        p5.fill(color);
+        p5.textSize(32);
+        p5.textAlign(p5.CENTER, p5.CENTER);
         // // // (canvasTime[1] + " && " + client_id);
         if (canvasTime[1] === client_id || canvasTime[1] === 'You Won')
         {
-          buffer.text('You won', p5.map(683 / 2, 0, 683, 0, (buffer.windowWidth / 2)) ,
-          buffer.map(331 / 2, 0, 331, 0, (p5.windowHeight / 2)));
+          p5.text('You won', p5.map(683 / 2, 0, 683, 0, (p5.windowWidth / 2)) ,
+          p5.map(331 / 2, 0, 331, 0, (p5.windowHeight / 2)));
         }
         else if (canvasTime[1] === 'waiting' || canvasTime[1] === 'Your Already In Game' || canvasTime[1] === 'Draw')
         {
-          buffer.text(canvasTime[1], p5.map(683 / 2, 0, 683, 0, (buffer.windowWidth / 2)) ,
+          p5.text(canvasTime[1], p5.map(683 / 2, 0, 683, 0, (p5.windowWidth / 2)) ,
           p5.map(331 / 2, 0, 331, 0, (p5.windowHeight / 2)));
         }
         else
         {
-          buffer.text('Game Over', p5.map(683 / 2, 0, 683, 0, (buffer.windowWidth / 2)) ,
-          p5.map(331 / 2, 0, 331, 0, (buffer.windowHeight / 2)));
+          p5.text('Game Over', p5.map(683 / 2, 0, 683, 0, (p5.windowWidth / 2)) ,
+          p5.map(331 / 2, 0, 331, 0, (p5.windowHeight / 2)));
         }
       }
-    buffer.fill(255);
-    buffer.textSize(32);
-    p5.image(buffer, 0, 0);
+    p5.fill(255);
+    p5.textSize(32);
+    p5.image(p5, 0, 0);
     // requestAnimationFrame(p5.draw);
     };
 
