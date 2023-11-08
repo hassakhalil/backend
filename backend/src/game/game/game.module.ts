@@ -10,6 +10,7 @@ import { NotificationsService } from 'src/chat/event.notifications';
 
 @Module(
 {
+    
     providers: [GameGateway, gameService, PrismaService, UsersService, JwtService, NotificationsService],
     imports : [PrismaModule, UsersModule],
     

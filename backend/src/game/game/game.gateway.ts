@@ -252,11 +252,10 @@ export class GameGateway implements OnGatewayDisconnect {
     if (this.gameService.gameloaded(Client))
     {
       const gameId = this.gameService.getGameId(Client)
-      let sketchData : SketchData;
+      let sketchData : SketchData
       // console.log(this.gameService.getTime(Client));
     this.io.to(gameId).emit('gameTimer', this.gameService.getTime(Client));
     sketchData = this.gameService.getsketchData(Client);
-    // console.log('out', sketchData);
     return sketchData
     }
   }

@@ -192,7 +192,7 @@ createGame(@ConnectedSocket() socket: Socket , gameDuration: string | string[], 
                 this.dashBoard.games[gameDuration].game[gp_index[0]].initialTime = new Date().getTime();
                 this.startInterval(socket);
             }
-            if (!this.dashBoard.games || !this.dashBoard.games[gameDuration].game[gp_index[0]])
+            if (!this.dashBoard.games[gameDuration] || !this.dashBoard.games[gameDuration].game[gp_index[0]])
                 return ;
             var currentTime = new Date().getTime(); 
             var timeDifference = currentTime - this.dashBoard.games[gameDuration].game[gp_index[0]].initialTime;
@@ -310,15 +310,20 @@ userInGame(user_id : number)
 async giveAchievement(Name : string, id : number)
 {
     // ("give achievement");
-    await this.prisma.achievements.create(
-        {
-            data:
+    try
+    {
+        await this.prisma.achievements.create(
             {
-                name : Name,
-                user_id : id,
+                data:
+                {
+                    name : Name,
+                    user_id : id,
+                }
             }
-        }
-    )
+        )
+    }
+    catch(error)
+    {}
 }
 
 async  checkAchievements(socket : Socket, achieveName : string, userId : number)
@@ -419,10 +424,12 @@ this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(()
 
         if (this.dashBoard.games[gameDuration].game[gp_index[0]]) {
             this.updateballposition(socket);
+            // this.updatePaddlePosition(socket);
+            // socket.emit('SketchData', this.getsketchData(socket))
             this.botTimer(socket);
         }
         }
-            , 16)
+            , this.dashBoard.games[gameDuration].game[gp_index[0]].ball.RATE)
     }
 getsketchData(socket : Socket)
 {
@@ -437,7 +444,7 @@ getsketchData(socket : Socket)
             x_1: 0,
             y_1: 0,
             w_1: 0,
-            h_1: 0,
+            h_1: 0, 
         }
     };
     sketchData.ball = this.getballposition(socket)
@@ -456,8 +463,7 @@ getsketchData(socket : Socket)
             return;
         this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(() => {
             if (this.dashBoard.games[gameDuration].game[gp_index[0]]) {
-                this.updateballposition(socket);
-                // socket.emit('sketchData', this.getsketchData(socket));
+                this.updateballposition(socket); 
                 this.gameTimer(socket);
             }       
         }

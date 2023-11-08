@@ -22,13 +22,11 @@ export class ballClass {
     this.x = this.x + this.xspeed;
     this.y = this.y + this.yspeed;
     // if (gameMode === 'botMode')
-      this.progress_speed += 0.005;
-      this.RATE -= 0.96997; 
+      // this.progress_speed += 0.005;
+      this.progress_speed = 0;
+      // this.RATE -= 0.5; 
     // this.progress_speed += 0.000025;
-  }
-  // if (this.y - this.r < p.y + p.h/2 &&
-  // this.y + this.r > p.y - p.h/2 &&
-  // this.x - this.r < p.x + p.w/2) 
+  } 
   checkLeftPaddle(paddle_x: number, paddle_y: number, paddle_h: number) {
     if ((this.y - 12 < (paddle_y + paddle_h / 2) &&
       this.y  + 12 > (paddle_y - paddle_h / 2)) && this.x - 12 < paddle_x + 5)
@@ -39,7 +37,7 @@ export class ballClass {
           this.xspeed = 6 * Math.cos(angel);
           this.yspeed = 5 * Math.sin(angel);
           this.x = paddle_x + 5 + 12;
-          this.xspeed += 1.5 + this.progress_speed;
+          this.xspeed += 1.5 ;
         }
     }
         
@@ -54,7 +52,7 @@ export class ballClass {
           this.xspeed = 6 * Math.cos(angel);
           this.yspeed = 5 * Math.sin(angel);
           this.x = paddle_x - 5 - 12;
-          this.xspeed -= 1.5 + this.progress_speed;
+          this.xspeed -= 1.5 ;
         }
       }
   reset = () => {
@@ -75,7 +73,7 @@ export class ballClass {
       this.reset();
       this.score[0] += 1;
       this.progress_speed = 0;
-      this.RATE = 1000 / 60;
+      // this.RATE = 1000 / 60;
       // RATE = 60;
     }
     if (this.x + 10 <= 0)
@@ -83,7 +81,7 @@ export class ballClass {
       this.reset();
       this.score[1] += 1;
       this.progress_speed = 0;
-      this.RATE = 1000 / 60;
+      // this.RATE = 1000 / 60;
     }
   }
 }
