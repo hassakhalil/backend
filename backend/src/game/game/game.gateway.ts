@@ -16,6 +16,25 @@ import { NotificationsService } from 'src/chat/event.notifications';
 import { UsersService } from 'src/users/users.service';
 // import { JwtService } from "@nestjs/jwt";
 import { JwtService } from "@nestjs/jwt";
+
+interface coordonation
+{
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    x_1: number;
+    y_1: number;
+    w_1: number;
+    h_1: number;
+}
+
+class SketchData {
+  ball : number[] = []
+  Score : number[] = []
+  paddles : coordonation
+}
+
 @WebSocketGateway(
   {
     path: '/game',
@@ -25,6 +44,7 @@ import { JwtService } from "@nestjs/jwt";
     },
   }
 )
+
 @Injectable()
 export class GameGateway implements OnGatewayDisconnect {
   @WebSocketServer()
@@ -196,20 +216,19 @@ export class GameGateway implements OnGatewayDisconnect {
     this.gameService.playerMovePaddle(newPosition, Client)
   }
 
-  @SubscribeMessage("drawPaddles")
-  draw(@ConnectedSocket() Client: Socket)
+  @SubscribeMessage('updatePaddlePosition')
+  updatePaddlePosition(socket: Socket)
   {
-    if (this.gameService.gameloaded(Client))
-    return (this.gameService.drawPaddles(Client))
+    if (this.gameService.gameloaded(socket))
+      this.gameService.updatePaddlePosition(socket)
   }
-
-  @SubscribeMessage("updatePaddlePosition")
-  updatePaddlePosition(@ConnectedSocket() Client: Socket)
-  {
-    if (this.gameService.gameloaded(Client))
-    this.gameService.updatePaddlePosition(Client)
-  }
-  // @UseGuards(Jwt2faAuthGuard)
+  // @SubscribeMessage("drawPaddles")
+  // draw(@ConnectedSocket() Client: Socket)
+  // {
+  //   if (this.gameService.gameloaded(Client))
+  //   return (this.gameService.drawPaddles(Client))
+  // }
+// )
   @SubscribeMessage("stopPaddleMove")
   stopPaddleMove(@ConnectedSocket() Client: Socket)
   {
@@ -217,23 +236,28 @@ export class GameGateway implements OnGatewayDisconnect {
     this.gameService.stopPaddleMove(Client)
   }
   // @UseGuards(Jwt2faAuthGuard)
-  @SubscribeMessage("getballposition")
-  getballposition(@ConnectedSocket() Client: Socket)
-  {
-    if (this.gameService.gameloaded(Client))
-    {
-      const PlayersId = this.gameService.getPlayersId(Client)
-    return (this.gameService.getballposition(Client))}
-  }
+  // @SubscribeMessage("getballposition")
+  // getballposition(@ConnectedSocket() Client: Socket)
+  // {
+  //   if (this.gameService.gameloaded(Client))
+  //   {
+  //     const PlayersId = this.gameService.getPlayersId(Client)
+  //   return (this.gameService.getballposition(Client))}
+  // }
   // @UseGuards(Jwt2faAuthGuard)
-  @SubscribeMessage("getScore")
-  getScore(@ConnectedSocket() Client: Socket)
+  @SubscribeMessage("SketchData")
+  sketchData(@ConnectedSocket() Client: Socket)
   {
+    // console.log('dkhel');
     if (this.gameService.gameloaded(Client))
     {
       const gameId = this.gameService.getGameId(Client)
+      let sketchData : SketchData;
+      // console.log(this.gameService.getTime(Client));
     this.io.to(gameId).emit('gameTimer', this.gameService.getTime(Client));
-    const Score = this.gameService.getScore(Client)
-    return Score;}
+    sketchData = this.gameService.getsketchData(Client);
+    // console.log('out', sketchData);
+    return sketchData
+    }
   }
   }

@@ -17,9 +17,27 @@ import { UsersService } from 'src/users/users.service';
 // import { GameGateway } from './game.gateway';
 
 // let RATE = 60;
+interface coordonation
+{
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    x_1: number;
+    y_1: number;
+    w_1: number;
+    h_1: number;
+}
+class SketchData {
+    ball : number[] = []
+    Score : number[] = []
+    paddles : coordonation
+}
+
 @Injectable()
 export class gameService {
     private dashBoard: dashBoard;
+    SketchData : SketchData;
     // private prisma: PrismaService;
 
     constructor(private prisma: PrismaService, private user: UsersService) {
@@ -37,9 +55,6 @@ export class gameService {
         const gp_index = this.matchPlayerFromSocketId(socket);
         if (this.IsDataValid(gameDuration, gp_index[0]))
             return;
-        // //("socket" + socket.id);
-        // //("game_index" + gp_index[0]);
-        // //("gamDuration" + gameDuration);
         return (this.dashBoard.games[gameDuration].game[gp_index[0]].gameId);
     }
     isGameOpen(gameDuration: number) {
@@ -181,7 +196,7 @@ createGame(@ConnectedSocket() socket: Socket , gameDuration: string | string[], 
                 return ;
             var currentTime = new Date().getTime(); 
             var timeDifference = currentTime - this.dashBoard.games[gameDuration].game[gp_index[0]].initialTime;
-            socket.emit('Score', this.getScore(socket));
+            // socket.emit('Score', this.getScore(socket));
             this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime[0] = Math.floor(timeDifference / (1000 * 60));
             this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime[1] = Math.floor((timeDifference % (1000 * 60)) / 1000);
             if (this.dashBoard.games[gameDuration].game[gp_index[0]].currentTime[0] === gameDuration + 1 
@@ -309,7 +324,7 @@ async giveAchievement(Name : string, id : number)
 async  checkAchievements(socket : Socket, achieveName : string, userId : number)
 {
     let gp_index = this.matchPlayerFromSocketId(socket)
-    let gameDuration = this.getGameDuration(socket);
+    let gameDuration = this.getGameDuration(socket)
 
     let current = await this.prisma.achievements.findMany({where: {user_id: userId}});
 
@@ -409,7 +424,30 @@ this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(()
         }
             , 16)
     }
+getsketchData(socket : Socket)
+{
+    let sketchData : SketchData = {
+        ball : [0,0],
+        Score : [0,0],
+        paddles : {
+            x: 0,
+            y: 0,
+            w: 0,
+            h: 0,
+            x_1: 0,
+            y_1: 0,
+            w_1: 0,
+            h_1: 0,
+        }
+    };
+    sketchData.ball = this.getballposition(socket)
+    // console.log('after ', sketchData)
+    sketchData.Score = this.getScore(socket);
+    sketchData.paddles = this.drawPaddles(socket);
+    return sketchData
+    // console.log(sketchData);
 
+}
     startInterval(socket: Socket) {
         let gp_index = this.matchPlayerFromSocketId(socket);
         let gameDuration = this.getGameDuration(socket);
@@ -419,6 +457,7 @@ this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(()
         this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(() => {
             if (this.dashBoard.games[gameDuration].game[gp_index[0]]) {
                 this.updateballposition(socket);
+                // socket.emit('sketchData', this.getsketchData(socket));
                 this.gameTimer(socket);
             }       
         }

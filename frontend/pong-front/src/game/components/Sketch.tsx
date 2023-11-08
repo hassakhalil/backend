@@ -24,6 +24,23 @@ interface friendsList{
 	  setData: React.Dispatch<React.SetStateAction<any>>;
 	}
 
+  interface coordonationDTO
+{
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    x_1: number;
+    y_1: number;
+    w_1: number;
+    h_1: number;
+}
+interface SketchData {
+    ball : number[]
+    Score : number[]
+    paddles : coordonationDTO
+}
+
 const GameCanvas = ( ) => {
   let client_id : string;
   let color =  sessionStorage.getItem('Color')
@@ -67,7 +84,8 @@ const GameCanvas = ( ) => {
   const sketch = (p5 : P5CanvasInstance) => {
     let ball_coordonation: number[] = [];
     let paddles: Paddles;
-
+    // let sketchData;
+    let Score : number[] = []
     p5.setup = () => { 
       // ('socket idd ', socket.id)
       const canvas = p5.createCanvas(p5.windowWidth / 2, p5.windowHeight / 2);
@@ -76,37 +94,58 @@ const GameCanvas = ( ) => {
       paddles = new Paddles(p5);
     };
     
+    // useEffect(() =>
+    // {
+    //   socket.on('SketchData', (sketchData : SketchData) =>
+    //   {
+    //       ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, p5.windowWidth / 2);
+    //     ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, p5.windowHeight / 2);
+    //     ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
+      
+    //     Score[0] =sketchData.Score[0];
+    //     Score[1] = sketchData.Score[1];
+
+    //       paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (p5.windowWidth / 2))
+    //       paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, p5.windowHeight / 2);
+    //       paddles.w = p5.map(sketchData.paddles.w, 0, 683, 0, p5.windowWidth / 2);
+    //       paddles.h = p5.map(sketchData.paddles.h, 0, 331, 0, p5.windowHeight / 2);
+    //       paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, p5.windowWidth / 2);
+    //       paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, p5.windowHeight / 2);
+    //       paddles.w_1 = p5.map(sketchData.paddles.w_1, 0, 683, 0, p5.windowWidth / 2);
+    //       paddles.h_1 = p5.map(sketchData.paddles.h_1, 0, 331, 0, p5.windowHeight / 2);
+    //   })
+    //   return () =>
+    //   {
+    //     socket.off('SketchData');
+    //   }
+    // })
     p5.draw = () => {
       p5.resizeCanvas(p5.windowWidth / 2, p5.windowHeight / 2);
       if  (canvasTime[0] === 'true')
       {
-        socket.emit('getballposition', (coordonation: number[])=>
-        {
-          ball_coordonation[0] = p5.map(coordonation[0], 0, 683, 0, p5.windowWidth / 2);
-          ball_coordonation[1] = p5.map(coordonation[1], 0, 331, 0, p5.windowHeight / 2);
-          ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
-        });
+        socket.emit('SketchData', (sketchData : SketchData) =>
+          {
+            // console.log(sketchData);
+              ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, p5.windowWidth / 2);
+            ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, p5.windowHeight / 2);
+            ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
+          
+            Score[0] =sketchData.Score[0];
+            Score[1] = sketchData.Score[1];
+    
+              paddles.x = p5.map(sketchData.paddles.x, 0, 683, 0, (p5.windowWidth / 2))
+              paddles.y = p5.map(sketchData.paddles.y, 0, 331, 0, p5.windowHeight / 2);
+              paddles.w = p5.map(sketchData.paddles.w, 0, 683, 0, p5.windowWidth / 2);
+              paddles.h = p5.map(sketchData.paddles.h, 0, 331, 0, p5.windowHeight / 2);
+              paddles.x_1 = p5.map(sketchData.paddles.x_1, 0, 683, 0, p5.windowWidth / 2);
+              paddles.y_1 = p5.map(sketchData.paddles.y_1, 0, 331, 0, p5.windowHeight / 2);
+              paddles.w_1 = p5.map(sketchData.paddles.w_1, 0, 683, 0, p5.windowWidth / 2);
+              paddles.h_1 = p5.map(sketchData.paddles.h_1, 0, 331, 0, p5.windowHeight / 2);
+          })
         p5.stroke(color);
         p5.fill(color);
         p5.ellipse(ball_coordonation[0], ball_coordonation[1], ball_coordonation[2], ball_coordonation[2]);
         socket.emit("updatePaddlePosition");
-        socket.emit("getScore", (score : number[])=>
-        {
-          Score[0] = score[0];
-          Score[1] = score[1];
-        })
-        socket.emit("drawPaddles", (coordonation: coordonation)=>
-        {
-          paddles.x = p5.map(coordonation.x, 0, 683, 0, (p5.windowWidth / 2))
-          paddles.y = p5.map(coordonation.y, 0, 331, 0, p5.windowHeight / 2);
-          paddles.w = p5.map(coordonation.w, 0, 683, 0, p5.windowWidth / 2);
-          paddles.h = p5.map(coordonation.h, 0, 331, 0, p5.windowHeight / 2);
-          paddles.x_1 = p5.map(coordonation.x_1, 0, 683, 0, p5.windowWidth / 2);
-          paddles.y_1 = p5.map(coordonation.y_1, 0, 331, 0, p5.windowHeight / 2);
-          paddles.w_1 = p5.map(coordonation.w_1, 0, 683, 0, p5.windowWidth / 2);
-          paddles.h_1 = p5.map(coordonation.h_1, 0, 331, 0, p5.windowHeight / 2);
-          // // // (paddles.x);
-        })
         paddles.show(paddles.x, paddles.y, paddles.w, paddles.h);
         paddles.show(paddles.x_1, paddles.y_1, paddles.w_1, paddles.h_1);
         
