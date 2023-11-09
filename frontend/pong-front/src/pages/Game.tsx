@@ -46,13 +46,15 @@ export function Game ({user_id } : Props) {
 				setMydata({username : response.data.username, avatar : response.data.avatar, rating: response.data.rating})
 			} catch (error) {
 			}
-			try {
-					const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/get-user/${user_id[1]}`, { withCredentials: true });
-				  setOponnent({username : response.data.username, avatar : response.data.avatar, rating: response.data.rating})
-				} catch (error) {
-				}
-				
-			  };
+			if (user_id[1] !== -42)
+			{
+				try {
+						const response = await axios.get(`http://${import.meta.env.VITE_API_URL}/get-user/${user_id[1]}`, { withCredentials: true });
+					  setOponnent({username : response.data.username, avatar : response.data.avatar, rating: response.data.rating})
+					} catch (error) {
+					}
+				  };
+			}
 			return () => {
 				if(socket)
 				{

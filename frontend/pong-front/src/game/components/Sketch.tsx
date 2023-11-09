@@ -103,7 +103,7 @@ const GameCanvas = ( ) => {
       {   
           socket.emit('SketchData', (sketchData : SketchData) =>
           {
-            console.log('sketchdata', sketchData)
+            //('sketchdata', sketchData)
               ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, p5.windowWidth / 2);
               ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, p5.windowHeight / 2);
               ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);

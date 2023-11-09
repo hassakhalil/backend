@@ -365,8 +365,8 @@ async saveGame(socket : Socket)
     let user_0 = await this.prisma.users.findUnique({ where: { id: id_0 }});
     let user_1 = await this.prisma.users.findUnique({where: { id : id_1}});
 
-    await this.checkAchievements(socket, 'Played Your First Game', id_0);
-    await this.checkAchievements(socket, 'Played Your First Game', id_1);
+    // await this.checkAchievements(socket, 'Played Your First Game', id_0);
+    // await this.checkAchievements(socket, 'Played Your First Game', id_1);
     if (score[0] > score[1])
         newRating = this.updateEloSystem(user_0.rating, user_1.rating, 0);
     else if (score[1] > score[0])
@@ -403,10 +403,10 @@ async saveGame(socket : Socket)
     username = await this.user.findById(id_1);
     userData = await this.user.getProfileData(username.username);
     // console.log('total games', userData.loses + userData.wins + userData.draws)
-    if (userData.loses + userData.wins + userData.draws === 3)
-    await this.checkAchievements(socket, 'Played 3 Games', userData.user_data.id);
-    if (userData.loses + userData.wins + userData.draws === 7)
-        await this.checkAchievements(socket, 'Played 7 Games', userData.user_data.id);
+    // if (userData.loses + userData.wins + userData.draws === 3)
+    // await this.checkAchievements(socket, 'Played 3 Games', userData.user_data.id);
+    // if (userData.loses + userData.wins + userData.draws === 7)
+    //     await this.checkAchievements(socket, 'Played 7 Games', userData.user_data.id);
 }
 
     getGameResult(socket: Socket) {

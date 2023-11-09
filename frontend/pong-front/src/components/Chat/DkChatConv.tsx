@@ -28,8 +28,15 @@ interface ChatDto {
 	roomId: string
 	userId: string
 	message: string
+	username : string
+	avatar : string
 }
 
+interface ChatMe {
+	roomId: string
+	userId: string
+	message: string
+}
 const LeaveRoom = (id: number) => {
 	try {
 	  let response =  axios.delete(
@@ -53,16 +60,18 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 		roomId: room.id.toString()
 	};
 	socket.emit('join-room', joinRoom);
-
+	
+	
+	console.log('li sifet l msg', messages);
 	useEffect(() => {
 		// console.log('new room')
 		socket.on('chat', (data: ChatDto) => {
-
-				// console.log('li sifet l msg', data);
 				const _data = {
 					user_id: data.userId,
 					message: data.message,
-					date: new Date(),
+					username: data.username,
+					avatar: data.avatar,
+					// date: new Date(),
 				};
 				setMessages((old) => [...old, _data])
 			});
@@ -75,7 +84,7 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		let chat: ChatDto = {
+		let chat: ChatMe = {
 			roomId: room.id.toString(),
 			userId: profile.user_data.id,
 			message: message,
@@ -112,11 +121,11 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 							</div>
 							<div className="overflow-y-auto">
 								{messages.map((message : any, index : number) => {
-									const friend = members.find(f => f.id === message.user_id);
-									if (friend) {
+									// const friend = members.find(f => f.id === message.user_id);
+									if (message.user_id !== profile.user_data.user_id) {
 										return (<Msg key={`friend-${index}`}
-											profile={friend.avatar}
-											name={friend.username}
+											profile={message.avatar}
+											name={message.username}
 											msg={message.message}
 											/>);
 									} else if (message.message) {

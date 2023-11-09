@@ -95,7 +95,7 @@ fetchData();
 			rooms ? 
 			<div className="">
 				{OtherRooms.map((otheRroom: {id:number, type: string, name: string, avatar: string}, index: number) => (
-					<JoinRoom
+					<JoinRoom key={index}
 						avatar={otheRroom.avatar}
 						roomName={otheRroom.name}
 						RoomType={otheRroom.type}

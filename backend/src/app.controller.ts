@@ -599,7 +599,13 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto, @Re
     for (let i = 0; i < messages.length; i++){
       const isBlocked = await this.usersService.checkIfUserIsBlocked(user.id, messages[i].user_id);
       if (!isBlocked){
-        filteredMessages.push(messages[i]);
+        const uusser = await this.usersService.findById(messages[i].user_id);
+        filteredMessages.push({
+          user_id: messages[i].user_id,
+          message: messages[i].message,
+          username: uusser.username,
+          avatar: uusser.avatar,
+        });
       }
     }
     return filteredMessages;

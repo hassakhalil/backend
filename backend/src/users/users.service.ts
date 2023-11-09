@@ -413,7 +413,6 @@ export class UsersService {
             }
           }
           const MatchHistory = await this.getMatchHistory(PersonalData.id);
-          const UserAchievements = await this.getAchievements(PersonalData.id);
           let wins = 0;
           let loses = 0;
           let draws = 0;
@@ -425,10 +424,40 @@ export class UsersService {
               wins++;
             }
             else{
-                loses++;
+              loses++;
             }
           });
-
+          try{
+            if (wins+ loses+draws === 7)
+            {
+              const isCreated = await this.prisma.achievements.create({
+                data:{
+                  name: "Played 7 Games",
+                  user_id: PersonalData.id,
+                }
+              });
+            }
+            else if (wins+ loses+draws === 3){
+              const isCreated = await this.prisma.achievements.create({
+                data:{
+                  name: "Played 7 Games",
+                  user_id: PersonalData.id,
+                }
+              });
+            }
+            else if (wins+ loses+draws === 1){
+              const isCreated = await this.prisma.achievements.create({
+                data:{
+                  name: "Played Your First Game",
+                  user_id: PersonalData.id,
+                }
+              });
+            }
+          }
+          catch(error){
+            
+          }
+          const UserAchievements = await this.getAchievements(PersonalData.id);
           return {
             user_data:        PersonalData,
             friends:          FriendList,
