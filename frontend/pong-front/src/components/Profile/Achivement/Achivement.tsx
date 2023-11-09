@@ -23,7 +23,7 @@ export function Achivement ( {Achi} : Props ) {
 					{
 						(Achi.some((obj : any) => obj.name === "Played Your First Game") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
-							<div className="text-xs text-[#808191]">unlocked</div>	
+							{/* <div className="text-xs text-[#808191]">unlocked</div>	 */}
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
 						</div>
 					}
@@ -36,7 +36,7 @@ export function Achivement ( {Achi} : Props ) {
 					{
 						(Achi.some((obj : any) => obj.name === "Played a Game With Friend") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
-							<div className="text-xs text-[#808191]">unlocked</div>	
+							{/* <div className="text-xs text-[#808191]">unlocked</div>	 */}
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
 						</div>
 					}
@@ -49,7 +49,7 @@ export function Achivement ( {Achi} : Props ) {
 					{
 						(Achi.some((obj : any) => obj.name === "Get 800 Elo Point") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
-							<div className="text-xs text-[#808191]">unlocked</div>	
+							{/* <div className="text-xs text-[#808191]">unlocked</div>	 */}
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
 
 						</div>
@@ -63,7 +63,7 @@ export function Achivement ( {Achi} : Props ) {
 					{
 						(Achi.some((obj : any) => obj.name === "Play With AI Player") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
-							<div className="text-xs text-[#808191]">unlocked</div>	
+							{/* <div className="text-xs text-[#808191]">unlocked</div>	 */}
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
 
 						</div>
@@ -77,7 +77,7 @@ export function Achivement ( {Achi} : Props ) {
 					{
 						(Achi.some((obj : any) => obj.name === "Won Over AI Player") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
-							<div className="text-xs text-[#808191]">unlocked</div>	
+							{/* <div className="text-xs text-[#808191]">unlocked</div>	 */}
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
 
 						</div>
@@ -91,7 +91,7 @@ export function Achivement ( {Achi} : Props ) {
 					{
 						(Achi.some((obj : any) => obj.name === "Played 3 Games") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
-							<div className="text-xs text-[#808191]">unlocked</div>	
+							{/* <div className="text-xs text-[#808191]">unlocked</div>	 */}
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
 
 						</div>
@@ -105,7 +105,7 @@ export function Achivement ( {Achi} : Props ) {
 					{
 						(Achi.some((obj : any) => obj.name === "Played 7 Games") === true ) ? null :
 						<div className="flex gap-[8px] items-center">
-							<div className="text-xs text-[#808191]">unlocked</div>	
+							{/* <div className="text-xs text-[#808191]">unlocked</div>	 */}
 							<img className="w-[20px] h-[20px]" src={unlock}></img>
 
 						</div>

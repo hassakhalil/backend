@@ -66,7 +66,7 @@ export function TwoFa ( {hide}:Props ) {
 
 
 	const handle2faOn = async () => {
-		console.log('start')
+		// console.log('start')
 		try {
 			const response = await axios.post(`http://${import.meta.env.VITE_API_URL}/2fa/turn-on`, code, { withCredentials: true })
 				Setsent(true);

@@ -240,6 +240,7 @@ userInGame(user_id : number)
         let score = this.getScore(socket);
         let PlayersID = this.getPlayersId(socket);
         
+        // console.log();
         if (start)
         this.botstartInterval(socket);
     socket.emit('Score', this.getScore(socket));
@@ -401,7 +402,7 @@ async saveGame(socket : Socket)
     }
     username = await this.user.findById(id_1);
     userData = await this.user.getProfileData(username.username);
-    console.log('total games', userData.loses + userData.wins + userData.draws)
+    // console.log('total games', userData.loses + userData.wins + userData.draws)
     if (userData.loses + userData.wins + userData.draws === 3)
     await this.checkAchievements(socket, 'Played 3 Games', userData.user_data.id);
     if (userData.loses + userData.wins + userData.draws === 7)
@@ -421,9 +422,13 @@ botstartInterval(socket: Socket) {
     
     if (gameDuration === -1)
     return;
-this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(() => {
+// console.log('bot game index', gp_index[0])
+this.dashBoard.games[gameDuration].game[this.matchPlayerFromSocketId(socket)[0]].intervalId = setInterval(() => {
+    // console.log('gp_index[0]', gp_index[0])
 
-        if (this.dashBoard.games[gameDuration].game[gp_index[0]]) {
+        // console.log(new Date(), this.dashBoard.games[gameDuration].game[gp_index[0]].gameId)
+        if (this.dashBoard.games[gameDuration].game[this.matchPlayerFromSocketId(socket)[0]]) {
+            // console.log('update makhdamash');
             this.updateballposition(socket);
             // this.updatePaddlePosition(socket);
             // socket.emit('SketchData', this.getsketchData(socket))
@@ -462,8 +467,8 @@ getsketchData(socket : Socket)
 
         if (gameDuration === -1)
             return;
-        this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId = setInterval(() => {
-            if (this.dashBoard.games[gameDuration].game[gp_index[0]]) {
+        this.dashBoard.games[gameDuration].game[this.matchPlayerFromSocketId(socket)[0]].intervalId = setInterval(() => {
+            if (this.dashBoard.games[gameDuration].game[this.matchPlayerFromSocketId(socket)[0]]) {
                 this.updateballposition(socket); 
                 this.gameTimer(socket);
             }       
@@ -481,8 +486,9 @@ getsketchData(socket : Socket)
     }
 
     stopInterval(socket: Socket) {
-        let gp_index = this.matchPlayerFromSocketId(socket);
+        let gp_index = this.matchPlayerFromSocketId(socket)
         let gameDuration = this.getGameDuration(socket);
+        // console.log('game stoped ', gp_index)
         if (this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId)
             clearInterval(this.dashBoard.games[gameDuration].game[gp_index[0]].intervalId);
     }
@@ -637,6 +643,8 @@ getsketchData(socket : Socket)
         let gp_index = this.matchPlayerFromSocketId(socket);
         let gameDuration = this.getGameDuration(socket);
 
+        // console.log('remove game', gp_index);
+        // console.log('game ', this.dashBoard.games[gameDuration].game)
         const gameId = this.getGameId(socket);
         if (!this.dashBoard.games[gameDuration] || !this.dashBoard.games[gameDuration].game[gp_index[0]] 
             || !this.dashBoard.games[gameDuration].game[gp_index[0]])
@@ -660,6 +668,7 @@ getsketchData(socket : Socket)
         this.dashBoard.allUsersIDs = this.dashBoard.allUsersIDs
         .filter(user_id => user_id !== this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].user_id);
         this.dashBoard.games[gameDuration].game.splice(gp_index[0], 1);
+        // console.log('game after', gp_index, this.dashBoard.games[gameDuration].game)
     }
 
     getballposition(socket: Socket) {
@@ -668,12 +677,15 @@ getsketchData(socket : Socket)
         let gameDuration = this.getGameDuration(socket);
         // ("players number = " + this.dashBoard.playersNumber);
         if (this.IsDataValid(gameDuration, gp_index[0]))
-        return;
+        {
+            return;
+        }
         let leftPaddle = this.dashBoard.games[gameDuration].game[gp_index[0]].players[0].paddle;
         let rightPaddle = this.dashBoard.games[gameDuration].game[gp_index[0]].players[1].paddle;
 
-        ball_coordonation[0] = this.dashBoard.games[gameDuration].game[gp_index[0]].ball.x;
+        ball_coordonation[0] = this.dashBoard.games[gameDuration].game[gp_index[0]].ball.x
         ball_coordonation[1] = this.dashBoard.games[gameDuration].game[gp_index[0]].ball.y
+        // console.log(ball_coordonation);
 
         return (ball_coordonation);
     }

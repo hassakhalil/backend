@@ -57,7 +57,7 @@ export class GameGateway implements OnGatewayDisconnect {
 
   private clients: Map<string, number> = new Map();
   async handleDisconnect(Client: Socket) {
-    // this.logger.log(`Cliend id:${Client.id} disconnected`);
+    this.logger.log(`Cliend id:${Client.id} disconnected`);
     const userId = this.clients.get(Client.id);
 
     if (userId){
@@ -146,7 +146,7 @@ export class GameGateway implements OnGatewayDisconnect {
       return ;
     }
     let gameDuration = (parseInt(gameduration.toString(), 10));
-    // this.logger.log(`Client connected: ${Client.id}`)
+    this.logger.log(`Client connected: ${Client.id}`)
 
     if (gameDuration < 1 || gameDuration > 6)
     {
@@ -249,13 +249,15 @@ export class GameGateway implements OnGatewayDisconnect {
   sketchData(@ConnectedSocket() Client: Socket)
   {
     // console.log('dkhel');
+    // this.dashBoard.games[gameDuration].game[1].intervalId 
     if (this.gameService.gameloaded(Client))
     {
       const gameId = this.gameService.getGameId(Client)
       let sketchData : SketchData
       // console.log(this.gameService.getTime(Client));
-    this.io.to(gameId).emit('gameTimer', this.gameService.getTime(Client));
-    sketchData = this.gameService.getsketchData(Client);
+      this.io.to(gameId).emit('gameTimer', this.gameService.getTime(Client));
+      sketchData = this.gameService.getsketchData(Client);
+      // console.log(sketchData)
     return sketchData
     }
   }

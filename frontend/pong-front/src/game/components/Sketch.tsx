@@ -103,6 +103,7 @@ const GameCanvas = ( ) => {
       {   
           socket.emit('SketchData', (sketchData : SketchData) =>
           {
+            console.log('sketchdata', sketchData)
               ball_coordonation[0] = p5.map(sketchData.ball[0], 0, 683, 0, p5.windowWidth / 2);
               ball_coordonation[1] = p5.map(sketchData.ball[1], 0, 331, 0, p5.windowHeight / 2);
               ball_coordonation[2] = p5.map(24, 0, 683, 0, p5.windowWidth /2);
@@ -127,11 +128,10 @@ const GameCanvas = ( ) => {
         p5.text(Score[0] + " : " + Score[1], p5.windowWidth / 4 , (p5.windowHeight / 4) * 0.2);
         p5.fill(255);
         p5.textSize(70);
-        p5.textAlign(p5.CENTER, p5.CENTER);
+        p5.textAlign(p5.CENTER, p5.CENTER)
         if (time[1] !== undefined)
         p5.text(time[0] + "  :  " + time[1], p5.map(683 / 2, 0, 683, 0, (p5.windowWidth / 2)) ,
         p5.map(331 / 2, 0, 331, 0, (p5.windowHeight / 2)));
-        // // // ("working");
         // // // ("working");
       }
       else

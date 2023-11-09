@@ -186,7 +186,7 @@ async activateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto ,@Res(
   res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
   //set the token in a cookie
   // res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
-  console.log('on code == ', body)
+  // console.log('on code == ', body)
 
   return 'You successfully activated 2fa';
 	// return res.x (`http://localhost:5173/profile/${user.username}`)
@@ -209,12 +209,12 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto, @Re
     throw new HttpException('Failed to deactivate 2fa', HttpStatus.BAD_REQUEST);
   }
   //generate new jwt
-  console.log('---------',req.user)
+  // console.log('---------',req.user)
   const token  = await this.authService.newJwt(req.user, false, false);
 
   //set the token in a cookie
   res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
-  console.log('off token == ',token)
+  // console.log('off token == ',token)
   return 'You successfully deactivated 2fa';
 }
 

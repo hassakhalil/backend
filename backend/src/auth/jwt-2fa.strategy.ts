@@ -22,7 +22,7 @@ export class Jwt2faStrategy extends PassportStrategy(Strategy, 'jwt-2fa') {
 
     async validate(payload: any){
         //your validation logic here, e.g.,getching user from database
-        console.log(payload);
+        // console.log(payload);
         const user = await this.usersService.findOne(payload.sub);
         if (!user)
             throw new UnauthorizedException('Setup a username');
