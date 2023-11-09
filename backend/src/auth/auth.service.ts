@@ -5,7 +5,18 @@ import { toDataURL } from 'qrcode';
 
 @Injectable()
 export class AuthService {
-    constructor(private jwtService: JwtService) {}
+    constructor(private jwtService: JwtService, ) {}
+
+    async newJwt(user:any, isTwoFactorAuthEbnabled:boolean, bool:boolean) {
+        const payload = {
+            username: user.username,
+            sub: user.sub,
+            photo: user.photo,
+            isTwoFactorAuthenticationEbnabled: isTwoFactorAuthEbnabled,
+            isTwoFactorAuthentcated: bool,
+        };
+        return this.jwtService.sign(payload);
+    }
     
     async login(user: any, isTwoFactorAuthEbnabled:boolean) {
         const payload = {

@@ -166,7 +166,7 @@ async generateQrCode(@Res() res: Response, @Req() req:Request){
 
 @Post('2fa/turn-on')
 @UseGuards(Jwt2faAuthGuard)
-async activateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
+async activateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto ,@Res({ passthrough: true }) res:Response) {
   const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
   const isCodeValid = this.authService.isTwoFactorAuthCodeValid(
     body.code,
@@ -179,7 +179,15 @@ async activateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
   if (!isActivated){
     throw new HttpException('Failed to activate 2fa', HttpStatus.BAD_REQUEST);
   }
-  // console.log('return 2fa')
+  // const token  = await this.authService.newJwt(req.user, true);
+  const token  = await this.authService.newJwt(req.user, true, true);
+
+  //set the token in a cookie
+  res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
+  //set the token in a cookie
+  // res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
+  console.log('on code == ', body)
+
   return 'You successfully activated 2fa';
 	// return res.x (`http://localhost:5173/profile/${user.username}`)
 
@@ -187,7 +195,7 @@ async activateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
 
 @Post('2fa/turn-off')
 @UseGuards(Jwt2faAuthGuard)
-async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
+async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto, @Res({ passthrough: true }) res:Response) {
   const user = await this.usersService.findOne(this.authService.extractIdFromPayload(req.user));
   const isCodeValid = this.authService.isTwoFactorAuthCodeValid(
     body.code,
@@ -200,6 +208,13 @@ async deactivateTwoFactorAuth(@Req() req: Request, @Body() body: TfaCodeDto) {
   if (!isDesactivated){
     throw new HttpException('Failed to deactivate 2fa', HttpStatus.BAD_REQUEST);
   }
+  //generate new jwt
+  console.log('---------',req.user)
+  const token  = await this.authService.newJwt(req.user, false, false);
+
+  //set the token in a cookie
+  res.cookie('jwt', token, { httpOnly: true , sameSite: 'strict'});
+  console.log('off token == ',token)
   return 'You successfully deactivated 2fa';
 }
 
