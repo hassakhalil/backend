@@ -20,7 +20,6 @@ import { GameRoute } from "./components/Game/GameRoute"
 // import { ProfileProvider } from "./ProfileContext"
 
 
-
 interface friendsList{
 	id:  '',
 	username: '',
