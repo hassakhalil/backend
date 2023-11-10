@@ -62,7 +62,7 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 	socket.emit('join-room', joinRoom);
 	
 	
-	console.log('li sifet l msg', messages);
+	// console.log('li sifet l msg', messages);
 	useEffect(() => {
 		// console.log('new room')
 		socket.on('chat', (data: ChatDto) => {

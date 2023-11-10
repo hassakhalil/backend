@@ -428,34 +428,59 @@ export class UsersService {
             }
           });
           try{
+            // console.log('total == ',wins+loses+draws)
             if (wins+ loses+draws === 7)
             {
+              const isFound = await this.prisma.achievements.findMany({
+                where: {
+                  name: "Played 7 Games",
+                  user_id: PersonalData.id,
+                }
+              });
+              if (!isFound[0]){
               const isCreated = await this.prisma.achievements.create({
                 data:{
                   name: "Played 7 Games",
                   user_id: PersonalData.id,
                 }
-              });
+              });}
             }
             else if (wins+ loses+draws === 3){
-              const isCreated = await this.prisma.achievements.create({
-                data:{
-                  name: "Played 7 Games",
+              const isFound = await this.prisma.achievements.findMany({
+                where: {
+                  name: "Played 3 Games",
                   user_id: PersonalData.id,
                 }
               });
+              if (!isFound[0]){
+              const isCreated = await this.prisma.achievements.create({
+                data:{
+                  name: "Played 3 Games",
+                  user_id: PersonalData.id,
+                }
+              });}
             }
             else if (wins+ loses+draws === 1){
+              //
+              // console.log('------------entered 1 game -----------')
+              const isFound = await this.prisma.achievements.findMany({
+                where: {
+                  name: "Played Your First Game",
+                  user_id: PersonalData.id,
+                }
+              });
+              // console.log('found = ', isFound)
+              if(!isFound[0]){
               const isCreated = await this.prisma.achievements.create({
                 data:{
                   name: "Played Your First Game",
                   user_id: PersonalData.id,
                 }
-              });
+              });}
             }
           }
           catch(error){
-            
+            // console.log(error)
           }
           const UserAchievements = await this.getAchievements(PersonalData.id);
           return {

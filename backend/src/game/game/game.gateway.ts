@@ -57,7 +57,7 @@ export class GameGateway implements OnGatewayDisconnect {
 
   private clients: Map<string, number> = new Map();
   async handleDisconnect(Client: Socket) {
-    this.logger.log(`Cliend id:${Client.id} disconnected`);
+    // this.logger.log(`Cliend id:${Client.id} disconnected`);
     const userId = this.clients.get(Client.id);
 
     if (userId){
@@ -146,7 +146,7 @@ export class GameGateway implements OnGatewayDisconnect {
       return ;
     }
     let gameDuration = (parseInt(gameduration.toString(), 10));
-    this.logger.log(`Client connected: ${Client.id}`)
+    // this.logger.log(`Client connected: ${Client.id}`)
 
     if (gameDuration < 1 || gameDuration > 6)
     {
