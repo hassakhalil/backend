@@ -94,6 +94,8 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 		setMessage('');
 	}
 	(profile);
+	// console.log(messages);
+	// console.log(profile.user_data.user_id)
 
 	return (
 		<>
@@ -122,7 +124,7 @@ export function DkChatConv({ prop_room, members, profile, messages, setMessages 
 							<div className="overflow-y-auto">
 								{messages.map((message : any, index : number) => {
 									// const friend = members.find(f => f.id === message.user_id);
-									if (message.user_id !== profile.user_data.user_id) {
+									if (message.user_id !== profile.user_data.id) {
 										return (<Msg key={`friend-${index}`}
 											profile={message.avatar}
 											name={message.username}
