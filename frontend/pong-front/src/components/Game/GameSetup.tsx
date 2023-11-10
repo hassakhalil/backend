@@ -22,26 +22,26 @@ export const GameSetup  = ( ) =>
   const navigate = useNavigate();
 
 
-  useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      // Perform any cleanup or additional logic here
-      // ...
+  // useEffect(() => {
+  //   const handleBeforeUnload = (event) => {
+  //     // Perform any cleanup or additional logic here
+  //     // ...
 
-      // Store the redirection path in sessionStorage only if accessing /game
-      if (window.location.pathname === "/game") {
-        sessionStorage.setItem("redirectPath", "/");
-      }
+  //     // Store the redirection path in sessionStorage only if accessing /game
+  //     if (window.location.pathname === "/game") {
+  //       sessionStorage.setItem("redirectPath", "/");
+  //     }
 
-      // Some browsers require the returnValue to be set
-      event.returnValue = "";
-    };
+  //     // Some browsers require the returnValue to be set
+  //     event.returnValue = "";
+  //   };
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
+  //   window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener("beforeunload", handleBeforeUnload);
+  //   };
+  // }, []);
 
   useEffect(() => {
     // Check sessionStorage for the redirection path on component mount

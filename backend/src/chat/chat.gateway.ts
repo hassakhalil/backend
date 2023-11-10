@@ -143,7 +143,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         }catch(error){
             // console.log(error);
             // throw new WsException('unauthorized');
-            client.disconnect();
+            // client.disconnect();
             // throw new Error('unauthorized');
             //throw error
         }
